@@ -9,10 +9,18 @@
 
 class VulkanRenderer final {
 public:
+    explicit VulkanRenderer(string appName);
+    ~VulkanRenderer() = default;
+
+    VulkanRenderer(const VulkanRenderer&) = delete;
+    VulkanRenderer(VulkanRenderer&&) = default;
+
+    VulkanRenderer& operator= (const VulkanRenderer&) = delete;
+    VulkanRenderer& operator= (VulkanRenderer&&) = default;
+private:
 
 
-
-
+public:
 
 
 

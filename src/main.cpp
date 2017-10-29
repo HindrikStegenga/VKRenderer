@@ -1,18 +1,16 @@
-#include <iostream>
-#include "Vulkan/VulkanPlatform.h"
-
-
+#include "Application.h"
 
 int main() {
 
-    VkUniqueHandle<VkInstance> handle(vkDestroyInstance);
+    auto app = Application();
 
-    if (handle) {
-        std::cout << "true!" << std::endl;
-    } else {
-        std::cout << "false!" << std::endl;
-    }
+    auto t = thread([&app]{
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        app.stop();
+    });
 
+    app.run();
+    t.join();
 
-    return 0;
+    return EXIT_SUCCESS;
 }

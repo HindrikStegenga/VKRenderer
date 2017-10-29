@@ -3,3 +3,7 @@
 //
 
 #include "VulkanRenderer.h"
+
+VulkanRenderer::VulkanRenderer(string appName) {
+
+}
