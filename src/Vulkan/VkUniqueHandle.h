@@ -32,7 +32,7 @@ public:
     VkUniqueHandle(const VkUniqueHandle&) = delete;
     VkUniqueHandle& operator= (const VkUniqueHandle&) = delete;
 private:
-    auto clean_up() -> void;
+    auto cleanUp() -> void;
 public:
     auto release()                      -> T;
     auto get()              const       -> T;
@@ -44,11 +44,11 @@ public:
     auto reset(T handle, VkInstance instance, function<void(VkInstance, T, VkAllocationCallbacks*)> deleteFunc) -> void;
     auto reset(T handle, VkDevice device, function<void(VkDevice, T, VkAllocationCallbacks*)> deleteFunc)       -> void;
 
-    auto reset_deleter(function<void(T, VkAllocationCallbacks*)> deleteFunc)                                    -> void;
-    auto reset_deleter(VkInstance instance, function<void(VkInstance, T, VkAllocationCallbacks*)> deleteFunc)   -> void;
-    auto reset_deleter(VkDevice   device,   function<void(VkDevice, T, VkAllocationCallbacks*)> deleteFunc)     -> void;
+    auto resetDeleter(function<void(T, VkAllocationCallbacks *)> deleteFunc)                                    -> void;
+    auto resetDeleter(VkInstance instance, function<void(VkInstance, T, VkAllocationCallbacks *)> deleteFunc)   -> void;
+    auto resetDeleter(VkDevice device, function<void(VkDevice, T, VkAllocationCallbacks *)> deleteFunc)         -> void;
 
-    auto get_deleter() const -> function<void(T)>;
+    auto getDeleter() const -> function<void(T)>;
 
     explicit operator bool() const;
     const T* operator &() const;
@@ -58,12 +58,12 @@ public:
 
 template<typename T>
 VkUniqueHandle<T>::~VkUniqueHandle() {
-    clean_up();
+    cleanUp();
 }
 
 template<typename T>
 VkUniqueHandle<T>::VkUniqueHandle(VkUniqueHandle&& rhs) noexcept {
-    clean_up();
+    cleanUp();
     object      = std::move(rhs.object);
     deleteFunc  = rhs.deleteFunc;
 
@@ -73,7 +73,7 @@ VkUniqueHandle<T>::VkUniqueHandle(VkUniqueHandle&& rhs) noexcept {
 
 template<typename T>
 VkUniqueHandle<T>& VkUniqueHandle<T>::operator=(VkUniqueHandle&& rhs) noexcept {
-    clean_up();
+    cleanUp();
 
     object      = std::move(rhs.object);
     deleteFunc  = rhs.deleteFunc;
@@ -85,7 +85,7 @@ VkUniqueHandle<T>& VkUniqueHandle<T>::operator=(VkUniqueHandle&& rhs) noexcept {
 }
 
 template<typename T>
-auto VkUniqueHandle<T>::clean_up() -> void {
+auto VkUniqueHandle<T>::cleanUp() -> void {
 
     if (object != VK_NULL_HANDLE){
         if (deleteFunc != nullptr) {
@@ -156,31 +156,32 @@ auto VkUniqueHandle<T>::get() const -> T {
 
 template<typename T>
 auto VkUniqueHandle<T>::reset(T handle) -> void {
-    clean_up();
+    cleanUp();
     object = handle;
 }
 
 template<typename T>
-auto VkUniqueHandle<T>::get_deleter() const -> function<void(T)> {
+auto VkUniqueHandle<T>::getDeleter() const -> function<void(T)> {
     return deleteFunc;
 }
 
 template<typename T>
-auto VkUniqueHandle<T>::reset_deleter(function<void(T, VkAllocationCallbacks *)> deleteFunc) -> void {
+auto VkUniqueHandle<T>::resetDeleter(function<void(T, VkAllocationCallbacks *)> deleteFunc) -> void {
     this->deleteFunc = [=](T obj){
         deleteFunc(obj, nullptr);
     };
 }
 
 template<typename T>
-auto VkUniqueHandle<T>::reset_deleter(VkInstance instance, function<void(VkInstance, T, VkAllocationCallbacks *)> deleteFunc) -> void {
+auto VkUniqueHandle<T>::resetDeleter(VkInstance instance,
+                                     function<void(VkInstance, T, VkAllocationCallbacks *)> deleteFunc) -> void {
     this->deleteFunc = [=](T obj){
         deleteFunc(instance, obj, nullptr);
     };
 }
 
 template<typename T>
-auto VkUniqueHandle<T>::reset_deleter(VkDevice device, function<void(VkDevice, T, VkAllocationCallbacks *)> deleteFunc) -> void {
+auto VkUniqueHandle<T>::resetDeleter(VkDevice device, function<void(VkDevice, T, VkAllocationCallbacks *)> deleteFunc) -> void {
     this->deleteFunc = [=](T obj){
         deleteFunc(device, obj, nullptr);
     };
@@ -229,7 +230,7 @@ VkUniqueHandle<T>::operator bool() const -> bool {
 
 template<typename T>
 auto VkUniqueHandle<T>::reset() -> T* {
-    clean_up();
+    cleanUp();
     return &object;
 }
 

@@ -30,7 +30,7 @@ string getCurrentWorkingDir();
 class ConfigFileReader final
 {
 private:
-    std::map<string, string> m_Values;
+    std::map<string, string> values;
 public:
     explicit ConfigFileReader(bool pwd = false);
     ~ConfigFileReader() = default;

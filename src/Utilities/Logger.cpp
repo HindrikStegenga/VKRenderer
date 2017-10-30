@@ -46,8 +46,8 @@
 
 #endif
 
-bool Logger::m_logToFile = true;
-bool Logger::m_logFileIsOpened = false;
+bool Logger::logToFile = true;
+bool Logger::logFileIsOpened = false;
 
 void Logger::log(string msg)
 {
@@ -125,18 +125,18 @@ void Logger::logToFileAndConsole(string str, LogLevel e)
     string timestamp(timeString);
 
     cout << "[" << timestamp << "]" << tagged(e,str, true);
-    if(!m_logToFile) return;
+    if(!logToFile) return;
 
     std::ofstream ofs;
 
-    if(m_logFileIsOpened)
+    if(logFileIsOpened)
         ofs.open("log.txt", std::ios_base::app);
     else
         ofs.open("log.txt", std::ios_base::trunc);
 
     if(ofs.is_open())
     {
-        if(!m_logFileIsOpened)
+        if(!logFileIsOpened)
         {
             ofs << "This log file has been created on " << ctime(&currentTime) << std::endl;
 
@@ -147,7 +147,7 @@ void Logger::logToFileAndConsole(string str, LogLevel e)
     {
         cout << "[" << timestamp << "]" << tagged(LogLevel::Error,"Could not open log file!", true);
     }
-    m_logFileIsOpened = true;
+    logFileIsOpened = true;
     ofs.close();
 }
 

@@ -7,9 +7,14 @@
 
 #include "VulkanPlatform.h"
 
+static const char* debugLayers[] = {
+        "VK_LAYER_LUNARG_standard_validation",
+        "VK_LAYER_LUNARG_api_dump"
+};
+
 class VulkanRenderer final {
 public:
-    explicit VulkanRenderer(string appName);
+    explicit VulkanRenderer(string appName, bool debugEnabled = false);
     ~VulkanRenderer() = default;
 
     VulkanRenderer(const VulkanRenderer&) = delete;
@@ -18,12 +23,13 @@ public:
     VulkanRenderer& operator= (const VulkanRenderer&) = delete;
     VulkanRenderer& operator= (VulkanRenderer&&) = default;
 private:
-
+    VKUH<VkInstance> instance = VKUH<VkInstance>(vkDestroyInstance);
 
 public:
 
 
-
+private:
+    void initInstance(map<string,string> args);
 
 
 

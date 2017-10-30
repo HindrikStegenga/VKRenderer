@@ -11,4 +11,16 @@
 #include "../CommonInclude.h"
 #include "VkUniqueHandle.h"
 
+template<typename T>
+using VKUH = VkUniqueHandle<T>;
+
+inline void handleResult(VkResult result, string msg) {
+    if (result != VK_SUCCESS) {
+        Logger::failure(msg);
+    }
+}
+
+
+
+
 #endif //VKRENDERER_VULKANPLATFORM_H

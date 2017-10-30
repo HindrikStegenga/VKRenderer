@@ -30,7 +30,7 @@ void ConfigFileReader::parseFile(string file)
         std::smatch matchresults;
         if(std::regex_match(line, matchresults, match))
         {
-            m_Values.insert(std::pair<std::string, std::string>(matchresults[1], matchresults[2]));
+            values.insert(std::pair<std::string, std::string>(matchresults[1], matchresults[2]));
         }
     }
     configFile.close();
@@ -45,5 +45,5 @@ ConfigFileReader::ConfigFileReader(bool pwd)
 
 const std::map<string, string>& ConfigFileReader::map() const
 {
-    return m_Values;
+    return values;
 }

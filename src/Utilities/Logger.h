@@ -109,8 +109,8 @@ inline string tagged(LogLevel l, const string& value, bool isColorized = false)
 class Logger
 {
 private:
-    static bool m_logToFile;
-    static bool m_logFileIsOpened;
+    static bool logToFile;
+    static bool logFileIsOpened;
 
 public:
     Logger() = default;

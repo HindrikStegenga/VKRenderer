@@ -11,8 +11,13 @@ Application::Application() {
     cg.parseFile("config/application.cfg");
 
     applicationName = cg.map().at("name");
+    auto debug = cg.map().at("debug");
+
+    bool isDebug = debug == "true";
+
     Logger::log(applicationName);
 
+    renderer.set(VulkanRenderer(applicationName, isDebug));
 }
 
 void Application::run() {

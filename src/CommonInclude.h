@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <thread>
+#include <map>
 
 using std::string;
 using std::function;
@@ -20,6 +21,7 @@ using std::vector;
 using std::array;
 using std::move;
 using std::thread;
+using std::map;
 
 
 
