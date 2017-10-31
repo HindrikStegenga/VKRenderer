@@ -23,9 +23,10 @@ Application::Application() {
 void Application::run() {
 
     while (!mustStop) {
-
-        Logger::log("Loop");
-
+        bool eventsSucceeded = renderer.get().processEvents();
+        if (!eventsSucceeded) {
+            mustStop = true;
+        }
     }
 }
 

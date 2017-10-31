@@ -13,11 +13,11 @@ public:
     Nullable();
     ~Nullable();
 
-    Nullable(const Nullable&)       = default;
-    Nullable(Nullable&&) noexcept   = default;
+    Nullable(const Nullable& rhs);
+    Nullable(Nullable&& rhs) noexcept;
 
-    Nullable& operator=(const Nullable&)     = default;
-    Nullable& operator=(Nullable&&) noexcept = default;
+    Nullable& operator=(const Nullable& rhs);
+    Nullable& operator=(Nullable&& rhs) noexcept;
 
     const T& get() const;
 
@@ -32,7 +32,7 @@ public:
     explicit operator T() const;
 
 private:
-    alignas(T) char data[sizeof(T)];
+    alignas(T) char data[sizeof(T)] = {};
     bool isNull = true;
 private:
     void cleanUp();
@@ -99,7 +99,58 @@ bool Nullable<T>::isSet() const {
 
 template<typename T>
 const T& Nullable<T>::get() const {
-    return data;
+    return *(T*)(&data);
+}
+
+template<typename T>
+Nullable<T>::Nullable(Nullable&& rhs) noexcept {
+
+    isNull = rhs.isNull;
+
+    if (!rhs.isNull){
+        //move contained type...
+        auto tData = (T*)&data;
+        auto rData = (T*)&rhs.data;
+        *tData = move(*rData);
+    }
+    rhs.isNull = true;
+}
+
+template<typename T>
+Nullable<T>& Nullable<T>::operator=(Nullable&& rhs) noexcept {
+    isNull = rhs.isNull;
+
+    if (!rhs.isNull){
+        //move contained type...
+        auto tData = (T*)&data;
+        auto rData = (T*)&rhs.data;
+        *tData = move(*rData); //calls move ctor
+    }
+    rhs.isNull = true;
+    return *this;
+}
+
+template<typename T>
+Nullable<T>::Nullable(const Nullable& rhs) {
+    isNull = rhs.isNull;
+    if (!rhs.isNull){
+        //copy contained type...
+        auto tData = (T*)&data;
+        auto rData = (T*)&rhs.data;
+        *tData = *rData; //calls copy ctor
+    }
+}
+
+template<typename T>
+Nullable<T>& Nullable<T>::operator=(const Nullable& rhs) {
+    isNull = rhs.isNull;
+    if (!rhs.isNull){
+        //copy contained type...
+        auto tData = (T*)&data;
+        auto rData = (T*)&rhs.data;
+        *tData = *rData; //calls copy ctor
+    }
+    return *this;
 }
 
 #endif //VKRENDERER_NULLABLE_H

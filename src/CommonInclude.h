@@ -6,6 +6,7 @@
 #define VKRENDERER_COMMONINCLUDE_H
 
 #include "Utilities/Logger.h"
+#include "Utilities/Macros.h"
 #include <string>
 #include <functional>
 #include <vector>

@@ -15,6 +15,7 @@ VulkanRenderer::VulkanRenderer(string appName, bool debugEnabled) {
     map.insert(std::make_pair("appName",appName));
     map.insert(std::make_pair("debug", debugEnabled ? "true" : "false"));
     initInstance(map);
+    renderWindow.set(RenderWindow(800,600, false));
 }
 
 void VulkanRenderer::initInstance(const map<string, string> args) {
@@ -52,4 +53,8 @@ void VulkanRenderer::initInstance(const map<string, string> args) {
     auto result = vkCreateInstance(&instanceCreateInfo, nullptr, instance.reset());
     handleResult(result, "Instance creation failed!");
     Logger::succes("Vulkan instance creation succeeded!");
+}
+
+bool VulkanRenderer::processEvents() const {
+    return renderWindow.get().pollWindowEvents();
 }

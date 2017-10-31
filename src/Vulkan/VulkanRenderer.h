@@ -6,6 +6,8 @@
 #define VKRENDERER_VULKANRENDERER_H
 
 #include "VulkanPlatform.h"
+#include "RenderWindow.h"
+#include "../Utilities/Nullable.h"
 
 static const char* debugLayers[] = {
         "VK_LAYER_LUNARG_standard_validation",
@@ -24,9 +26,9 @@ public:
     VulkanRenderer& operator= (VulkanRenderer&&) = default;
 private:
     VKUH<VkInstance> instance = VKUH<VkInstance>(vkDestroyInstance);
-
+    Nullable<RenderWindow> renderWindow;
 public:
-
+    bool processEvents() const;
 
 private:
     void initInstance(map<string,string> args);
