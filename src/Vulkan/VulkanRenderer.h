@@ -8,11 +8,20 @@
 #include "VulkanPlatform.h"
 #include "RenderWindow.h"
 #include "../Utilities/Nullable.h"
+#include "VulkanInstance.h"
 
-static const char* debugLayers[] = {
+static const char* instanceExtensions[] {
+};
+static const char* instanceLayers[] {
+};
+static const char* debugInstanceExtensions[] {
+};
+static const char* debugInstanceLayers[] = {
         "VK_LAYER_LUNARG_standard_validation",
         "VK_LAYER_LUNARG_api_dump"
 };
+
+
 
 class VulkanRenderer final {
 public:
@@ -25,13 +34,12 @@ public:
     VulkanRenderer& operator= (const VulkanRenderer&) = delete;
     VulkanRenderer& operator= (VulkanRenderer&&) = default;
 private:
-    VKUH<VkInstance> instance = VKUH<VkInstance>(vkDestroyInstance);
-    Nullable<RenderWindow> renderWindow;
+    Nullable<VulkanInstance>    instance;
+    Nullable<RenderWindow>      renderWindow;
 public:
     bool processEvents() const;
 
 private:
-    void initInstance(map<string,string> args);
 
 
 

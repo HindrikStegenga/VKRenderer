@@ -3,6 +3,7 @@
 //
 
 #include "RenderWindow.h"
+#include <cstring>
 
 int  RenderWindow::windowCounter = 0;
 bool RenderWindow::isGLFWinitialized = false;
@@ -80,4 +81,35 @@ RenderWindow &RenderWindow::operator=(RenderWindow && rhs) noexcept {
     window = rhs.window;
     rhs.window = nullptr;
     return *this;
+}
+
+vector<const char*> RenderWindow::processExtensions(const vector<const char *>& instanceExtensions) const {
+
+    vector<const char*> additionalExtensions(instanceExtensions);
+
+    uint32_t glfwExtensionCount = 0;
+    const char** extensions;
+
+    extensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+    for (uint32_t i = 0; i < glfwExtensionCount; ++i)
+    {
+        bool isFound = false;
+        for (auto& instanceExtension : instanceExtensions)
+        {
+            if (strcmp(instanceExtension, extensions[i]) == 0)
+            {
+                isFound = true;
+                continue;
+            }
+        }
+
+        if (isFound)
+        {
+            continue;
+        }
+        additionalExtensions.push_back(extensions[i]);
+    }
+
+    return additionalExtensions;
 }

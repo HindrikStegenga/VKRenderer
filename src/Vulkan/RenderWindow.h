@@ -25,6 +25,7 @@ private:
     GLFWwindow* window = nullptr;
 public:
     bool pollWindowEvents() const;
+    vector<const char*> processExtensions(const vector<const char *> & instanceExtensions) const;
 };
 
 

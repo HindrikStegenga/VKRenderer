@@ -14,6 +14,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <thread>
+#include <tuple>
 #include <map>
 
 using std::string;
@@ -23,6 +24,10 @@ using std::array;
 using std::move;
 using std::thread;
 using std::map;
+using std::pair;
+using std::make_pair;
+using std::tuple;
+using std::make_tuple;
 
 
 
