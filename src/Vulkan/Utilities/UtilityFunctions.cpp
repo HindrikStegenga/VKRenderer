@@ -2,7 +2,7 @@
 // Created by Hindrik Stegenga on 3-11-17.
 //
 
-#include "VulkanUtilityFunctions.h"
+#include "UtilityFunctions.h"
 
 auto operator<<(ostream& o, VkPhysicalDeviceType& t) -> ostream&
 {

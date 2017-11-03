@@ -5,27 +5,16 @@
 #ifndef VKRENDERER_VULKANRENDERER_H
 #define VKRENDERER_VULKANRENDERER_H
 
-#include "VulkanPlatform.h"
-#include "RenderWindow.h"
+#include "Platform/VulkanPlatform.h"
+#include "VulkanRequirements.h"
+#include "Platform/RenderWindow.h"
 #include "../Utilities/Nullable.h"
-#include "VulkanInstance.h"
-
-static const char* instanceExtensions[] {
-};
-static const char* instanceLayers[] {
-};
-static const char* debugInstanceExtensions[] {
-};
-static const char* debugInstanceLayers[] = {
-        "VK_LAYER_LUNARG_standard_validation",
-        "VK_LAYER_LUNARG_api_dump"
-};
-
-
+#include "Instance.h"
+#include "PresentDevice.h"
 
 class VulkanRenderer final {
 public:
-    explicit VulkanRenderer(string appName, bool debugEnabled = false);
+    explicit VulkanRenderer(string appName, string engineName, bool debugEnabled = false);
     ~VulkanRenderer() = default;
 
     VulkanRenderer(const VulkanRenderer&) = delete;
@@ -34,8 +23,9 @@ public:
     VulkanRenderer& operator= (const VulkanRenderer&) = delete;
     VulkanRenderer& operator= (VulkanRenderer&&) = default;
 private:
-    Nullable<VulkanInstance>    instance;
     Nullable<RenderWindow>      renderWindow;
+    Nullable<Instance>          instance;
+    Nullable<PresentDevice>     device;
 public:
     bool processEvents() const;
 

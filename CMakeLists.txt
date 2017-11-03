@@ -8,5 +8,5 @@ link_directories($ENV{VULKAN_SDK}/lib)
 
 link_libraries(vulkan glfw pthread)
 
-set(SOURCE_FILES src/main.cpp src/Vulkan/VulkanPlatform.h src/Vulkan/VulkanRenderer.cpp src/Vulkan/VulkanRenderer.h src/Vulkan/VkUniqueHandle.h src/CommonInclude.h src/Application.cpp src/Application.h src/Utilities/Logger.cpp src/Utilities/Logger.h src/Utilities/ConfigFileReader.cpp src/Utilities/ConfigFileReader.h src/Utilities/Nullable.h src/Vulkan/RenderWindow.cpp src/Vulkan/RenderWindow.h src/Utilities/Macros.h src/Vulkan/VulkanInstance.cpp src/Vulkan/VulkanInstance.h src/Vulkan/Utilities/VulkanUtilityFunctions.cpp src/Vulkan/Utilities/VulkanUtilityFunctions.h)
+set(SOURCE_FILES src/main.cpp src/Vulkan/Platform/VulkanPlatform.h src/Vulkan/VulkanRenderer.cpp src/Vulkan/VulkanRenderer.h src/Vulkan/Utilities/VkUniqueHandle.h src/CommonInclude.h src/Application.cpp src/Application.h src/Utilities/Logger.cpp src/Utilities/Logger.h src/Utilities/ConfigFileReader.cpp src/Utilities/ConfigFileReader.h src/Utilities/Nullable.h src/Vulkan/Platform/RenderWindow.cpp src/Vulkan/Platform/RenderWindow.h src/Utilities/Macros.h src/Vulkan/Instance.cpp src/Vulkan/Instance.h src/Vulkan/Utilities/UtilityFunctions.cpp src/Vulkan/Utilities/UtilityFunctions.h src/Vulkan/PresentDevice.cpp src/Vulkan/PresentDevice.h src/Vulkan/VulkanRequirements.h)
 add_executable(VKRenderer ${SOURCE_FILES})

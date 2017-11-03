@@ -5,9 +5,10 @@
 #ifndef VKRENDERER_VULKANINSTANCE_H
 #define VKRENDERER_VULKANINSTANCE_H
 
-#include "VulkanPlatform.h"
+#include "Platform/VulkanPlatform.h"
 
-struct VulkanInstanceSupportDescription {
+
+struct InstanceSupportDescription {
 
     const vector<const char*>& validationLayers;
     const vector<const char*>& extensions;
@@ -15,23 +16,24 @@ struct VulkanInstanceSupportDescription {
     const vector<const char*>& debugExtensions;
 };
 
-class VulkanInstance final {
+class Instance final {
 public:
-    VulkanInstance(const map<string, string>& params, const VulkanInstanceSupportDescription& instanceSupportDescription);
-    ~VulkanInstance() = default;
+    Instance(const map<string, string>& params, const InstanceSupportDescription& supportDescription);
+    ~Instance() = default;
 
-    VulkanInstance(const VulkanInstance&)   = delete;
-    VulkanInstance(VulkanInstance&&)        = default;
+    Instance(const Instance&)   = delete;
+    Instance(Instance&&)        = default;
 
-    VulkanInstance& operator=(const VulkanInstance&)    = delete;
-    VulkanInstance& operator=(VulkanInstance&&)         = default;
+    Instance& operator=(const Instance&)    = delete;
+    Instance& operator=(Instance&&)         = default;
 private:
     VKUH<VkInstance> instance = VKUH<VkInstance>(vkDestroyInstance);
 private:
     static void checkLayersAndExtensionsSupport(const vector<const char*>& validationLayers, const vector<const char*>& extensions);
     static pair<bool, string> checkValidationLayerSupport(const vector<const char*>& layers);
     static pair<bool, string> checkExtensionSupport(const vector<const char*>& validationLayers, const vector<const char*>& extensions);
-
+public:
+    VkInstance getHandle();
 };
 
 

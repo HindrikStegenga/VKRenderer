@@ -8,8 +8,8 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#include "../CommonInclude.h"
-#include "VkUniqueHandle.h"
+#include "../../CommonInclude.h"
+#include "../Utilities/VkUniqueHandle.h"
 
 template<typename T>
 using VKUH = VkUniqueHandle<T>;
@@ -57,6 +57,5 @@ inline void handleResult(VkResult result, string msg)
         Logger::failure(msg + " Reason: " + mapVkResult(result));
     }
 }
-
 
 #endif //VKRENDERER_VULKANPLATFORM_H

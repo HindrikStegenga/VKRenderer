@@ -3,9 +3,9 @@
 //
 
 #include <cstring>
-#include "VulkanInstance.h"
+#include "Instance.h"
 
-VulkanInstance::VulkanInstance(const map<string, string>& params, const VulkanInstanceSupportDescription& instanceSupportDescription){
+Instance::Instance(const map<string, string>& params, const InstanceSupportDescription& supportDescription){
 
     string appName      = params.at("appName");
     string engineName   = params.at("engineName");
@@ -16,11 +16,11 @@ VulkanInstance::VulkanInstance(const map<string, string>& params, const VulkanIn
 
     if (debug)
     {
-        auto dLayers(instanceSupportDescription.validationLayers);
-        auto dExtensions(instanceSupportDescription.extensions);
+        auto dLayers(supportDescription.validationLayers);
+        auto dExtensions(supportDescription.extensions);
 
-        dLayers.insert(std::end(dLayers), std::begin(instanceSupportDescription.debugValidationLayers), std::end(instanceSupportDescription.debugValidationLayers));
-        dExtensions.insert(std::end(dExtensions),std::begin(instanceSupportDescription.debugExtensions), std::end(instanceSupportDescription.debugExtensions));
+        dLayers.insert(std::end(dLayers), std::begin(supportDescription.debugValidationLayers), std::end(supportDescription.debugValidationLayers));
+        dExtensions.insert(std::end(dExtensions),std::begin(supportDescription.debugExtensions), std::end(supportDescription.debugExtensions));
 
         checkLayersAndExtensionsSupport(dLayers, dExtensions);
 
@@ -28,9 +28,9 @@ VulkanInstance::VulkanInstance(const map<string, string>& params, const VulkanIn
         usedExtensions.swap(dExtensions);
     } else
     {
-        checkLayersAndExtensionsSupport(instanceSupportDescription.validationLayers, instanceSupportDescription.extensions);
-        usedValidationLayers = instanceSupportDescription.validationLayers;
-        usedExtensions = instanceSupportDescription.extensions;
+        checkLayersAndExtensionsSupport(supportDescription.validationLayers, supportDescription.extensions);
+        usedValidationLayers = supportDescription.validationLayers;
+        usedExtensions = supportDescription.extensions;
     }
 
     VkApplicationInfo applicationInfo   = {};
@@ -73,7 +73,7 @@ VulkanInstance::VulkanInstance(const map<string, string>& params, const VulkanIn
     Logger::succes("Vulkan instance creation succeeded!");
 }
 
-pair<bool, string> VulkanInstance::checkValidationLayerSupport(const vector<const char *> &layers)
+pair<bool, string> Instance::checkValidationLayerSupport(const vector<const char *> &layers)
 {
     uint32_t layerCount;
     vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
@@ -99,7 +99,8 @@ pair<bool, string> VulkanInstance::checkValidationLayerSupport(const vector<cons
     }
     return make_pair(true, "SUCCESS");
 }
-pair<bool, string> VulkanInstance::checkExtensionSupport(const vector<const char*>& validationLayers, const vector<const char *>& extensions)
+
+pair<bool, string> Instance::checkExtensionSupport(const vector<const char*>& validationLayers, const vector<const char *>& extensions)
 {
     uint32_t extensionCount;
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
@@ -152,8 +153,7 @@ pair<bool, string> VulkanInstance::checkExtensionSupport(const vector<const char
     return make_pair(true, "SUCCESS");
 }
 
-void VulkanInstance::checkLayersAndExtensionsSupport(const vector<const char *> &validationLayers,
-                                                     const vector<const char *> &extensions)
+void Instance::checkLayersAndExtensionsSupport(const vector<const char *>& validationLayers, const vector<const char *>& extensions)
 {
     auto layerSupport = checkValidationLayerSupport(validationLayers);
     if (!layerSupport.first) {
@@ -164,4 +164,9 @@ void VulkanInstance::checkLayersAndExtensionsSupport(const vector<const char *> 
     if (!extensionSupport.first) {
         Logger::failure("Instance extension not supported! Extension: " + extensionSupport.second);
     }
+}
+
+VkInstance Instance::getHandle()
+{
+    return instance.get();
 }

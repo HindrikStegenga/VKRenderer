@@ -5,7 +5,7 @@
 #ifndef VKRENDERER_VULKANUTILITYFUNCTIONS_H
 #define VKRENDERER_VULKANUTILITYFUNCTIONS_H
 
-#include "../VulkanPlatform.h"
+#include "../Platform/VulkanPlatform.h"
 #include <iostream>
 
 using std::ostream;

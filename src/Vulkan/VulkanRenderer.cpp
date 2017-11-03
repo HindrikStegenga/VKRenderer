@@ -5,7 +5,7 @@
 #include "VulkanRenderer.h"
 #include "../Utilities/ConfigFileReader.h"
 
-VulkanRenderer::VulkanRenderer(string appName, bool debugEnabled) {
+VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEnabled) {
 
     auto configReader = ConfigFileReader();
 
@@ -13,8 +13,14 @@ VulkanRenderer::VulkanRenderer(string appName, bool debugEnabled) {
 
     auto map = configReader.map();
     map.insert(std::make_pair("appName",appName));
+    map.insert(std::make_pair("engineName", engineName));
     map.insert(std::make_pair("debug", debugEnabled ? "true" : "false"));
-    renderWindow.set(RenderWindow(800,600, false));
+
+    uint32_t width, height;
+    width = static_cast<uint32_t>(std::stoi(map.at("width")));
+    height = static_cast<uint32_t>(std::stoi(map.at("height")));
+
+    renderWindow.set(RenderWindow(width, height, false));
 
     vector<const char*> extensions;
     for (auto instanceExtension : instanceExtensions) {
@@ -35,9 +41,9 @@ VulkanRenderer::VulkanRenderer(string appName, bool debugEnabled) {
 
     auto processedExtensions = renderWindow.get().processExtensions(extensions);
 
-    VulkanInstanceSupportDescription supportDescription { layers, processedExtensions, debugLayers, debugExtensions };
+    InstanceSupportDescription supportDescription { layers, processedExtensions, debugLayers, debugExtensions };
 
-    instance.set(VulkanInstance(map, supportDescription));
+    instance.set(Instance(map, supportDescription));
 }
 
 bool VulkanRenderer::processEvents() const {

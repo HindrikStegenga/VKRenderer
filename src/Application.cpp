@@ -15,9 +15,12 @@ Application::Application() {
 
     bool isDebug = debug == "true";
 
-    Logger::log(applicationName);
+    string engineName = cg.map().at("engineName");
 
-    renderer.set(VulkanRenderer(applicationName, isDebug));
+    Logger::log(applicationName);
+    Logger::log(engineName);
+
+    renderer.set(VulkanRenderer(applicationName, engineName, isDebug));
 }
 
 void Application::run() {
