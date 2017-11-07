@@ -12,6 +12,7 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
     configReader.parseFile("config/vulkan.cfg");
 
     auto map = configReader.map();
+
     map.insert(std::make_pair("appName",appName));
     map.insert(std::make_pair("engineName", engineName));
     map.insert(std::make_pair("debug", debugEnabled ? "true" : "false"));
@@ -39,11 +40,25 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
         debugLayers.push_back(instanceLayer);
     }
 
+    vector<const char*> dExtensions;
+    for (auto extension : deviceExtensions) {
+        dExtensions.push_back(extension);
+    }
+
+    vector<const char*> ddExtensions;
+    for (auto extension : debugDeviceExtensions) {
+        ddExtensions.push_back(extension);
+    }
+
     auto processedExtensions = renderWindow.get().processExtensions(extensions);
 
     InstanceSupportDescription supportDescription { layers, processedExtensions, debugLayers, debugExtensions };
 
     instance.set(Instance(map, supportDescription));
+
+    DeviceSupportDescription deviceSupportDescription { dExtensions, ddExtensions, requiredDeviceFeatures };
+
+    device.set(PresentDevice(instance.get().getHandle(), map, deviceSupportDescription));
 }
 
 bool VulkanRenderer::processEvents() const {

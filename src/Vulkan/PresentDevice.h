@@ -6,12 +6,14 @@
 #define VKRENDERER_VULKANPRESENTDEVICE_H
 
 #include "Platform/VulkanPlatform.h"
+#include "Utilities/PhysicalDevice.h"
 
 
 struct DeviceSupportDescription {
 
     const vector<const char*>& extensions;
     const vector<const char*>& debugExtensions;
+    const VkPhysicalDeviceFeatures& requiredFeatures;
 };
 
 class PresentDevice final {
@@ -27,6 +29,8 @@ public:
 private:
     VKUH<VkDevice> device = VKUH<VkDevice>(vkDestroyDevice);
     VkInstance instance;
+private:
+    PhysicalDevice selectPhysicalDevice(VkInstance instance, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures);
 };
 
 

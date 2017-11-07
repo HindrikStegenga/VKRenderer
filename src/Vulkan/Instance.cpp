@@ -166,7 +166,7 @@ void Instance::checkLayersAndExtensionsSupport(const vector<const char *>& valid
     }
 }
 
-VkInstance Instance::getHandle()
+VkInstance Instance::getHandle() const
 {
     return instance.get();
 }

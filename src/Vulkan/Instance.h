@@ -33,7 +33,7 @@ private:
     static pair<bool, string> checkValidationLayerSupport(const vector<const char*>& layers);
     static pair<bool, string> checkExtensionSupport(const vector<const char*>& validationLayers, const vector<const char*>& extensions);
 public:
-    VkInstance getHandle();
+    VkInstance getHandle() const;
 };
 
 
