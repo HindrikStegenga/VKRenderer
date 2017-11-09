@@ -14,6 +14,7 @@ PhysicalDevice::PhysicalDevice(VkPhysicalDevice physicalDevice) : physicalDevice
     extensionProperties.resize(extensionCount);
     vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, extensionProperties.data());
     vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
+    queueFamilies = getQueueFamilies(physicalDevice);
 }
 
 bool PhysicalDevice::meetsRequiredPhysicalDeviceFeatures(const VkPhysicalDeviceFeatures& features, const VkPhysicalDeviceFeatures& requirements)
@@ -91,13 +92,69 @@ pair<bool, string> PhysicalDevice::meetsRequiredExtensions(const vector<VkExtens
     return make_pair(true, "SUCCESS");
 }
 
-bool PhysicalDevice::isSuitable(const vector<const char*>& extensionNames, const VkPhysicalDeviceFeatures& requiredFeatures)
+pair<bool, vk_QueueFamily> PhysicalDevice::isSuitableAndReturnPresentQueue(const vector<const char *> &extensionNames,
+                                                                          const VkPhysicalDeviceFeatures &requiredFeatures,
+                                                                          VkSurfaceKHR surface)
 {
     auto pair = meetsRequiredExtensions(extensionProperties, extensionNames);
     if (!pair.first) {
         Logger::warn(string("Device extension not supported for device: " + pair.second));
-        return false;
+        return make_pair(false, vk_QueueFamily{});
     }
-    return meetsRequiredPhysicalDeviceFeatures(features, requiredFeatures);
+    bool support = meetsRequiredPhysicalDeviceFeatures(features, requiredFeatures);
+    if (!support) { return make_pair(false, vk_QueueFamily{}); }
+    support = meetsRequiredQueueTypes(queueFamilies);
+    if (!support) { return make_pair(false, vk_QueueFamily{}); }
+    auto presentQueue = meetsRequiredSurfaceSupport(physicalDevice, surface, queueFamilies);
+    return presentQueue;
+}
 
+vector<vk_QueueFamily> PhysicalDevice::getQueueFamilies(VkPhysicalDevice physicalDevice)
+{
+    vector<vk_QueueFamily> queueFamilies;
+    uint32_t qfCount = 0;
+
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &qfCount, nullptr);
+    vector<VkQueueFamilyProperties> queueFamilyProperties(qfCount);
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &qfCount, queueFamilyProperties.data());
+    for (uint32_t i = 0; i < queueFamilyProperties.size(); ++i) {
+        queueFamilies.push_back(vk_QueueFamily { i, queueFamilyProperties[i] });
+    }
+    return queueFamilies;
+}
+
+bool PhysicalDevice::meetsRequiredQueueTypes(const vector<vk_QueueFamily> &queueFamilies)
+{
+    return findFirstGraphicsComputeQueueFamily(queueFamilies).first;
+}
+
+pair<bool, vk_QueueFamily> PhysicalDevice::findFirstGraphicsComputeQueueFamily(const vector<vk_QueueFamily> &queueFamilies)
+{
+    for (const auto& qf : queueFamilies) {
+        if (qf.queueFamilyProperties.queueCount > 0 &&
+                static_cast<bool>(qf.queueFamilyProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT) &&
+                static_cast<bool>(qf.queueFamilyProperties.queueFlags & VK_QUEUE_COMPUTE_BIT))
+        {
+            return make_pair(true, qf);
+        }
+    }
+    return make_pair(false, vk_QueueFamily {});
+}
+
+pair<bool, vk_QueueFamily> PhysicalDevice::meetsRequiredSurfaceSupport(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface,
+                                            const vector<vk_QueueFamily> &queueFamilies)
+{
+    for (const auto& qf : queueFamilies) {
+        if (qf.queueFamilyProperties.queueCount > 0 &&
+            static_cast<bool>(qf.queueFamilyProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT) &&
+            static_cast<bool>(qf.queueFamilyProperties.queueFlags & VK_QUEUE_COMPUTE_BIT))
+        {
+            VkBool32 presentSupport = VK_FALSE;
+            vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, qf.queueFamilyIndex, surface, &presentSupport);
+            if (presentSupport == VK_TRUE) {
+                return make_pair(true, qf);
+            }
+        }
+    }
+    return make_pair(false, vk_QueueFamily {});
 }

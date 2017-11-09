@@ -16,6 +16,7 @@ private:
     T object = VK_NULL_HANDLE;
     function<void(T)> deleteFunc;
 public:
+    VkUniqueHandle() = default;
     explicit VkUniqueHandle(function<void(T, VkAllocationCallbacks*)> deleteFunc);
     VkUniqueHandle(VkInstance instance, function<void(VkInstance, T, VkAllocationCallbacks*)> deleteFunc);
     VkUniqueHandle(VkDevice device, function<void(VkDevice, T, VkAllocationCallbacks*)> deleteFunc);
@@ -38,6 +39,12 @@ public:
     auto get()              const       -> T;
     auto reset(T handle)                -> void;
     auto reset()                        -> T*;
+
+    auto reset(function<void(T, VkAllocationCallbacks*)> deleteFunc)                                  -> T*;
+    auto reset(VkInstance instance, function<void(VkInstance, T, VkAllocationCallbacks*)> deleteFunc) -> T*;
+    auto reset(VkDevice device, function<void(VkDevice, T, VkAllocationCallbacks*)> deleteFunc)       -> T*;
+
+
     auto swap(VkUniqueHandle& rhs)      -> void;
 
     auto reset(T handle, function<void(T, VkAllocationCallbacks*)> deleteFunc)                                  -> void;
@@ -173,8 +180,7 @@ auto VkUniqueHandle<T>::resetDeleter(function<void(T, VkAllocationCallbacks *)> 
 }
 
 template<typename T>
-auto VkUniqueHandle<T>::resetDeleter(VkInstance instance,
-                                     function<void(VkInstance, T, VkAllocationCallbacks *)> deleteFunc) -> void {
+auto VkUniqueHandle<T>::resetDeleter(VkInstance instance, function<void(VkInstance, T, VkAllocationCallbacks *)> deleteFunc) -> void {
     this->deleteFunc = [=](T obj){
         deleteFunc(instance, obj, nullptr);
     };
@@ -182,6 +188,7 @@ auto VkUniqueHandle<T>::resetDeleter(VkInstance instance,
 
 template<typename T>
 auto VkUniqueHandle<T>::resetDeleter(VkDevice device, function<void(VkDevice, T, VkAllocationCallbacks *)> deleteFunc) -> void {
+    cleanUp();
     this->deleteFunc = [=](T obj){
         deleteFunc(device, obj, nullptr);
     };
@@ -189,6 +196,7 @@ auto VkUniqueHandle<T>::resetDeleter(VkDevice device, function<void(VkDevice, T,
 
 template<typename T>
 auto VkUniqueHandle<T>::reset(T handle, function<void(T, VkAllocationCallbacks *)> deleteFunc) -> void {
+    cleanUp();
     object = handle;
     this->deleteFunc = [=](T obj){
         deleteFunc(obj, nullptr);
@@ -197,6 +205,7 @@ auto VkUniqueHandle<T>::reset(T handle, function<void(T, VkAllocationCallbacks *
 
 template<typename T>
 auto VkUniqueHandle<T>::reset(T handle, VkInstance instance, function<void(VkInstance, T, VkAllocationCallbacks *)> deleteFunc) -> void {
+    cleanUp();
     object = handle;
     this->deleteFunc = [=](T obj){
         deleteFunc(instance, obj, nullptr);
@@ -205,10 +214,38 @@ auto VkUniqueHandle<T>::reset(T handle, VkInstance instance, function<void(VkIns
 
 template<typename T>
 auto VkUniqueHandle<T>::reset(T handle, VkDevice device, function<void(VkDevice, T, VkAllocationCallbacks *)> deleteFunc) -> void {
+    cleanUp();
     object = handle;
     this->deleteFunc = [=](T obj){
         deleteFunc(device, obj, nullptr);
     };
+}
+
+template<typename T>
+auto VkUniqueHandle<T>::reset(function<void(T, VkAllocationCallbacks *)> deleteFunc) -> T* {
+    cleanUp();
+    this->deleteFunc = [=](T obj){
+        deleteFunc(obj, nullptr);
+    };
+    return &object;
+}
+
+template<typename T>
+auto VkUniqueHandle<T>::reset(VkInstance instance, function<void(VkInstance, T, VkAllocationCallbacks *)> deleteFunc) -> T* {
+    cleanUp();
+    this->deleteFunc = [=](T obj){
+        deleteFunc(instance, obj, nullptr);
+    };
+    return &object;
+}
+
+template<typename T>
+auto VkUniqueHandle<T>::reset(VkDevice device, function<void(VkDevice, T, VkAllocationCallbacks *)> deleteFunc) -> T* {
+    cleanUp();
+    this->deleteFunc = [=](T obj){
+        deleteFunc(device, obj, nullptr);
+    };
+    return &object;
 }
 
 template<typename T>
@@ -243,5 +280,6 @@ template<typename T>
 VkUniqueHandle<T>::operator T() const {
     return object;
 }
+
 
 #endif //VKRENDERER_VKUNIQUEHANDLE_H

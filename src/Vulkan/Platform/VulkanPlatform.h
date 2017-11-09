@@ -54,7 +54,7 @@ inline string mapVkResult(VkResult result){
 inline void handleResult(VkResult result, string msg)
 {
     if (result != VK_SUCCESS) {
-        Logger::failure(msg + " Reason: " + mapVkResult(result));
+        Logger::failure(msg + " Result: " + mapVkResult(result));
     }
 }
 

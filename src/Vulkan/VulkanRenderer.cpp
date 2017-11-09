@@ -5,7 +5,7 @@
 #include "VulkanRenderer.h"
 #include "../Utilities/ConfigFileReader.h"
 
-VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEnabled) {
+VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEnabled) : debugEnabled(debugEnabled ? VK_TRUE : VK_FALSE) {
 
     auto configReader = ConfigFileReader();
 
@@ -15,7 +15,8 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
 
     map.insert(std::make_pair("appName",appName));
     map.insert(std::make_pair("engineName", engineName));
-    map.insert(std::make_pair("debug", debugEnabled ? "true" : "false"));
+
+    map.insert(std::make_pair("debug", this->debugEnabled == VK_TRUE ? "true" : "false"));
 
     uint32_t width, height;
     width = static_cast<uint32_t>(std::stoi(map.at("width")));
@@ -56,11 +57,51 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
 
     instance.set(Instance(map, supportDescription));
 
-    DeviceSupportDescription deviceSupportDescription { dExtensions, ddExtensions, requiredDeviceFeatures };
+    if (this->debugEnabled == VK_TRUE) {
+        setupDebugCallback();
+    }
+
+    VkSurfaceKHR surface = renderWindow.getMutable().getWindowSurface(instance.getMutable().getHandle());
+
+    DeviceSupportDescription deviceSupportDescription { dExtensions, ddExtensions, requiredDeviceFeatures, surface };
 
     device.set(PresentDevice(instance.get().getHandle(), map, deviceSupportDescription));
 }
 
 bool VulkanRenderer::processEvents() const {
     return renderWindow.get().pollWindowEvents();
+}
+
+VkBool32 VulkanRenderer::debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj,
+                                       size_t location, int32_t code, const char *layerPrefix, const char *msg,
+                                       void *userData)
+{
+    Logger::warn("Validation layer: " + string(msg));
+    return VK_FALSE;
+}
+
+void VulkanRenderer::setupDebugCallback()
+{
+    VkDebugReportCallbackCreateInfoEXT createInfo = {};
+    createInfo.sType        = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+    createInfo.pNext        = nullptr;
+    createInfo.flags        = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT;
+    createInfo.pfnCallback  = debugCallback;
+    createInfo.pUserData    = nullptr;
+
+    VkResult result = createDebugReportCallbackEXT(instance.get().getHandle(), &createInfo, nullptr, &debugCallbackHandle);
+    if (result != VK_SUCCESS) {
+        Logger::warn("Debug callback is not enabled! Reason: " + mapVkResult(result));
+        debugEnabled = VK_FALSE;
+    }
+    else {
+        Logger::succes("Debug callback enabled!");
+    }
+}
+
+VulkanRenderer::~VulkanRenderer()
+{
+    if (debugEnabled == VK_TRUE) {
+        destroyDebugReportCallbackEXT(instance.get().getHandle(), debugCallbackHandle, nullptr);
+    }
 }

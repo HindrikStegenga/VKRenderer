@@ -15,7 +15,7 @@
 class VulkanRenderer final {
 public:
     explicit VulkanRenderer(string appName, string engineName, bool debugEnabled = false);
-    ~VulkanRenderer() = default;
+    ~VulkanRenderer();
 
     VulkanRenderer(const VulkanRenderer&) = delete;
     VulkanRenderer(VulkanRenderer&&) = default;
@@ -25,15 +25,41 @@ public:
 private:
     Nullable<RenderWindow>      renderWindow;
     Nullable<Instance>          instance;
+    VkDebugReportCallbackEXT    debugCallbackHandle;
+    VkBool32                    debugEnabled = VK_FALSE;
     Nullable<PresentDevice>     device;
 public:
     bool processEvents() const;
-
 private:
-
+    void setupDebugCallback();
+    static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags,
+                                                        VkDebugReportObjectTypeEXT objType,
+                                                        uint64_t obj,
+                                                        size_t location,
+                                                        int32_t code,
+                                                        const char* layerPrefix,
+                                                        const char* msg,
+                                                        void* userData);
 
 
 };
 
+
+inline VkResult createDebugReportCallbackEXT(VkInstance instance, const VkDebugReportCallbackCreateInfoEXT *pCreateInfo,
+                                      const VkAllocationCallbacks *pAllocator, VkDebugReportCallbackEXT *pCallback) {
+    auto func = (PFN_vkCreateDebugReportCallbackEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
+    if (func != nullptr) {
+        return func(instance, pCreateInfo, pAllocator, pCallback);
+    }
+    return VK_ERROR_EXTENSION_NOT_PRESENT;
+}
+
+inline void destroyDebugReportCallbackEXT(VkInstance instance, VkDebugReportCallbackEXT callback,
+                                          const VkAllocationCallbacks *pAllocator) {
+    auto func = (PFN_vkDestroyDebugReportCallbackEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugReportCallbackEXT");
+    if (func != nullptr) {
+        func(instance, callback, pAllocator);
+    }
+}
 
 #endif //VKRENDERER_VULKANRENDERER_H

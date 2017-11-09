@@ -12,10 +12,11 @@ static const char* instanceExtensions[] {
 static const char* instanceLayers[] {
 };
 static const char* debugInstanceExtensions[] {
+        VK_EXT_DEBUG_REPORT_EXTENSION_NAME
 };
 static const char* debugInstanceLayers[] = {
         "VK_LAYER_LUNARG_standard_validation",
-        "VK_LAYER_LUNARG_api_dump"
+        "VK_LAYER_LUNARG_api_dump",
 };
 
 static const char* deviceExtensions[] {

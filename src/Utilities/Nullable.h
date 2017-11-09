@@ -5,8 +5,6 @@
 #ifndef VKRENDERER_NULLABLE_H
 #define VKRENDERER_NULLABLE_H
 
-#include "../Vulkan/VulkanRenderer.h"
-
 template<typename T>
 class Nullable final {
 public:
@@ -20,6 +18,7 @@ public:
     Nullable& operator=(Nullable&& rhs) noexcept;
 
     const T& get() const;
+    T& getMutable();
 
     bool isSet() const;
 
@@ -151,6 +150,12 @@ Nullable<T>& Nullable<T>::operator=(const Nullable& rhs) {
         *tData = *rData; //calls copy ctor
     }
     return *this;
+}
+
+template<typename T>
+T& Nullable<T>::getMutable()
+{
+    return *(T*)(&data);
 }
 
 #endif //VKRENDERER_NULLABLE_H

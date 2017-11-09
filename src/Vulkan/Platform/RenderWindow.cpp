@@ -113,3 +113,13 @@ vector<const char*> RenderWindow::processExtensions(const vector<const char *>& 
 
     return additionalExtensions;
 }
+
+VkSurfaceKHR RenderWindow::getWindowSurface(VkInstance instance)
+{
+    VkResult result = glfwCreateWindowSurface(instance, window, nullptr, surface.reset(instance, vkDestroySurfaceKHR));
+    if (result != VK_SUCCESS) {
+        Logger::warn("Surface creation failed!");
+        return VK_NULL_HANDLE;
+    }
+    return surface.get();
+}

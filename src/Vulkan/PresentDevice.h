@@ -7,6 +7,7 @@
 
 #include "Platform/VulkanPlatform.h"
 #include "Utilities/PhysicalDevice.h"
+#include "../Utilities/Nullable.h"
 
 
 struct DeviceSupportDescription {
@@ -14,6 +15,7 @@ struct DeviceSupportDescription {
     const vector<const char*>& extensions;
     const vector<const char*>& debugExtensions;
     const VkPhysicalDeviceFeatures& requiredFeatures;
+    VkSurfaceKHR surfaceHandle  = VK_NULL_HANDLE;
 };
 
 class PresentDevice final {
@@ -28,9 +30,13 @@ public:
     PresentDevice& operator=(PresentDevice&&)       = default;
 private:
     VKUH<VkDevice> device = VKUH<VkDevice>(vkDestroyDevice);
+    Nullable<PhysicalDevice> physicalDevice;
+    vk_Queue presentationQueue;
     VkInstance instance;
 private:
-    PhysicalDevice selectPhysicalDevice(VkInstance instance, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures);
+    pair<PhysicalDevice, vk_QueueFamily>
+    selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures);
+    void createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice, vk_QueueFamily> deviceAndQueueFamily, const vector<const char*>& extensions, VkPhysicalDeviceFeatures features);
 };
 
 

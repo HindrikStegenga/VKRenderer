@@ -18,5 +18,6 @@ ostream& operator<<(ostream& o, VkQueueFamilyProperties p);
 
 ostream& operator<<(ostream& o, VkExtensionProperties p);
 
+uint32_t deviceTypePriority(VkPhysicalDeviceType deviceType);
 
 #endif //VKRENDERER_VULKANUTILITYFUNCTIONS_H

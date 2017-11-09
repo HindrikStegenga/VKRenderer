@@ -23,8 +23,10 @@ private:
     static bool isGLFWinitialized;
 private:
     GLFWwindow* window = nullptr;
+    VKUH<VkSurfaceKHR> surface = VKUH<VkSurfaceKHR>();
 public:
     bool pollWindowEvents() const;
+    VkSurfaceKHR getWindowSurface(VkInstance instance);
     vector<const char*> processExtensions(const vector<const char *> & instanceExtensions) const;
 };
 

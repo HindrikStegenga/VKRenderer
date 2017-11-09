@@ -78,4 +78,24 @@ auto operator<<(ostream &o, VkExtensionProperties p) -> ostream&
     return o;
 }
 
+uint32_t deviceTypePriority(VkPhysicalDeviceType deviceType)
+{
+    switch (deviceType) {
+        case VK_PHYSICAL_DEVICE_TYPE_RANGE_SIZE:
+            return 0;
+        case VK_PHYSICAL_DEVICE_TYPE_MAX_ENUM:
+            return 1;
+        case VK_PHYSICAL_DEVICE_TYPE_OTHER:
+            return 2;
+        case VK_PHYSICAL_DEVICE_TYPE_CPU:
+            return 3;
+        case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
+            return 4;
+        case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+            return 5;
+        case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+            return 6;
+    }
+}
+
 
