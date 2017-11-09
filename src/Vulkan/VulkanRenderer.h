@@ -23,8 +23,8 @@ public:
     VulkanRenderer& operator= (const VulkanRenderer&) = delete;
     VulkanRenderer& operator= (VulkanRenderer&&) = default;
 private:
-    Nullable<RenderWindow>      renderWindow;
     Nullable<Instance>          instance;
+    Nullable<RenderWindow>      renderWindow;
     VkDebugReportCallbackEXT    debugCallbackHandle;
     VkBool32                    debugEnabled = VK_FALSE;
     Nullable<PresentDevice>     device;

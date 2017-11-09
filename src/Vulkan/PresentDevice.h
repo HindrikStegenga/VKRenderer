@@ -29,10 +29,11 @@ public:
     PresentDevice& operator=(const PresentDevice&)  = delete;
     PresentDevice& operator=(PresentDevice&&)       = default;
 private:
-    VKUH<VkDevice> device = VKUH<VkDevice>(vkDestroyDevice);
-    Nullable<PhysicalDevice> physicalDevice;
-    vk_Queue presentationQueue;
-    VkInstance instance;
+    VKUH<VkDevice>              device = VKUH<VkDevice>(vkDestroyDevice);
+    VKUH<VkSurfaceKHR>          surface = VKUH<VkSurfaceKHR>();
+    Nullable<PhysicalDevice>    physicalDevice;
+    vk_Queue                    presentationQueue;
+    VkInstance                  instance;
 private:
     pair<PhysicalDevice, vk_QueueFamily>
     selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures);

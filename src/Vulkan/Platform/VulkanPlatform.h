@@ -5,7 +5,7 @@
 #ifndef VKRENDERER_VULKANPLATFORM_H
 #define VKRENDERER_VULKANPLATFORM_H
 
-#define GLFW_INCLUDE_VULKAN
+#include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 
 #include "../../CommonInclude.h"
@@ -47,7 +47,7 @@ inline string mapVkResult(VkResult result){
         case VK_ERROR_OUT_OF_POOL_MEMORY_KHR: return string("VK_ERROR_OUT_OF_POOL_MEMORY_KHR"); 
         case VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR: return string("VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR"); 
         case VK_RESULT_RANGE_SIZE: return string("VK_RESULT_RANGE_SIZE"); 
-        case VK_RESULT_MAX_ENUM: return string("VK_RESULT_MAX_ENUM"); 
+        case VK_RESULT_MAX_ENUM: return string("VK_RESULT_MAX_ENUM");
     }
 }
 

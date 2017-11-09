@@ -26,6 +26,7 @@ PresentDevice::PresentDevice(VkInstance instance, const map<string, string>& par
     Logger::log("Selected device: " + ss.str());
 
     createLogicalDeviceAndPresentationQueue(physicalDevice, usedExtensions, supportDescription.requiredFeatures);
+    this->surface.reset(supportDescription.surfaceHandle, instance, vkDestroySurfaceKHR);
 }
 
 pair<PhysicalDevice, vk_QueueFamily> PresentDevice::selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures)
