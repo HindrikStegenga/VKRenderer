@@ -11,6 +11,7 @@
 #include "../Utilities/Nullable.h"
 #include "Instance.h"
 #include "PresentDevice.h"
+#include "Classes/VulkanRenderMode.h"
 
 class VulkanRenderer final {
 public:
@@ -23,11 +24,12 @@ public:
     VulkanRenderer& operator= (const VulkanRenderer&) = delete;
     VulkanRenderer& operator= (VulkanRenderer&&) = default;
 private:
-    Nullable<Instance>          instance;
-    Nullable<RenderWindow>      renderWindow;
-    VkDebugReportCallbackEXT    debugCallbackHandle;
-    VkBool32                    debugEnabled = VK_FALSE;
-    Nullable<PresentDevice>     device;
+    Nullable<Instance>              instance;
+    Nullable<RenderWindow>          renderWindow;
+    VkDebugReportCallbackEXT        debugCallbackHandle;
+    VkBool32                        debugEnabled = VK_FALSE;
+    Nullable<PresentDevice>         device;
+    unique_ptr<VulkanRenderMode>    renderMode = nullptr;
 public:
     bool processEvents() const;
 private:

@@ -4,6 +4,8 @@
 
 #include "VulkanRenderer.h"
 #include "../Utilities/ConfigFileReader.h"
+#include "RenderModes/ForwardRenderMode.h"
+#include "RenderModes/DeferredRenderMode.h"
 
 VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEnabled) : debugEnabled(debugEnabled ? VK_TRUE : VK_FALSE) {
 
@@ -66,6 +68,17 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
     DeviceSupportDescription deviceSupportDescription { dExtensions, ddExtensions, requiredDeviceFeatures, surface };
 
     device.set(PresentDevice(instance.get().getHandle(), map, deviceSupportDescription));
+
+
+    const string renderMode = configReader.map().at("renderMode");
+    if (renderMode == string("Forward")) {
+        this->renderMode = std::make_unique<ForwardRenderMode>();
+    } else if (renderMode == string("Deferred")) {
+        this->renderMode = std::make_unique<DeferredRenderMode>();
+    } else {
+        Logger::error("Could not find appropriate renderMode!");
+    }
+
 }
 
 bool VulkanRenderer::processEvents() const {

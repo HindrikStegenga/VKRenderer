@@ -26,6 +26,10 @@ private:
     Nullable<VulkanRenderer> renderer;
     string applicationName;
     bool   mustStop = false;
+public:
+    
+
+
 };
 
 

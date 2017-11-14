@@ -16,6 +16,7 @@
 #include <thread>
 #include <tuple>
 #include <map>
+#include <memory>
 
 using std::string;
 using std::function;
@@ -28,7 +29,8 @@ using std::pair;
 using std::make_pair;
 using std::tuple;
 using std::make_tuple;
-
+using std::unique_ptr;
+using std::make_unique;
 
 
 #endif //VKRENDERER_COMMONINCLUDE_H
