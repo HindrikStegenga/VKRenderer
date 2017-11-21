@@ -18,11 +18,11 @@ public:
     explicit VulkanRenderer(string appName, string engineName, bool debugEnabled = false);
     ~VulkanRenderer();
 
-    VulkanRenderer(const VulkanRenderer&) = delete;
-    VulkanRenderer(VulkanRenderer&&) = default;
+    VulkanRenderer(const VulkanRenderer&)       = delete;
+    VulkanRenderer(VulkanRenderer&&) noexcept   = default;
 
-    VulkanRenderer& operator= (const VulkanRenderer&) = delete;
-    VulkanRenderer& operator= (VulkanRenderer&&) = default;
+    VulkanRenderer& operator= (const VulkanRenderer&)       = delete;
+    VulkanRenderer& operator= (VulkanRenderer&&) noexcept   = default;
 private:
     Nullable<Instance>              instance;
     Nullable<RenderWindow>          renderWindow;

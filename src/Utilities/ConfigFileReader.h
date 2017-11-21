@@ -35,11 +35,11 @@ public:
     explicit ConfigFileReader(bool pwd = false);
     ~ConfigFileReader() = default;
 
-    ConfigFileReader(const ConfigFileReader&)   = default;
-    ConfigFileReader(ConfigFileReader&&)        = default;
+    ConfigFileReader(const ConfigFileReader&)       = default;
+    ConfigFileReader(ConfigFileReader&&) noexcept   = default;
 
-    ConfigFileReader& operator=(const ConfigFileReader&)    = default;
-    ConfigFileReader& operator=(ConfigFileReader&&)         = default;
+    ConfigFileReader& operator=(const ConfigFileReader&)        = default;
+    ConfigFileReader& operator=(ConfigFileReader&&) noexcept    = default;
 public:
     void parseFile(string file);
     const std::map<string,string>& map() const;

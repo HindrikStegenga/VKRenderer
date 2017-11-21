@@ -10,13 +10,13 @@ void ThreadWorker::operator()()
     std::function<void()> task;
     while (true)
     {
-        std::unique_lock<std::mutex> locker(pool.queue_mutex);
-        pool.cond.wait(locker, [this]() -> bool { return !pool.tasks.empty() || pool.stop; });
-        if (pool.stop) { locker.unlock(); return; };
-        if (!pool.tasks.empty())
+        std::unique_lock<std::mutex> locker(pool->queue_mutex);
+        pool->cond.wait(locker, [this]() -> bool { return !pool->tasks.empty() || pool->stop; });
+        if (pool->stop) { locker.unlock(); return; };
+        if (!pool->tasks.empty())
         {
-            task = pool.tasks.front();
-            pool.tasks.pop_front();
+            task = pool->tasks.front();
+            pool->tasks.pop_front();
             locker.unlock();
             task();
         }

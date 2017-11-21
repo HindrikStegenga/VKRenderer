@@ -14,11 +14,11 @@ public:
     Application();
     ~Application() = default;
 
-    Application(const Application&) = delete;
-    Application(Application&&) = default;
+    Application(const Application&)     = delete;
+    Application(Application&&) noexcept = delete;
 
-    Application& operator= (const Application&) = delete;
-    Application& operator= (Application&&) = default;
+    Application& operator= (const Application&)     = delete;
+    Application& operator= (Application&&) noexcept = delete;
 public:
     void run();
     void stop();

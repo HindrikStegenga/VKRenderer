@@ -48,6 +48,10 @@ inline string mapVkResult(VkResult result){
         case VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR: return string("VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR"); 
         case VK_RESULT_RANGE_SIZE: return string("VK_RESULT_RANGE_SIZE"); 
         case VK_RESULT_MAX_ENUM: return string("VK_RESULT_MAX_ENUM");
+
+        default:
+            return "VkResult value not natively support. Please Check the error value itself!";
+
     }
 }
 

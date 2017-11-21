@@ -23,11 +23,11 @@ public:
     PresentDevice(VkInstance instance, const map<string, string>& params, const DeviceSupportDescription& supportDescription);
     ~PresentDevice() = default;
 
-    PresentDevice(const PresentDevice&) = delete;
-    PresentDevice(PresentDevice&&)      = default;
+    PresentDevice(const PresentDevice&)     = delete;
+    PresentDevice(PresentDevice&&) noexcept = default;
 
-    PresentDevice& operator=(const PresentDevice&)  = delete;
-    PresentDevice& operator=(PresentDevice&&)       = default;
+    PresentDevice& operator=(const PresentDevice&)      = delete;
+    PresentDevice& operator=(PresentDevice&&) noexcept  = default;
 private:
     VKUH<VkDevice>              device = VKUH<VkDevice>(vkDestroyDevice);
     VKUH<VkSurfaceKHR>          surface = VKUH<VkSurfaceKHR>();

@@ -23,11 +23,11 @@ public:
     explicit AwaitableTask(std::function<void()> func);
     ~AwaitableTask() = default;
 
-    AwaitableTask(AwaitableTask&&)      = delete;
-    AwaitableTask(const AwaitableTask&) = delete;
+    AwaitableTask(AwaitableTask&&) noexcept     = delete;
+    AwaitableTask(const AwaitableTask&)         = delete;
 
-    AwaitableTask& operator=(const AwaitableTask&) = delete;
-    AwaitableTask& operator=(AwaitableTask&&)      = delete;
+    AwaitableTask& operator=(const AwaitableTask&)      = delete;
+    AwaitableTask& operator=(AwaitableTask&&) noexcept  = delete;
 public:
     void enqueue(ThreadPool& pool);
     void wait();

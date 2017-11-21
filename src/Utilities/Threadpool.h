@@ -18,8 +18,16 @@ class ThreadPool final
 {
 public:
     explicit ThreadPool(size_t threads);
-    template<class F> void enqueue(F f);
     ~ThreadPool();
+
+    ThreadPool(const ThreadPool&)       = delete;
+    ThreadPool(ThreadPool&&) noexcept   = delete;
+
+    ThreadPool& operator=(const ThreadPool&)        = delete;
+    ThreadPool& operator=(ThreadPool&&) noexcept    = delete;
+
+public:
+    template<class F> void enqueue(F f);
 private:
     friend class ThreadWorker;
 

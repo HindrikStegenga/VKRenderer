@@ -2,7 +2,7 @@
 
 int main() {
 
-    auto app = Application();
+    Application app;
     app.run();
 
     return EXIT_SUCCESS;

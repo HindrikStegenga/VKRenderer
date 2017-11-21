@@ -21,11 +21,11 @@ public:
     Instance(const map<string, string>& params, const InstanceSupportDescription& supportDescription);
     ~Instance() = default;
 
-    Instance(const Instance&)   = delete;
-    Instance(Instance&&)        = default;
+    Instance(const Instance&)       = delete;
+    Instance(Instance&&) noexcept   = default;
 
-    Instance& operator=(const Instance&)    = delete;
-    Instance& operator=(Instance&&)         = default;
+    Instance& operator=(const Instance&)        = delete;
+    Instance& operator=(Instance&&) noexcept    = default;
 private:
     VKUH<VkInstance> instance = VKUH<VkInstance>(vkDestroyInstance);
 private:

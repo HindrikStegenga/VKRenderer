@@ -15,15 +15,15 @@ public:
     ~PhysicalDevice() = default;
 
     PhysicalDevice(const PhysicalDevice&)               = default;
-
     PhysicalDevice& operator=(const PhysicalDevice&)    = default;
+
 public:
     VkPhysicalDevice                    physicalDevice;
     VkPhysicalDeviceProperties          properties;
     VkPhysicalDeviceFeatures            features;
     vector<VkExtensionProperties>       extensionProperties;
     VkPhysicalDeviceMemoryProperties    memoryProperties;
-    vector<vk_QueueFamily>               queueFamilies;
+    vector<vk_QueueFamily>              queueFamilies;
 public:
     pair<bool, vk_QueueFamily> isSuitableAndReturnPresentQueue(const vector<const char *> &extensionNames,
                                                               const VkPhysicalDeviceFeatures &requiredFeatures,
