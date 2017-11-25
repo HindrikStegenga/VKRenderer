@@ -8,7 +8,8 @@ void ForwardRenderMode::render() {
 
 }
 
-ForwardRenderMode::ForwardRenderMode() : VulkanRenderMode("Forward")
+ForwardRenderMode::ForwardRenderMode(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface)
+        : VulkanRenderMode("Forward", device, physicalDevice, surface)
 {
 
 }

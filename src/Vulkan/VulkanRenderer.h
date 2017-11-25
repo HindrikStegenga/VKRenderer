@@ -32,6 +32,7 @@ private:
     unique_ptr<VulkanRenderMode>    renderMode = nullptr;
 public:
     bool processEvents() const;
+    void render();
 private:
     void setupDebugCallback();
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags,

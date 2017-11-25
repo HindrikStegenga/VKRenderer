@@ -11,7 +11,7 @@
 class DeferredRenderMode : public VulkanRenderMode {
 
 public:
-    DeferredRenderMode();
+    DeferredRenderMode(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
     ~DeferredRenderMode() override = default;
     void render() override;
 };

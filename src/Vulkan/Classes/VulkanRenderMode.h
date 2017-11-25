@@ -10,12 +10,15 @@
 class VulkanRenderMode {
 private:
     string                      name;
-    VKUH<VkSwapchainKHR>        swapChain;
+    VkDevice                    device;
+    VkPhysicalDevice            physicalDevice;
+    VkSurfaceKHR                surface;
+
     vector<VKUH<VkRenderPass>>  renderPasses;
     vector<VKUH<VkPipeline>>    pipelines;
     vector<VkCommandPool>       commandPools;
 public:
-    explicit VulkanRenderMode(string renderModeName);
+    VulkanRenderMode(string renderModeName, VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
     virtual ~VulkanRenderMode() = 0;
 
     VulkanRenderMode(const VulkanRenderMode&)       = delete;

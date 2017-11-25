@@ -4,12 +4,13 @@
 
 #include "DeferredRenderMode.h"
 
-void DeferredRenderMode::render() {
+DeferredRenderMode::DeferredRenderMode(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface)
+        : VulkanRenderMode("Deferred", device, physicalDevice, surface){
+
+    Logger::warn("Currently deferred rendering is not yet implemented!");
 
 }
 
-DeferredRenderMode::DeferredRenderMode() : VulkanRenderMode("Deferred"){
-
-    Logger::warn("Currently deferred rendering is not yet implemented!");
+void DeferredRenderMode::render() {
 
 }

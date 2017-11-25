@@ -95,3 +95,15 @@ void PresentDevice::createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice,
     presentationQueue = present;
     Logger::succes("Logical device creation succeeded!");
 }
+
+VkDevice PresentDevice::getDevice() {
+    return device.get();
+}
+
+PhysicalDevice& PresentDevice::getPhysicalDevice() {
+    return physicalDevice.getMutable();
+}
+
+VkSurfaceKHR PresentDevice::getSurface() {
+    return surface.get();
+}

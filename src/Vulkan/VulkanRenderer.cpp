@@ -72,9 +72,9 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
 
     const string renderMode = configReader.map().at("renderMode");
     if (renderMode == string("Forward")) {
-        this->renderMode = std::make_unique<ForwardRenderMode>();
+        this->renderMode = std::make_unique<ForwardRenderMode>(device.getMutable().getDevice(), device.getMutable().getPhysicalDevice().physicalDevice,device.getMutable().getSurface());
     } else if (renderMode == string("Deferred")) {
-        this->renderMode = std::make_unique<DeferredRenderMode>();
+        this->renderMode = std::make_unique<DeferredRenderMode>(device.getMutable().getDevice(), device.getMutable().getPhysicalDevice().physicalDevice,device.getMutable().getSurface());
     } else {
         Logger::error("Could not find appropriate renderMode!");
     }
@@ -117,4 +117,8 @@ VulkanRenderer::~VulkanRenderer()
     if (debugEnabled == VK_TRUE) {
         destroyDebugReportCallbackEXT(instance.get().getHandle(), debugCallbackHandle, nullptr);
     }
+}
+
+void VulkanRenderer::render() {
+    renderMode->render();
 }

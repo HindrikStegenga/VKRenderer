@@ -38,6 +38,12 @@ private:
     pair<PhysicalDevice, vk_QueueFamily>
     selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures);
     void createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice, vk_QueueFamily> deviceAndQueueFamily, const vector<const char*>& extensions, VkPhysicalDeviceFeatures features);
+public:
+    VkDevice getDevice();
+    PhysicalDevice& getPhysicalDevice();
+    VkSurfaceKHR getSurface();
+
+
 };
 
 

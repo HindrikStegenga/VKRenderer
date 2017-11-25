@@ -10,7 +10,7 @@
 
 class ForwardRenderMode : public VulkanRenderMode {
 public:
-    ForwardRenderMode();
+    ForwardRenderMode(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
 public:
     void render() override;
 
