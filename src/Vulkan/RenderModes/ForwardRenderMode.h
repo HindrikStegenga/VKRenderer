@@ -14,6 +14,7 @@ public:
 public:
     void render() override;
 
+    void windowHasResized(uint32_t width, uint32_t height) override;
 
 };
 

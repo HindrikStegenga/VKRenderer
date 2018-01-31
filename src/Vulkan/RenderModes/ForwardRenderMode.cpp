@@ -13,3 +13,7 @@ ForwardRenderMode::ForwardRenderMode(VkDevice device, VkPhysicalDevice physicalD
 {
 
 }
+
+void ForwardRenderMode::windowHasResized(uint32_t width, uint32_t height) {
+
+}

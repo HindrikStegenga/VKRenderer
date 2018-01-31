@@ -8,6 +8,5 @@ VulkanRenderMode::VulkanRenderMode(string renderModeName, VkDevice device, VkPhy
         : name(std::move(renderModeName)),
           device(device), physicalDevice(physicalDevice), surface(surface){
 
-    Logger::log("Initialized rendermode: " + name);
-
+    Logger::log("Initializing rendermode: " + name);
 }

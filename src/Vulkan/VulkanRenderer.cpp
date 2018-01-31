@@ -114,6 +114,11 @@ void VulkanRenderer::setupDebugCallback()
 
 VulkanRenderer::~VulkanRenderer()
 {
+    if (instance.isSet()) {
+        Logger::log("Shutting down the vulkan renderer.");
+    }
+
+
     if (debugEnabled == VK_TRUE) {
         destroyDebugReportCallbackEXT(instance.get().getHandle(), debugCallbackHandle, nullptr);
     }

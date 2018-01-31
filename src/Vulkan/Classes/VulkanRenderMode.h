@@ -6,6 +6,8 @@
 #define VKRENDERER_VULKANRENDERMODE_H
 
 #include "../Platform/VulkanPlatform.h"
+#include "Swapchain.h"
+#include "../../Utilities/Nullable.h"
 
 class VulkanRenderMode {
 private:
@@ -17,6 +19,8 @@ private:
     vector<VKUH<VkRenderPass>>  renderPasses;
     vector<VKUH<VkPipeline>>    pipelines;
     vector<VkCommandPool>       commandPools;
+
+    Nullable<Swapchain>         swapchain;
 public:
     VulkanRenderMode(string renderModeName, VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
     virtual ~VulkanRenderMode() = 0;
@@ -29,7 +33,7 @@ public:
 
 public:
     virtual void render() = 0;
-
+    virtual void windowHasResized(uint32_t width, uint32_t height) = 0;
 };
 
 inline VulkanRenderMode::~VulkanRenderMode() = default;

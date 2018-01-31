@@ -50,7 +50,7 @@ inline string mapVkResult(VkResult result){
         case VK_RESULT_MAX_ENUM: return string("VK_RESULT_MAX_ENUM");
 
         default:
-            return "VkResult value not natively support. Please Check the error value itself!";
+            return "VkResult value not natively supported. Please Check the error value itself!";
 
     }
 }

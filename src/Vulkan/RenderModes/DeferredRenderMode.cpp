@@ -14,3 +14,7 @@ DeferredRenderMode::DeferredRenderMode(VkDevice device, VkPhysicalDevice physica
 void DeferredRenderMode::render() {
 
 }
+
+void DeferredRenderMode::windowHasResized(uint32_t width, uint32_t height) {
+
+}
