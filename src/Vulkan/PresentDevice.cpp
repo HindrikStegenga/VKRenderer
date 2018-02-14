@@ -5,28 +5,28 @@
 #include "PresentDevice.h"
 #include "Utilities/UtilityFunctions.h"
 
-PresentDevice::PresentDevice(VkInstance instance, const map<string, string>& params, const DeviceSupportDescription& supportDescription) : instance(instance)
+PresentDevice::PresentDevice(VkInstance instance, const map<string, string>& params, const PresentDeviceCreateInfo& createInfo) : instance(instance)
 {
     vector<const char*> usedExtensions;
     bool debug = params.at("debug") == "true";
 
     if (debug) {
-        auto dExtensions(supportDescription.extensions);
-        dExtensions.insert(std::end(dExtensions), std::begin(supportDescription.debugExtensions), std::end(supportDescription.debugExtensions));
+        auto dExtensions(createInfo.extensions);
+        dExtensions.insert(std::end(dExtensions), std::begin(createInfo.debugExtensions), std::end(createInfo.debugExtensions));
 
         usedExtensions.swap(dExtensions);
     } else {
-        usedExtensions = supportDescription.extensions;
+        usedExtensions = createInfo.extensions;
     }
 
-    auto physicalDevice = selectPhysicalDevice(instance, supportDescription.surfaceHandle, params, usedExtensions, supportDescription.requiredFeatures);
+    auto physicalDevice = selectPhysicalDevice(instance, createInfo.surfaceHandle, params, usedExtensions, createInfo.requiredFeatures);
 
     std::stringstream ss;
     ss << std::endl << physicalDevice.first.properties;
     Logger::log("Selected device: " + ss.str());
 
-    createLogicalDeviceAndPresentationQueue(physicalDevice, usedExtensions, supportDescription.requiredFeatures);
-    this->surface.reset(supportDescription.surfaceHandle, instance, vkDestroySurfaceKHR);
+    createLogicalDeviceAndPresentationQueue(physicalDevice, usedExtensions, createInfo.requiredFeatures);
+    this->surface.reset(createInfo.surfaceHandle, instance, vkDestroySurfaceKHR);
 }
 
 pair<PhysicalDevice, vk_QueueFamily> PresentDevice::selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures)
@@ -94,16 +94,25 @@ void PresentDevice::createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice,
     vkGetDeviceQueue(device.get(), deviceAndQueueFamily.second.queueFamilyIndex, 0, &present.queue);
     presentationQueue = present;
     Logger::succes("Logical device creation succeeded!");
+
+    for(auto& item : extensions)
+    {
+        auto itemstr = string(item);
+        auto pre = string("Enabled device extension: ");
+        Logger::log(pre + itemstr);
+    }
 }
 
-VkDevice PresentDevice::getDevice() {
-    return device.get();
-}
-
-PhysicalDevice& PresentDevice::getPhysicalDevice() {
+PhysicalDevice& PresentDevice::getPhysicalDevice()
+{
     return physicalDevice.getMutable();
 }
 
-VkSurfaceKHR PresentDevice::getSurface() {
+VkSurfaceKHR PresentDevice::getSurface()
+{
     return surface.get();
+}
+
+PresentDeviceInfo PresentDevice::getPresentDeviceInfo() {
+    return { device.get(), physicalDevice.getMutable().physicalDevice };
 }

@@ -4,9 +4,16 @@
 
 #include "VulkanRenderMode.h"
 
-VulkanRenderMode::VulkanRenderMode(string renderModeName, VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface)
-        : name(std::move(renderModeName)),
-          device(device), physicalDevice(physicalDevice), surface(surface){
+VulkanRenderMode::VulkanRenderMode(const VulkanRenderModeCreateInfo& createInfo)
+        : name(createInfo.name),
+          device(createInfo.deviceInfo.logical),
+          physicalDevice(createInfo.deviceInfo.physical)
+{
 
     Logger::log("Initializing rendermode: " + name);
+
+
+    
+
+
 }

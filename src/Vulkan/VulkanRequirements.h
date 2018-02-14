@@ -20,6 +20,7 @@ static const char* debugInstanceLayers[] = {
 };
 
 static const char* deviceExtensions[] {
+        VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
 static const char* debugDeviceExtensions[] {
 };

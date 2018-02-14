@@ -6,7 +6,11 @@
 
 Swapchain::Swapchain(uint32_t width, uint32_t height, VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface) : device(device) {
 
-    checkSupport();
+    bool result = checkSupport();
+    if (!result)
+    {
+        Logger::failure("Swapchain support was insufficient!");
+    }
 
 
 }
@@ -29,8 +33,10 @@ bool Swapchain::checkSupport() {
     vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceCount, formats.data());
     vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes.data());
 
+    if (formats.size() == 1 && formats.front().format == VK_FORMAT_UNDEFINED) {
+        //No preferred format, so we can pick freely!
 
-
+    }
 
 
 

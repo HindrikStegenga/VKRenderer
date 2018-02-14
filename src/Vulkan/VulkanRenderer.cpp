@@ -5,9 +5,9 @@
 #include "VulkanRenderer.h"
 #include "../Utilities/ConfigFileReader.h"
 #include "RenderModes/ForwardRenderMode.h"
-#include "RenderModes/DeferredRenderMode.h"
 
-VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEnabled) : debugEnabled(debugEnabled ? VK_TRUE : VK_FALSE) {
+VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEnabled) : debugEnabled(debugEnabled ? VK_TRUE : VK_FALSE)
+{
 
     auto configReader = ConfigFileReader();
 
@@ -55,7 +55,7 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
 
     auto processedExtensions = renderWindow.get().processExtensions(extensions);
 
-    InstanceSupportDescription supportDescription { layers, processedExtensions, debugLayers, debugExtensions };
+    VulkanInstanceCreateInfo supportDescription { layers, processedExtensions, debugLayers, debugExtensions };
 
     instance.set(Instance(map, supportDescription));
 
@@ -65,23 +65,30 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
 
     VkSurfaceKHR surface = renderWindow.getMutable().getWindowSurface(instance.getMutable().getHandle());
 
-    DeviceSupportDescription deviceSupportDescription { dExtensions, ddExtensions, requiredDeviceFeatures, surface };
+    PresentDeviceCreateInfo deviceSupportDescription { dExtensions, ddExtensions, requiredDeviceFeatures, surface };
 
     device.set(PresentDevice(instance.get().getHandle(), map, deviceSupportDescription));
 
 
     const string renderMode = configReader.map().at("renderMode");
     if (renderMode == string("Forward")) {
-        this->renderMode = std::make_unique<ForwardRenderMode>(device.getMutable().getDevice(), device.getMutable().getPhysicalDevice().physicalDevice,device.getMutable().getSurface());
-    } else if (renderMode == string("Deferred")) {
-        this->renderMode = std::make_unique<DeferredRenderMode>(device.getMutable().getDevice(), device.getMutable().getPhysicalDevice().physicalDevice,device.getMutable().getSurface());
-    } else {
+
+        ForwardRenderModeCreateInfo createInfo = {};
+
+        createInfo.deviceInfo   = device.getMutable().getPresentDeviceInfo();
+        createInfo.surface      = surface;
+
+        this->renderMode = std::make_unique<ForwardRenderMode>(createInfo);
+    }
+    else
+    {
         Logger::error("Could not find appropriate renderMode!");
     }
 
 }
 
-bool VulkanRenderer::processEvents() const {
+bool VulkanRenderer::processEvents() const
+{
     return renderWindow.get().pollWindowEvents();
 }
 
@@ -124,6 +131,7 @@ VulkanRenderer::~VulkanRenderer()
     }
 }
 
-void VulkanRenderer::render() {
+void VulkanRenderer::render()
+{
     renderMode->render();
 }

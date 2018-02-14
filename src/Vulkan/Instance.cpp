@@ -5,7 +5,7 @@
 #include <cstring>
 #include "Instance.h"
 
-Instance::Instance(const map<string, string>& params, const InstanceSupportDescription& supportDescription){
+Instance::Instance(const map<string, string>& params, const VulkanInstanceCreateInfo& createInfo){
 
     string appName      = params.at("appName");
     string engineName   = params.at("engineName");
@@ -16,11 +16,11 @@ Instance::Instance(const map<string, string>& params, const InstanceSupportDescr
 
     if (debug)
     {
-        auto dLayers(supportDescription.validationLayers);
-        auto dExtensions(supportDescription.extensions);
+        auto dLayers(createInfo.validationLayers);
+        auto dExtensions(createInfo.extensions);
 
-        dLayers.insert(std::end(dLayers), std::begin(supportDescription.debugValidationLayers), std::end(supportDescription.debugValidationLayers));
-        dExtensions.insert(std::end(dExtensions),std::begin(supportDescription.debugExtensions), std::end(supportDescription.debugExtensions));
+        dLayers.insert(std::end(dLayers), std::begin(createInfo.debugValidationLayers), std::end(createInfo.debugValidationLayers));
+        dExtensions.insert(std::end(dExtensions),std::begin(createInfo.debugExtensions), std::end(createInfo.debugExtensions));
 
         checkLayersAndExtensionsSupport(dLayers, dExtensions);
 
@@ -28,9 +28,9 @@ Instance::Instance(const map<string, string>& params, const InstanceSupportDescr
         usedExtensions.swap(dExtensions);
     } else
     {
-        checkLayersAndExtensionsSupport(supportDescription.validationLayers, supportDescription.extensions);
-        usedValidationLayers = supportDescription.validationLayers;
-        usedExtensions = supportDescription.extensions;
+        checkLayersAndExtensionsSupport(createInfo.validationLayers, createInfo.extensions);
+        usedValidationLayers = createInfo.validationLayers;
+        usedExtensions = createInfo.extensions;
     }
 
     VkApplicationInfo applicationInfo   = {};

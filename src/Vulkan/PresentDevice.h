@@ -9,18 +9,9 @@
 #include "Utilities/PhysicalDevice.h"
 #include "../Utilities/Nullable.h"
 
-
-struct DeviceSupportDescription {
-
-    const vector<const char*>& extensions;
-    const vector<const char*>& debugExtensions;
-    const VkPhysicalDeviceFeatures& requiredFeatures;
-    VkSurfaceKHR surfaceHandle  = VK_NULL_HANDLE;
-};
-
 class PresentDevice final {
 public:
-    PresentDevice(VkInstance instance, const map<string, string>& params, const DeviceSupportDescription& supportDescription);
+    PresentDevice(VkInstance instance, const map<string, string>& params, const PresentDeviceCreateInfo& createInfo);
     ~PresentDevice() = default;
 
     PresentDevice(const PresentDevice&)     = delete;
@@ -39,10 +30,9 @@ private:
     selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures);
     void createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice, vk_QueueFamily> deviceAndQueueFamily, const vector<const char*>& extensions, VkPhysicalDeviceFeatures features);
 public:
-    VkDevice getDevice();
     PhysicalDevice& getPhysicalDevice();
     VkSurfaceKHR getSurface();
-
+    PresentDeviceInfo getPresentDeviceInfo();
 
 };
 

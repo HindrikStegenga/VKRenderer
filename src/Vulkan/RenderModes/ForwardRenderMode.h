@@ -7,10 +7,11 @@
 
 
 #include "../Classes/VulkanRenderMode.h"
+#include "VulkanRenderModeCreateInfo.h"
 
 class ForwardRenderMode : public VulkanRenderMode {
 public:
-    ForwardRenderMode(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
+    ForwardRenderMode(const ForwardRenderModeCreateInfo& createInfo);
 public:
     void render() override;
 

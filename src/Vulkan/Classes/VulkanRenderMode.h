@@ -14,15 +14,8 @@ private:
     string                      name;
     VkDevice                    device;
     VkPhysicalDevice            physicalDevice;
-    VkSurfaceKHR                surface;
-
-    vector<VKUH<VkRenderPass>>  renderPasses;
-    vector<VKUH<VkPipeline>>    pipelines;
-    vector<VkCommandPool>       commandPools;
-
-    Nullable<Swapchain>         swapchain;
 public:
-    VulkanRenderMode(string renderModeName, VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
+    explicit VulkanRenderMode(const VulkanRenderModeCreateInfo& createInfo);
     virtual ~VulkanRenderMode() = 0;
 
     VulkanRenderMode(const VulkanRenderMode&)       = delete;

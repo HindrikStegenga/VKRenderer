@@ -27,7 +27,7 @@ private:
     string applicationName;
     bool   mustStop = false;
 public:
-    
+
 
 
 };

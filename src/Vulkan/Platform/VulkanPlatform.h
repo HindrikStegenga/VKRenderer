@@ -10,6 +10,7 @@
 
 #include "../../CommonInclude.h"
 #include "../Utilities/VkUniqueHandle.h"
+#include "../VulkanCreateInfo.h"
 
 template<typename T>
 using VKUH = VkUniqueHandle<T>;

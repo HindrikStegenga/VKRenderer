@@ -7,18 +7,9 @@
 
 #include "Platform/VulkanPlatform.h"
 
-
-struct InstanceSupportDescription {
-
-    const vector<const char*>& validationLayers;
-    const vector<const char*>& extensions;
-    const vector<const char*>& debugValidationLayers;
-    const vector<const char*>& debugExtensions;
-};
-
 class Instance final {
 public:
-    Instance(const map<string, string>& params, const InstanceSupportDescription& supportDescription);
+    Instance(const map<string, string>& params, const VulkanInstanceCreateInfo& createInfo);
     ~Instance() = default;
 
     Instance(const Instance&)       = delete;

@@ -4,16 +4,16 @@
 
 #include "ForwardRenderMode.h"
 
-void ForwardRenderMode::render() {
-
-}
-
-ForwardRenderMode::ForwardRenderMode(VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface)
-        : VulkanRenderMode("Forward", device, physicalDevice, surface)
+ForwardRenderMode::ForwardRenderMode(const ForwardRenderModeCreateInfo &createInfo) : VulkanRenderMode({ "Forward", createInfo.deviceInfo, createInfo.surface })
 {
 
 }
 
-void ForwardRenderMode::windowHasResized(uint32_t width, uint32_t height) {
+void ForwardRenderMode::windowHasResized(uint32_t width, uint32_t height)
+{
+
+}
+
+void ForwardRenderMode::render() {
 
 }

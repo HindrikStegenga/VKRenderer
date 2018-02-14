@@ -98,7 +98,7 @@ auto VkUniqueHandle<T>::cleanUp() -> void {
         if (deleteFunc != nullptr) {
             deleteFunc(object);
         } else {
-            Logger::warn("Could not deallocate VulkanHandle because of invalid delete function!");
+            Logger::warn("Could not deallocate VulkanHandle because of invalid deleter function!");
         }
     }
     object = VK_NULL_HANDLE;
