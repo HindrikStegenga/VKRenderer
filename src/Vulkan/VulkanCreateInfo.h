@@ -9,7 +9,7 @@
 #include <vulkan/vulkan.h>
 
 
-struct VulkanInstanceCreateInfo {
+struct VulkanInstanceCreateInfo final {
 
     const vector<const char*>& validationLayers;
     const vector<const char*>& extensions;
@@ -17,7 +17,7 @@ struct VulkanInstanceCreateInfo {
     const vector<const char*>& debugExtensions;
 };
 
-struct PresentDeviceCreateInfo {
+struct PresentDeviceCreateInfo final {
 
     const vector<const char*>&          extensions;
     const vector<const char*>&          debugExtensions;
@@ -25,13 +25,13 @@ struct PresentDeviceCreateInfo {
     VkSurfaceKHR                        surfaceHandle       = VK_NULL_HANDLE;
 };
 
-struct PresentDeviceInfo {
+struct PresentDeviceInfo final {
 
     VkDevice            logical     = VK_NULL_HANDLE;
     VkPhysicalDevice    physical    = VK_NULL_HANDLE;
 };
 
-struct VulkanRenderModeCreateInfo {
+struct VulkanRenderModeCreateInfo final {
 
     string              name            = "";
     PresentDeviceInfo   deviceInfo      = {};
@@ -39,7 +39,7 @@ struct VulkanRenderModeCreateInfo {
 
 };
 
-struct SwapchainCreateInfo {
+struct SwapchainCreateInfo final {
 
     uint32_t            width       = 0;
     uint32_t            height      = 0;

@@ -9,7 +9,7 @@
 
 class Swapchain final {
 public:
-    Swapchain(uint32_t width, uint32_t height, VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
+    explicit Swapchain(SwapchainCreateInfo createInfo);
     ~Swapchain() = default;
 
     Swapchain(Swapchain&&)      = default;

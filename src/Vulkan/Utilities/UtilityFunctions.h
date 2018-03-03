@@ -10,13 +10,13 @@
 
 using std::ostream;
 
-ostream& operator<<(ostream& o, VkPhysicalDeviceType& t);
+auto operator<<(ostream& o, VkPhysicalDeviceType& t) -> ostream&;
 
-ostream& operator<<(ostream& o, VkPhysicalDeviceProperties& p);
+auto operator<<(ostream& o, VkPhysicalDeviceProperties& p) -> ostream&;
 
-ostream& operator<<(ostream& o, VkQueueFamilyProperties p);
+auto operator<<(ostream& o, VkQueueFamilyProperties p) -> ostream&;
 
-ostream& operator<<(ostream& o, VkExtensionProperties p);
+auto operator<<(ostream& o, VkExtensionProperties p) -> ostream&;
 
 uint32_t deviceTypePriority(VkPhysicalDeviceType deviceType);
 

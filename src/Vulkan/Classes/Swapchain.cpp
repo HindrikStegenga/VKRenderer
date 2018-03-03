@@ -4,7 +4,7 @@
 
 #include "Swapchain.h"
 
-Swapchain::Swapchain(uint32_t width, uint32_t height, VkDevice device, VkPhysicalDevice physicalDevice, VkSurfaceKHR surface) : device(device) {
+Swapchain::Swapchain(SwapchainCreateInfo createInfo) : device(createInfo.deviceInfo.logical), physicalDevice(createInfo.deviceInfo.physical), surface(createInfo.surface) {
 
     bool result = checkSupport();
     if (!result)
@@ -36,9 +36,12 @@ bool Swapchain::checkSupport() {
     if (formats.size() == 1 && formats.front().format == VK_FORMAT_UNDEFINED) {
         //No preferred format, so we can pick freely!
 
+        
+
+
     }
 
 
 
-
+    return true;
 }

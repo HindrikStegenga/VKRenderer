@@ -33,7 +33,7 @@ public:
     VkUniqueHandle(const VkUniqueHandle&) = delete;
     VkUniqueHandle& operator= (const VkUniqueHandle&) = delete;
 private:
-    auto cleanUp() -> void;
+    auto cleanUp()                      -> void;
 public:
     auto release()                      -> T;
     auto get()              const       -> T;
@@ -261,7 +261,7 @@ auto VkUniqueHandle<T>::swap(VkUniqueHandle& rhs) -> void {
 }
 
 template<typename T>
-VkUniqueHandle<T>::operator bool() const -> bool {
+VkUniqueHandle<T>::operator bool() const {
     return object != VK_NULL_HANDLE;
 }
 

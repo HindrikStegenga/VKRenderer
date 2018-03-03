@@ -11,14 +11,15 @@
 #include <regex>
 #include <fstream>
 
+#include "Logger.h"
+
 #ifdef _WIN32
 #include <direct.h>
 #define GetCurrentDir _getcwd
 #else
-#include <bits/ios_base.h>
+//#include <bits/ios_base.h>
 #include <unistd.h>
 #include <cstring>
-#include "Logger.h"
 
 #define GetCurrentDir getcwd
 #endif

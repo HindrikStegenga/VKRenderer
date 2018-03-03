@@ -3,6 +3,7 @@
 //
 
 #include "Logger.h"
+#include <ctime>
 
 #ifdef WIN32
 

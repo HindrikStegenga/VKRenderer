@@ -6,7 +6,7 @@
 #define VKRENDERER_PHYSICALDEVICE_H
 
 #include "../Platform/VulkanPlatform.h"
-#include "UtilityStructrues.h"
+#include "UtilityStructures.h"
 
 struct PhysicalDevice final
 {

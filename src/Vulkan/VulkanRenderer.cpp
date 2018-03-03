@@ -85,6 +85,14 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
         Logger::error("Could not find appropriate renderMode!");
     }
 
+    SwapchainCreateInfo swapchainCreateInfo = {};
+
+    swapchainCreateInfo.deviceInfo  = device.getMutable().getPresentDeviceInfo();
+    swapchainCreateInfo.surface     = device.getMutable().getSurface();
+    swapchainCreateInfo.width       = width;
+    swapchainCreateInfo.height      = height;
+
+    swapchain.set(Swapchain(swapchainCreateInfo));
 }
 
 bool VulkanRenderer::processEvents() const

@@ -30,6 +30,7 @@ private:
     VkBool32                        debugEnabled = VK_FALSE;
     Nullable<PresentDevice>         device;
     unique_ptr<VulkanRenderMode>    renderMode = nullptr;
+    Nullable<Swapchain>             swapchain;
 public:
     bool processEvents() const;
     void render();
