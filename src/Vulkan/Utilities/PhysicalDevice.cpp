@@ -144,6 +144,7 @@ pair<bool, vk_QueueFamily> PhysicalDevice::findFirstGraphicsComputeQueueFamily(c
 pair<bool, vk_QueueFamily> PhysicalDevice::meetsRequiredSurfaceSupport(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface,
                                             const vector<vk_QueueFamily> &queueFamilies)
 {
+
     for (const auto& qf : queueFamilies) {
         if (qf.queueFamilyProperties.queueCount > 0 &&
             static_cast<bool>(qf.queueFamilyProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT) &&
@@ -152,6 +153,19 @@ pair<bool, vk_QueueFamily> PhysicalDevice::meetsRequiredSurfaceSupport(VkPhysica
             VkBool32 presentSupport = VK_FALSE;
             vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, qf.queueFamilyIndex, surface, &presentSupport);
             if (presentSupport == VK_TRUE) {
+
+                VkSurfaceCapabilitiesKHR caps = {};
+                vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &caps);
+
+                uint32_t surfaceCount       = 0;
+                uint32_t presentModeCount   = 0;
+
+                vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceCount, nullptr);
+                vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, nullptr);
+
+                if(surfaceCount == 0 && presentModeCount == 0)
+                    continue; //This one was not the right one unfortunately.
+
                 return make_pair(true, qf);
             }
         }

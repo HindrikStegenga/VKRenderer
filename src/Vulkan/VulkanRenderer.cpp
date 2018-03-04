@@ -69,7 +69,15 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
 
     device.set(PresentDevice(instance.get().getHandle(), map, deviceSupportDescription));
 
+    SwapchainCreateInfo swapchainCreateInfo = {};
 
+    swapchainCreateInfo.deviceInfo  = device.getMutable().getPresentDeviceInfo();
+    swapchainCreateInfo.surface     = device.getMutable().getSurface();
+    swapchainCreateInfo.width       = width;
+    swapchainCreateInfo.height      = height;
+
+    swapchain.set(Swapchain(swapchainCreateInfo));
+    
     const string renderMode = configReader.map().at("renderMode");
     if (renderMode == string("Forward")) {
 
@@ -84,15 +92,6 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
     {
         Logger::error("Could not find appropriate renderMode!");
     }
-
-    SwapchainCreateInfo swapchainCreateInfo = {};
-
-    swapchainCreateInfo.deviceInfo  = device.getMutable().getPresentDeviceInfo();
-    swapchainCreateInfo.surface     = device.getMutable().getSurface();
-    swapchainCreateInfo.width       = width;
-    swapchainCreateInfo.height      = height;
-
-    swapchain.set(Swapchain(swapchainCreateInfo));
 }
 
 bool VulkanRenderer::processEvents() const
@@ -123,7 +122,7 @@ void VulkanRenderer::setupDebugCallback()
         debugEnabled = VK_FALSE;
     }
     else {
-        Logger::succes("Debug callback enabled!");
+        Logger::success("Debug callback enabled!");
     }
 }
 

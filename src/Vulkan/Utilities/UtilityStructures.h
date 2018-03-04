@@ -17,4 +17,14 @@ struct vk_Queue final {
     vk_QueueFamily  queueFamily = {};
 };
 
+struct vk_SwapchainSettings final {
+
+    VkExtent2D                      extent          = {};
+    VkSurfaceFormatKHR              surfaceFormat   = {};
+    VkPresentModeKHR                presentMode     = {};
+    uint32_t                        imageCount      = 0;
+    VkSurfaceTransformFlagBitsKHR   preTransform    = {};
+
+};
+
 #endif //VKRENDERER_UTILITYSTRUCTURES_H

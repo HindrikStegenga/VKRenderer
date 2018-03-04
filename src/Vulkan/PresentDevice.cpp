@@ -93,7 +93,7 @@ void PresentDevice::createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice,
     present.queueFamily = deviceAndQueueFamily.second;
     vkGetDeviceQueue(device.get(), deviceAndQueueFamily.second.queueFamilyIndex, 0, &present.queue);
     presentationQueue = present;
-    Logger::succes("Logical device creation succeeded!");
+    Logger::success("Logical device creation succeeded!");
 
     for(auto& item : extensions)
     {

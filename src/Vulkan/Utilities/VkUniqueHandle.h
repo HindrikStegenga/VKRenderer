@@ -58,7 +58,6 @@ public:
     auto getDeleter() const -> function<void(T)>;
 
     explicit operator bool() const;
-    const T* operator &() const;
     explicit operator T() const;
 
 };
@@ -268,11 +267,6 @@ VkUniqueHandle<T>::operator bool() const {
 template<typename T>
 auto VkUniqueHandle<T>::reset() -> T* {
     cleanUp();
-    return &object;
-}
-
-template<typename T>
-const T* VkUniqueHandle<T>::operator&() const {
     return &object;
 }
 

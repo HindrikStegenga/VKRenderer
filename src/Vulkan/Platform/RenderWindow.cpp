@@ -3,7 +3,6 @@
 //
 
 #include "RenderWindow.h"
-#include <cstring>
 
 int  RenderWindow::windowCounter = 0;
 bool RenderWindow::isGLFWinitialized = false;

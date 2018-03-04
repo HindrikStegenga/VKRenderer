@@ -3,7 +3,6 @@
 //
 
 #include "Logger.h"
-#include <ctime>
 
 #ifdef WIN32
 
@@ -72,7 +71,7 @@ void Logger::error(string msg)
 
 }
 
-void Logger::succes(string msg)
+void Logger::success(string msg)
 {
     std::stringstream str;
     str << msg << std::endl;
@@ -102,7 +101,7 @@ void Logger::errorNoEndl(string msg)
     logToFileAndConsole(move(msg), LogLevel::Error);
 }
 
-void Logger::succesNoEndl(string msg)
+void Logger::successNoEndl(string msg)
 {
     logToFileAndConsole(move(msg), LogLevel::Succes);
 }

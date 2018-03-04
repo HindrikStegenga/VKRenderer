@@ -126,13 +126,13 @@ public:
     static void log(string msg);
     static void warn(string msg);
     static void error(string msg);
-    static void succes(string msg);
+    static void success(string msg);
     static void failure(string msg);
 
     static void logNoEndl(string msg);
     static void warnNoEndl(string msg);
     static void errorNoEndl(string msg);
-    static void succesNoEndl(string msg);
+    static void successNoEndl(string msg);
     static void failureNoEndl(string msg);
 
 private:

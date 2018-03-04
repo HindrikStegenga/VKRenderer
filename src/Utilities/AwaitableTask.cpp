@@ -4,7 +4,6 @@
 
 #include "AwaitableTask.h"
 
-#include <utility>
 #include "Logger.h"
 #include "Threadpool.h"
 

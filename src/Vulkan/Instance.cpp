@@ -70,7 +70,7 @@ Instance::Instance(const map<string, string>& params, const VulkanInstanceCreate
         Logger::log(pre + itemstr);
     }
 
-    Logger::succes("Vulkan instance creation succeeded!");
+    Logger::success("Vulkan instance creation succeeded!");
 }
 
 pair<bool, string> Instance::checkValidationLayerSupport(const vector<const char *> &layers)
