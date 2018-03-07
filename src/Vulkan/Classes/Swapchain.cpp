@@ -3,6 +3,7 @@
 //
 
 #include "Swapchain.h"
+#include "../Utilities/UtilityFunctions.h"
 
 Swapchain::Swapchain(SwapchainCreateInfo createInfo) : device(createInfo.deviceInfo.logical), physicalDevice(createInfo.deviceInfo.physical), surface(createInfo.surface) {
 
@@ -124,5 +125,54 @@ void Swapchain::createSwapchain(vk_SwapchainSettings settings) {
 
     VkResult result = vkCreateSwapchainKHR(device, &createInfo, nullptr, swapchain.reset(device, vkDestroySwapchainKHR));
     handleResult(result, "Swapchain creation failed!");
+
+    this->settings = settings;
+
+    retrieveImages();
+    createImageViews();
     Logger::success("Succesfully created the swapchain!");
+}
+
+void Swapchain::retrieveImages() {
+
+    images.clear();
+
+    uint32_t imageCount = 0;
+    vkGetSwapchainImagesKHR(device, swapchain.get(), &imageCount, nullptr);
+
+    images.resize(imageCount);
+    vkGetSwapchainImagesKHR(device, swapchain.get(), &imageCount, images.data());
+}
+
+void Swapchain::createImageViews() {
+
+    imageViews.resize(images.size());
+
+    for(size_t i = 0; i < imageViews.size(); ++i) {
+
+        //Create image view
+
+        VkImageViewCreateInfo createInfo = {};
+        createInfo.sType        = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        createInfo.pNext        = nullptr;
+        createInfo.image        = images[i];
+        createInfo.viewType     = VK_IMAGE_VIEW_TYPE_2D;
+        createInfo.format       = settings.surfaceFormat.format;
+        createInfo.components   = defaultComponentMapping();
+
+        VkImageSubresourceRange range   = {};
+        range.aspectMask                = VK_IMAGE_ASPECT_COLOR_BIT;
+        range.baseMipLevel              = 0;
+        range.levelCount                = 1;
+        range.baseArrayLayer            = 0;
+        range.layerCount                = 1;
+
+        createInfo.subresourceRange = range;
+
+        VkImageView imageView = VK_NULL_HANDLE;
+        VkResult result = vkCreateImageView(device, &createInfo, nullptr, &imageView);
+        handleResult(result, "Swapchain imageview creation failed.");
+
+        imageViews[i] = VkUniqueHandle<VkImageView>(imageView, device, vkDestroyImageView);
+    }
 }

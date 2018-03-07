@@ -6,6 +6,8 @@
 
 #ifdef WIN32
 
+#include <ctime>
+
 #define RESET   ""
 #define BLACK   ""
 #define RED     ""

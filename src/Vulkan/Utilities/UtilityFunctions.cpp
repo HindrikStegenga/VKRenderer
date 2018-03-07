@@ -98,4 +98,15 @@ uint32_t deviceTypePriority(VkPhysicalDeviceType deviceType)
     }
 }
 
+VkComponentMapping defaultComponentMapping() {
+
+    VkComponentMapping mapping = {};
+    mapping.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+    mapping.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+    mapping.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+    mapping.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+    return mapping;
+
+}
+
 

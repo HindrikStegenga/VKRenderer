@@ -20,4 +20,6 @@ auto operator<<(ostream& o, VkExtensionProperties p) -> ostream&;
 
 uint32_t deviceTypePriority(VkPhysicalDeviceType deviceType);
 
+VkComponentMapping defaultComponentMapping();
+
 #endif //VKRENDERER_VULKANUTILITYFUNCTIONS_H

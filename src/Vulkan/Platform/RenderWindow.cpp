@@ -4,6 +4,10 @@
 
 #include "RenderWindow.h"
 
+#ifdef WIN32
+#include <cstring>
+#endif
+
 int  RenderWindow::windowCounter = 0;
 bool RenderWindow::isGLFWinitialized = false;
 
