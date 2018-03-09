@@ -7,6 +7,7 @@
 
 #include <functional>
 #include <vulkan/vulkan.h>
+#include "VkTypeTraits.h"
 
 using std::function;
 
@@ -95,6 +96,7 @@ auto VkUniqueHandle<T>::cleanUp() -> void {
 
     if (object != VK_NULL_HANDLE){
         if (deleteFunc != nullptr) {
+            Logger::log("Destroyed " + string(TypeTraits<T>::name()));
             deleteFunc(object);
         } else {
             Logger::warn("Could not deallocate VulkanHandle because of invalid deleter function!");

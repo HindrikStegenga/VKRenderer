@@ -22,4 +22,13 @@ uint32_t deviceTypePriority(VkPhysicalDeviceType deviceType);
 
 VkComponentMapping defaultComponentMapping();
 
+VkImageSubresourceRange defaultImageSubresourceRange(VkImageAspectFlags aspectFlags);
+
+uint32_t chooseMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t typeFilter, VkMemoryPropertyFlags props);
+
+VkFormat chooseSupportedFormat(VkPhysicalDevice physicalDevice, const vector<VkFormat>& availableFormats, VkImageTiling tiling, VkFormatFeatureFlags featureFlags);
+
+
+
+
 #endif //VKRENDERER_VULKANUTILITYFUNCTIONS_H

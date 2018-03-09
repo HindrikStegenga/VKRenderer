@@ -30,9 +30,10 @@ private:
     VkBool32                        debugEnabled = VK_FALSE;
     Nullable<PresentDevice>         device;
     unique_ptr<VulkanRenderMode>    renderMode = nullptr;
+public:
     Nullable<Swapchain>             swapchain;
 public:
-    bool processEvents() const;
+    bool processEvents();
     void render();
 private:
     void setupDebugCallback();

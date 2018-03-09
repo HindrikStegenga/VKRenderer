@@ -109,4 +109,50 @@ VkComponentMapping defaultComponentMapping() {
 
 }
 
+VkFormat chooseSupportedFormat(VkPhysicalDevice physicalDevice, const vector<VkFormat> &availableFormats, VkImageTiling tiling, VkFormatFeatureFlags featureFlags) {
+
+    for(const auto format : availableFormats) {
+
+        VkFormatProperties props = {};
+        vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
+
+        if (tiling == VK_IMAGE_TILING_OPTIMAL && ((props.linearTilingFeatures & featureFlags) == featureFlags)) {
+            return format;
+
+        } else if(tiling == VK_IMAGE_TILING_LINEAR && ((props.optimalTilingFeatures & featureFlags) == featureFlags)) {
+            return format;
+        }
+    }
+
+    Logger::failure("Could not find an appropriate format!");
+    return VK_FORMAT_UNDEFINED;
+}
+
+VkImageSubresourceRange defaultImageSubresourceRange(VkImageAspectFlags aspectFlags) {
+
+    VkImageSubresourceRange range   = {};
+    range.layerCount                = 1;
+    range.baseArrayLayer            = 0;
+    range.levelCount                = 1;
+    range.baseMipLevel              = 0;
+    range.aspectMask                = aspectFlags;
+
+    return range;
+}
+
+uint32_t chooseMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t typeFilter, VkMemoryPropertyFlags props) {
+
+    VkPhysicalDeviceMemoryProperties memProperties = {};
+    vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
+
+    for (uint32_t i = 0; i < memProperties.memoryTypeCount; ++i) {
+        if ((typeFilter & (1 << i)) && ((memProperties.memoryTypes[i].propertyFlags & props) == props)) {
+            return i;
+        }
+    }
+
+    Logger::failure("Could not find appropriate memory type!");
+    return std::numeric_limits<uint32_t>::max();
+}
+
 

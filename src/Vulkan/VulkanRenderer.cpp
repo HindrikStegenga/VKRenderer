@@ -24,7 +24,7 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
     width = static_cast<uint32_t>(std::stoi(map.at("width")));
     height = static_cast<uint32_t>(std::stoi(map.at("height")));
 
-    renderWindow.set(RenderWindow(width, height, false));
+    renderWindow.set(RenderWindow(width, height, true));
 
     vector<const char*> extensions;
     for (auto instanceExtension : instanceExtensions) {
@@ -94,9 +94,23 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
     }
 }
 
-bool VulkanRenderer::processEvents() const
+bool VulkanRenderer::processEvents()
 {
-    return renderWindow.get().pollWindowEvents();
+    bool result = renderWindow.get().pollWindowEvents();
+
+    if(!result)
+        return result;
+
+    uint32_t width, height;
+    bool mustResize = renderWindow.getMutable().mustWindowResize(width, height);
+    if(mustResize)
+    {
+        Logger::log("Window will be resized: " + std::to_string(width) + " - " + std::to_string(height));
+        swapchain.getMutable().recreateSwapchain(width, height);
+        renderMode->windowHasResized(width, height);
+    }
+
+    return result;
 }
 
 VkBool32 VulkanRenderer::debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj,

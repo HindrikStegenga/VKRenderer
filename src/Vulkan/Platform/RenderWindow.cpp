@@ -22,6 +22,10 @@ RenderWindow::RenderWindow(uint32_t width, uint32_t height, bool resizable) {
         Logger::failure("Window creation failed!");
     }
 
+    glfwSetWindowUserPointer(window, this);
+    glfwSetWindowSizeLimits(window, WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT, WINDOW_MAX_WIDTH, WINDOW_MAX_HEIGHT);
+    glfwSetWindowSizeCallback(window, onWindowResize);
+
     glfwShowWindow(window);
 
     windowCounter++;
@@ -35,17 +39,17 @@ static void glfwError(int id, const char* description)
 void RenderWindow::initGLFW() {
 
     if (isGLFWinitialized) {
-        glfwTerminate();
-        isGLFWinitialized = false;
+        return;
     }
 
-    glfwSetErrorCallback(&glfwError);
+
 
     if (glfwInit() == GLFW_FALSE){
         isGLFWinitialized = false;
         Logger::failure("Could not initialize GLFW!");
     }
 
+    glfwSetErrorCallback(&glfwError);
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     isGLFWinitialized = true;
 }
@@ -53,6 +57,7 @@ void RenderWindow::initGLFW() {
 RenderWindow::~RenderWindow() {
 
     if (window != nullptr){
+        glfwSetWindowUserPointer(window, nullptr);
         glfwDestroyWindow(window);
         window = nullptr;
 
@@ -78,11 +83,15 @@ bool RenderWindow::pollWindowEvents() const {
 RenderWindow::RenderWindow(RenderWindow && rhs) noexcept {
     window = rhs.window;
     rhs.window = nullptr;
+
+    glfwSetWindowUserPointer(window, this);
 }
 
 RenderWindow &RenderWindow::operator=(RenderWindow && rhs) noexcept {
     window = rhs.window;
     rhs.window = nullptr;
+
+    glfwSetWindowUserPointer(window, this);
     return *this;
 }
 
@@ -126,4 +135,31 @@ VkSurfaceKHR RenderWindow::getWindowSurface(VkInstance instance)
         return VK_NULL_HANDLE;
     }
     return surface;
+}
+
+void RenderWindow::onWindowResize(GLFWwindow *window, int width, int height) {
+
+    if(window == nullptr)
+        return;
+
+     auto* const renderWindow = reinterpret_cast<RenderWindow*>(glfwGetWindowUserPointer(window));
+
+    if(renderWindow == nullptr)
+        return;
+
+    renderWindow->nextWidth = static_cast<uint32_t>(width);
+    renderWindow->nextHeight = static_cast<uint32_t>(height);
+}
+
+bool RenderWindow::mustWindowResize(uint32_t &pWidth, uint32_t &pHeight) {
+    if(nextWidth == 0 && nextHeight == 0)
+        return false;
+
+    pWidth = nextWidth;
+    pHeight = nextHeight;
+
+    nextWidth = 0;
+    nextHeight = 0;
+
+    return true;
 }

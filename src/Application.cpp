@@ -26,7 +26,7 @@ Application::Application() {
 void Application::run() {
 
     while (!mustStop) {
-        bool eventsSucceeded = renderer.get().processEvents();
+        bool eventsSucceeded = renderer.getMutable().processEvents();
         if (!eventsSucceeded) {
             mustStop = true;
         }

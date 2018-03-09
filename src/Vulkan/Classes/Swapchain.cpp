@@ -8,10 +8,13 @@
 Swapchain::Swapchain(SwapchainCreateInfo createInfo) : device(createInfo.deviceInfo.logical), physicalDevice(createInfo.deviceInfo.physical), surface(createInfo.surface) {
 
     //Assume swapchain support was checked!
-    vk_SwapchainSettings settings = chooseSettings(createInfo.width, createInfo.height);
-    createSwapchain(settings);
+    recreateSwapchain(createInfo.width, createInfo.height);
+}
 
+void Swapchain::recreateSwapchain(uint32_t width, uint32_t height) {
 
+    vk_SwapchainSettings swapchainSettings = chooseSettings(width, height);
+    createSwapchain(swapchainSettings);
 }
 
 vk_SwapchainSettings Swapchain::chooseSettings(uint32_t width, uint32_t height) {
@@ -40,8 +43,6 @@ vk_SwapchainSettings Swapchain::chooseSettings(uint32_t width, uint32_t height) 
     if (caps.maxImageCount > 0 && imageCount > caps.maxImageCount) {
         imageCount = caps.maxImageCount;
     }
-
-
 
     vk_SwapchainSettings settings = {};
     settings.extent = extent;
@@ -130,6 +131,7 @@ void Swapchain::createSwapchain(vk_SwapchainSettings settings) {
 
     retrieveImages();
     createImageViews();
+    createDepthStencil();
     Logger::success("Succesfully created the swapchain!");
 }
 
@@ -175,4 +177,87 @@ void Swapchain::createImageViews() {
 
         imageViews[i] = VkUniqueHandle<VkImageView>(imageView, device, vkDestroyImageView);
     }
+}
+
+void Swapchain::createDepthStencil() {
+
+    VkFormat format = chooseDepthStencilFormat();
+
+    createDepthStencilImage(format);
+    allocateDepthStencilMemory();
+    createDepthStencilImageView(format);
+
+
+
+}
+
+VkFormat Swapchain::chooseDepthStencilFormat(bool requiresStencil) const {
+
+    static const vector<VkFormat> stencilFormats = { VK_FORMAT_D32_SFLOAT_S8_UINT,
+                                                     VK_FORMAT_D24_UNORM_S8_UINT };
+
+    static const vector<VkFormat> withNonStencilFormats = { VK_FORMAT_D32_SFLOAT,
+                                                            VK_FORMAT_D32_SFLOAT_S8_UINT,
+                                                            VK_FORMAT_D24_UNORM_S8_UINT };
+
+    return chooseSupportedFormat(physicalDevice, requiresStencil ? stencilFormats : withNonStencilFormats, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+}
+
+void Swapchain::createDepthStencilImage(VkFormat format) {
+
+    VkImageCreateInfo imageCreateInfo = {};
+
+    imageCreateInfo.sType                   = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    imageCreateInfo.pNext                   = nullptr;
+    imageCreateInfo.flags                   = {};
+    imageCreateInfo.imageType               = VK_IMAGE_TYPE_2D;
+    imageCreateInfo.format                  = format;
+    imageCreateInfo.extent                  = VkExtent3D { settings.extent.width, settings.extent.height, 1};
+    imageCreateInfo.mipLevels               = 1;
+    imageCreateInfo.arrayLayers             = 1;
+    imageCreateInfo.samples                 = VK_SAMPLE_COUNT_1_BIT;
+    imageCreateInfo.usage                   = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+    imageCreateInfo.sharingMode             = VK_SHARING_MODE_EXCLUSIVE;
+    imageCreateInfo.queueFamilyIndexCount   = 0;
+    imageCreateInfo.pQueueFamilyIndices     = nullptr;
+    imageCreateInfo.initialLayout           = VK_IMAGE_LAYOUT_UNDEFINED;
+
+    VkResult result = vkCreateImage(device, &imageCreateInfo, nullptr, depthStencilImage.reset(device, vkDestroyImage));
+
+    handleResult(result, "Depth/stencil image creation has failed!");
+}
+
+void Swapchain::allocateDepthStencilMemory() {
+
+    VkMemoryRequirements memoryRequirements = {};
+    vkGetImageMemoryRequirements(device, depthStencilImage.get(), &memoryRequirements);
+
+    VkMemoryAllocateInfo allocateInfo   = {};
+    allocateInfo.sType                  = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocateInfo.pNext                  = nullptr;
+    allocateInfo.allocationSize         = memoryRequirements.size;
+    allocateInfo.memoryTypeIndex        = chooseMemoryTypeIndex(physicalDevice, memoryRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+    VkResult result = vkAllocateMemory(device, &allocateInfo, nullptr, depthStencilMemory.reset(device, vkFreeMemory));
+
+    handleResult(result, "Could not allocate memory for depth/stencil image!");
+
+    vkBindImageMemory(device, depthStencilImage.get(), depthStencilMemory.get(), 0);
+}
+
+void Swapchain::createDepthStencilImageView(VkFormat format) {
+
+    VkImageViewCreateInfo viewCreateInfo = {};
+
+    viewCreateInfo.sType                = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    viewCreateInfo.pNext                = nullptr;
+    viewCreateInfo.flags                = {};
+    viewCreateInfo.image                = depthStencilImage.get();
+    viewCreateInfo.viewType             = VK_IMAGE_VIEW_TYPE_2D;
+    viewCreateInfo.format               = format;
+    viewCreateInfo.subresourceRange     = defaultImageSubresourceRange(VK_IMAGE_ASPECT_DEPTH_BIT);
+
+    VkResult result = vkCreateImageView(device, &viewCreateInfo, nullptr, depthStencilImageView.reset(device, vkDestroyImageView));
+
+    handleResult(result, "Depth/stencil imageView creation has failed!");
 }
