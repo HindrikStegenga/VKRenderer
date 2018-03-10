@@ -27,4 +27,14 @@ struct vk_SwapchainSettings final {
 
 };
 
+struct vk_RendermodeSwapchainInfo {
+
+    uint32_t width;
+    uint32_t height;
+    VkFormat format;
+
+
+
+};
+
 #endif //VKRENDERER_UTILITYSTRUCTURES_H

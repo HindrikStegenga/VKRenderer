@@ -10,7 +10,7 @@
 #include "../../Utilities/Nullable.h"
 
 class VulkanRenderMode {
-private:
+protected:
     string                      name;
     VkDevice                    device;
     VkPhysicalDevice            physicalDevice;
@@ -26,7 +26,7 @@ public:
 
 public:
     virtual void render() = 0;
-    virtual void windowHasResized(uint32_t width, uint32_t height) = 0;
+    virtual void windowHasResized(vk_RendermodeSwapchainInfo swapchainInfo) = 0;
 };
 
 inline VulkanRenderMode::~VulkanRenderMode() = default;

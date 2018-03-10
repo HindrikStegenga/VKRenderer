@@ -10,12 +10,25 @@
 #include "VulkanRenderModeCreateInfo.h"
 
 class ForwardRenderMode : public VulkanRenderMode {
+private:
+    vector<VKUH<VkPipelineLayout>> pipelineLayouts;
+    vector<VKUH<VkRenderPass>> renderPasses;
+    vector<VKUH<VkPipeline>> pipelines;
 public:
-    ForwardRenderMode(const ForwardRenderModeCreateInfo& createInfo);
+    explicit ForwardRenderMode(const ForwardRenderModeCreateInfo& createInfo);
+    ~ForwardRenderMode() = default;
+    ForwardRenderMode(const ForwardRenderMode&) = delete;
+    ForwardRenderMode(ForwardRenderMode&&) = default;
+
+    ForwardRenderMode& operator=(const ForwardRenderMode&) = delete;
+    ForwardRenderMode& operator=(ForwardRenderMode&&) = default;
 public:
     void render() override;
 
-    void windowHasResized(uint32_t width, uint32_t height) override;
+    void windowHasResized(vk_RendermodeSwapchainInfo swapchainInfo) override;
+private:
+    void createRenderMode(vk_RendermodeSwapchainInfo swapchainInfo);
+
 
 };
 

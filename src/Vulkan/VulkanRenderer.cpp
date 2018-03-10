@@ -83,8 +83,9 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
 
         ForwardRenderModeCreateInfo createInfo = {};
 
-        createInfo.deviceInfo   = device.getMutable().getPresentDeviceInfo();
-        createInfo.surface      = surface;
+        createInfo.deviceInfo       = device.getMutable().getPresentDeviceInfo();
+        createInfo.surface          = surface;
+        createInfo.swapchainInfo    = swapchain.get().retrieveRendermodeSwapchainInfo();
 
         this->renderMode = std::make_unique<ForwardRenderMode>(createInfo);
     }
@@ -106,8 +107,10 @@ bool VulkanRenderer::processEvents()
     if(mustResize)
     {
         Logger::log("Window will be resized: " + std::to_string(width) + " - " + std::to_string(height));
-        swapchain.getMutable().recreateSwapchain(width, height);
-        renderMode->windowHasResized(width, height);
+
+        vk_RendermodeSwapchainInfo swapchainInfo = swapchain.getMutable().recreateSwapchain(width, height);
+
+        renderMode->windowHasResized(swapchainInfo);
     }
 
     return result;
@@ -143,9 +146,8 @@ void VulkanRenderer::setupDebugCallback()
 VulkanRenderer::~VulkanRenderer()
 {
     if (instance.isSet()) {
-        Logger::log("Shutting down the vulkan renderer.");
+        Logger::log("Shutting down the Vulkan renderer.");
     }
-
 
     if (debugEnabled == VK_TRUE) {
         destroyDebugReportCallbackEXT(instance.get().getHandle(), debugCallbackHandle, nullptr);

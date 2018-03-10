@@ -116,3 +116,10 @@ VkSurfaceKHR PresentDevice::getSurface()
 PresentDeviceInfo PresentDevice::getPresentDeviceInfo() {
     return { device.get(), physicalDevice.getMutable().physicalDevice };
 }
+
+PresentDevice::~PresentDevice() {
+    if(device.get() != VK_NULL_HANDLE)
+    {
+        vkDeviceWaitIdle(device.get());
+    }
+}

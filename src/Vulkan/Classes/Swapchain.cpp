@@ -11,10 +11,18 @@ Swapchain::Swapchain(SwapchainCreateInfo createInfo) : device(createInfo.deviceI
     recreateSwapchain(createInfo.width, createInfo.height);
 }
 
-void Swapchain::recreateSwapchain(uint32_t width, uint32_t height) {
+vk_RendermodeSwapchainInfo Swapchain::recreateSwapchain(uint32_t width, uint32_t height) {
 
     vk_SwapchainSettings swapchainSettings = chooseSettings(width, height);
     createSwapchain(swapchainSettings);
+
+    vk_RendermodeSwapchainInfo swapchainInfo = {};
+
+    swapchainInfo.width  = width;
+    swapchainInfo.height = height;
+    swapchainInfo.format = settings.surfaceFormat.format;
+
+    return swapchainInfo;
 }
 
 vk_SwapchainSettings Swapchain::chooseSettings(uint32_t width, uint32_t height) {
@@ -260,4 +268,15 @@ void Swapchain::createDepthStencilImageView(VkFormat format) {
     VkResult result = vkCreateImageView(device, &viewCreateInfo, nullptr, depthStencilImageView.reset(device, vkDestroyImageView));
 
     handleResult(result, "Depth/stencil imageView creation has failed!");
+}
+
+vk_RendermodeSwapchainInfo Swapchain::retrieveRendermodeSwapchainInfo() const {
+
+    vk_RendermodeSwapchainInfo swapchainInfo = {};
+
+    swapchainInfo.width  = settings.extent.width;
+    swapchainInfo.height = settings.extent.height;
+    swapchainInfo.format = settings.surfaceFormat.format;
+
+    return swapchainInfo;
 }

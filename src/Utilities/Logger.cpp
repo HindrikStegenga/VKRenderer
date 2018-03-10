@@ -132,9 +132,9 @@ void Logger::logToFileAndConsole(string str, LogLevel e)
     std::ofstream ofs;
 
     if(logFileIsOpened)
-        ofs.open("log.txt", std::ios_base::app);
+        ofs.open("logs/log.txt", std::ios_base::app);
     else
-        ofs.open("log.txt", std::ios_base::trunc);
+        ofs.open("logs/log.txt", std::ios_base::trunc);
 
     if(ofs.is_open())
     {

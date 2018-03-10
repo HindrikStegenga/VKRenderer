@@ -12,7 +12,7 @@
 class PresentDevice final {
 public:
     PresentDevice(VkInstance instance, const map<string, string>& params, const PresentDeviceCreateInfo& createInfo);
-    ~PresentDevice() = default;
+    ~PresentDevice();
 
     PresentDevice(const PresentDevice&)     = delete;
     PresentDevice(PresentDevice&&) noexcept = default;

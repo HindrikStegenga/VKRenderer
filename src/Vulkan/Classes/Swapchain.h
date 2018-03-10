@@ -23,10 +23,9 @@ private:
     vector<VkImage>             images;
     vector<VKUH<VkImageView>>   imageViews;
 
-    VKUH<VkImage>               depthStencilImage       = VKUH<VkImage>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkDestroyImage);
     VKUH<VkDeviceMemory>        depthStencilMemory      = VKUH<VkDeviceMemory>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkFreeMemory);
+    VKUH<VkImage>               depthStencilImage       = VKUH<VkImage>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkDestroyImage);
     VKUH<VkImageView>           depthStencilImageView   = VKUH<VkImageView>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkDestroyImageView);
-
 
     VkDevice                device;
     VkPhysicalDevice        physicalDevice;
@@ -49,7 +48,8 @@ private:
 
     VkFormat chooseDepthStencilFormat(bool requiresStencil = false) const;
 public:
-    void recreateSwapchain(uint32_t width, uint32_t height);
+    vk_RendermodeSwapchainInfo recreateSwapchain(uint32_t width, uint32_t height);
+    vk_RendermodeSwapchainInfo retrieveRendermodeSwapchainInfo() const;
 };
 
 

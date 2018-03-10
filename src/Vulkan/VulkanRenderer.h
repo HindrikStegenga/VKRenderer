@@ -29,9 +29,8 @@ private:
     VkDebugReportCallbackEXT        debugCallbackHandle;
     VkBool32                        debugEnabled = VK_FALSE;
     Nullable<PresentDevice>         device;
-    unique_ptr<VulkanRenderMode>    renderMode = nullptr;
-public:
     Nullable<Swapchain>             swapchain;
+    unique_ptr<VulkanRenderMode>    renderMode = nullptr;
 public:
     bool processEvents();
     void render();

@@ -9,8 +9,9 @@
 
 struct ForwardRenderModeCreateInfo
 {
-    PresentDeviceInfo   deviceInfo      = {};
-    VkSurfaceKHR        surface         = VK_NULL_HANDLE;
+    PresentDeviceInfo               deviceInfo      = {};
+    VkSurfaceKHR                    surface         = VK_NULL_HANDLE;
+    vk_RendermodeSwapchainInfo      swapchainInfo   = {};
 };
 
 
