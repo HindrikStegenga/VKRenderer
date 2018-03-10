@@ -6,6 +6,7 @@
 #define VKRENDERER_VULKANCREATEINFO_H
 
 #include "../CommonInclude.h"
+#include "Utilities/UtilityStructures.h"
 #include <vulkan/vulkan.h>
 
 
@@ -27,8 +28,9 @@ struct PresentDeviceCreateInfo final {
 
 struct PresentDeviceInfo final {
 
-    VkDevice            logical     = VK_NULL_HANDLE;
-    VkPhysicalDevice    physical    = VK_NULL_HANDLE;
+    VkDevice            logical         = VK_NULL_HANDLE;
+    VkPhysicalDevice    physical        = VK_NULL_HANDLE;
+    vk_Queue            presentQueue    = {};
 };
 
 struct VulkanRenderModeCreateInfo final {
@@ -36,7 +38,6 @@ struct VulkanRenderModeCreateInfo final {
     string              name            = "";
     PresentDeviceInfo   deviceInfo      = {};
     VkSurfaceKHR        surface         = VK_NULL_HANDLE;
-
 };
 
 struct SwapchainCreateInfo final {

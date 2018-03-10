@@ -5,10 +5,11 @@
 #include "Swapchain.h"
 #include "../Utilities/UtilityFunctions.h"
 
-Swapchain::Swapchain(SwapchainCreateInfo createInfo) : device(createInfo.deviceInfo.logical), physicalDevice(createInfo.deviceInfo.physical), surface(createInfo.surface) {
+Swapchain::Swapchain(SwapchainCreateInfo createInfo) : device(createInfo.deviceInfo.logical), physicalDevice(createInfo.deviceInfo.physical), surface(createInfo.surface), presentQueue(createInfo.deviceInfo.presentQueue) {
 
     //Assume swapchain support was checked!
     recreateSwapchain(createInfo.width, createInfo.height);
+    createSemaphores();
 }
 
 vk_RendermodeSwapchainInfo Swapchain::recreateSwapchain(uint32_t width, uint32_t height) {
@@ -16,13 +17,7 @@ vk_RendermodeSwapchainInfo Swapchain::recreateSwapchain(uint32_t width, uint32_t
     vk_SwapchainSettings swapchainSettings = chooseSettings(width, height);
     createSwapchain(swapchainSettings);
 
-    vk_RendermodeSwapchainInfo swapchainInfo = {};
-
-    swapchainInfo.width  = width;
-    swapchainInfo.height = height;
-    swapchainInfo.format = settings.surfaceFormat.format;
-
-    return swapchainInfo;
+    return retrieveRendermodeSwapchainInfo();
 }
 
 vk_SwapchainSettings Swapchain::chooseSettings(uint32_t width, uint32_t height) {
@@ -140,6 +135,7 @@ void Swapchain::createSwapchain(vk_SwapchainSettings settings) {
     retrieveImages();
     createImageViews();
     createDepthStencil();
+
     Logger::success("Succesfully created the swapchain!");
 }
 
@@ -194,8 +190,6 @@ void Swapchain::createDepthStencil() {
     createDepthStencilImage(format);
     allocateDepthStencilMemory();
     createDepthStencilImageView(format);
-
-
 
 }
 
@@ -278,5 +272,69 @@ vk_RendermodeSwapchainInfo Swapchain::retrieveRendermodeSwapchainInfo() const {
     swapchainInfo.height = settings.extent.height;
     swapchainInfo.format = settings.surfaceFormat.format;
 
+    swapchainInfo.colorImageViews.resize(imageViews.size());
+    for(size_t i = 0; i < imageViews.size(); ++i) {
+        swapchainInfo.colorImageViews[i] = imageViews[i].get();
+    }
+
     return swapchainInfo;
+}
+
+void Swapchain::createSemaphores() {
+
+    VkSemaphoreCreateInfo createInfo    = {};
+    createInfo.sType                    = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    createInfo.pNext                    = nullptr;
+    createInfo.flags                    = {};
+
+    VkResult result = vkCreateSemaphore(device, &createInfo, nullptr, imageAvailableSemaphore.reset(device, vkDestroySemaphore));
+    handleResult(result, "Failed to create image available semaphore!");
+    result = vkCreateSemaphore(device, &createInfo, nullptr, renderFinishedSemaphore.reset(device, vkDestroySemaphore));
+    handleResult(result, "Failed to create render finished semaphore!");
+
+    Logger::success("Succesfully created semaphores!");
+}
+
+VkSemaphore Swapchain::retrieveImageAvailableSemaphore() const {
+    return imageAvailableSemaphore.get();
+}
+
+VkSemaphore Swapchain::retrieveRenderingFinishedSemaphore() const {
+    return renderFinishedSemaphore.get();
+}
+
+uint32_t Swapchain::retrieveNextImageIndex(bool& mustRecreateSwapchain) const {
+
+    uint32_t imageIndex = 0;
+    VkResult result = vkAcquireNextImageKHR(device, swapchain.get(), std::numeric_limits<uint64_t>::max(), imageAvailableSemaphore.get(), VK_NULL_HANDLE, &imageIndex);
+
+    switch(result) {
+        case VK_SUCCESS:
+            return imageIndex;
+        case VK_ERROR_OUT_OF_DATE_KHR:
+            mustRecreateSwapchain = true;
+            return std::numeric_limits<uint32_t >::max();
+        default:
+            Logger::failure("Failed getting the next swapchain image!");
+            return std::numeric_limits<uint32_t >::max();
+    }
+    return imageIndex;
+}
+
+void Swapchain::presentImage(uint32_t imageIndex) {
+
+    VkSemaphore renderFinished = renderFinishedSemaphore.get();
+    VkSwapchainKHR cSwapchain = swapchain.get();
+
+    VkPresentInfoKHR presentInfo    = {};
+    presentInfo.sType               = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    presentInfo.pNext               = nullptr;
+    presentInfo.waitSemaphoreCount  = 1;
+    presentInfo.pWaitSemaphores     = &renderFinished;
+    presentInfo.pImageIndices       = &imageIndex;
+    presentInfo.pResults            = nullptr;
+    presentInfo.swapchainCount      = 1;
+    presentInfo.pSwapchains         = &cSwapchain;
+
+    vkQueuePresentKHR(presentQueue.queue, &presentInfo);
 }

@@ -17,8 +17,8 @@ public:
     Nullable& operator=(const Nullable& rhs);
     Nullable& operator=(Nullable&& rhs) noexcept;
 
-    const T& get() const;
-    T& getMutable();
+    inline const T& get() const;
+    inline T& getMutable();
 
     bool isSet() const;
 
@@ -97,7 +97,7 @@ bool Nullable<T>::isSet() const {
 }
 
 template<typename T>
-const T& Nullable<T>::get() const {
+inline const T& Nullable<T>::get() const {
     return *(T*)(&data);
 }
 
@@ -153,7 +153,7 @@ Nullable<T>& Nullable<T>::operator=(const Nullable& rhs) {
 }
 
 template<typename T>
-T& Nullable<T>::getMutable()
+inline T& Nullable<T>::getMutable()
 {
     return *(T*)(&data);
 }

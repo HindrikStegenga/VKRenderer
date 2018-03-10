@@ -23,14 +23,18 @@ private:
     vector<VkImage>             images;
     vector<VKUH<VkImageView>>   imageViews;
 
+    VKUH<VkSemaphore>           imageAvailableSemaphore = VKUH<VkSemaphore>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkDestroySemaphore);
+    VKUH<VkSemaphore>           renderFinishedSemaphore = VKUH<VkSemaphore>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkDestroySemaphore);
+
     VKUH<VkDeviceMemory>        depthStencilMemory      = VKUH<VkDeviceMemory>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkFreeMemory);
     VKUH<VkImage>               depthStencilImage       = VKUH<VkImage>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkDestroyImage);
     VKUH<VkImageView>           depthStencilImageView   = VKUH<VkImageView>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkDestroyImageView);
 
-    VkDevice                device;
-    VkPhysicalDevice        physicalDevice;
-    VkSurfaceKHR            surface;
-    vk_SwapchainSettings    settings;
+    VkDevice                device                      = VK_NULL_HANDLE;
+    vk_Queue                presentQueue                = {};
+    VkPhysicalDevice        physicalDevice              = VK_NULL_HANDLE;
+    VkSurfaceKHR            surface                     = VK_NULL_HANDLE;
+    vk_SwapchainSettings    settings                    = {};
 
 private:
     vk_SwapchainSettings    chooseSettings(uint32_t width, uint32_t height);
@@ -41,6 +45,7 @@ private:
     void                    createDepthStencilImage(VkFormat format);
     void                    allocateDepthStencilMemory();
     void                    createDepthStencilImageView(VkFormat format);
+    void                    createSemaphores();
 
     static VkSurfaceFormatKHR chooseSurfaceFormat(const vector<VkSurfaceFormatKHR>& availableFormats);
     static VkPresentModeKHR choosePresentMode(const vector<VkPresentModeKHR>& availableModes);
@@ -50,6 +55,11 @@ private:
 public:
     vk_RendermodeSwapchainInfo recreateSwapchain(uint32_t width, uint32_t height);
     vk_RendermodeSwapchainInfo retrieveRendermodeSwapchainInfo() const;
+
+    VkSemaphore retrieveImageAvailableSemaphore() const;
+    VkSemaphore retrieveRenderingFinishedSemaphore() const;
+    uint32_t    retrieveNextImageIndex(bool& mustRecreateSwapchain) const;
+    void        presentImage(uint32_t imageIndex);
 };
 
 

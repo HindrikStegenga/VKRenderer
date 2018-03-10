@@ -30,6 +30,7 @@ void Application::run() {
         if (!eventsSucceeded) {
             mustStop = true;
         }
+        renderer.getMutable().render();
     }
 }
 

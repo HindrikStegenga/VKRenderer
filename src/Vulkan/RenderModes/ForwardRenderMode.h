@@ -11,25 +11,30 @@
 
 class ForwardRenderMode : public VulkanRenderMode {
 private:
-    vector<VKUH<VkPipelineLayout>> pipelineLayouts;
-    vector<VKUH<VkRenderPass>> renderPasses;
-    vector<VKUH<VkPipeline>> pipelines;
+    vector<VKUH<VkPipelineLayout>> pipelineLayouts      = {};
+    vector<VKUH<VkRenderPass>> renderPasses             = {};
+    vector<VKUH<VkPipeline>> pipelines                  = {};
+    vector<VKUH<VkFramebuffer>> frameBuffers            = {};
+    VKUH<VkCommandPool> commandPool                     = VKUH<VkCommandPool>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkDestroyCommandPool);
+    vector<VkCommandBuffer> commandBuffers              = {};
+    vk_Queue presentationQueue                          = {};
 public:
     explicit ForwardRenderMode(const ForwardRenderModeCreateInfo& createInfo);
-    ~ForwardRenderMode() = default;
+    ~ForwardRenderMode() override = default;
     ForwardRenderMode(const ForwardRenderMode&) = delete;
     ForwardRenderMode(ForwardRenderMode&&) = default;
 
     ForwardRenderMode& operator=(const ForwardRenderMode&) = delete;
     ForwardRenderMode& operator=(ForwardRenderMode&&) = default;
 public:
-    void render() override;
+    void render(uint32_t imageIndex, VkSemaphore imageAvailable, VkSemaphore renderFinished) override;
 
     void windowHasResized(vk_RendermodeSwapchainInfo swapchainInfo) override;
 private:
+    void createRenderpassAndFramebuffers(vk_RendermodeSwapchainInfo swapchainInfo);
     void createRenderMode(vk_RendermodeSwapchainInfo swapchainInfo);
-
-
+    void createCommandPool();
+    void createCommandBuffers(vk_RendermodeSwapchainInfo swapchainInfo);
 };
 
 

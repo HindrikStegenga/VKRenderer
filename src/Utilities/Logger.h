@@ -89,7 +89,7 @@ inline string tagged(LogLevel l, const string& value, bool isColorized = false)
             break;
         case LogLevel::Succes:
             modifier = BOLDGREEN;
-            level = "  SUCCES ";
+            level = " SUCCESS ";
             break;
         case LogLevel::Failure:
             modifier = BOLDBLUE;

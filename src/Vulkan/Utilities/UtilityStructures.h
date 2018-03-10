@@ -29,11 +29,10 @@ struct vk_SwapchainSettings final {
 
 struct vk_RendermodeSwapchainInfo {
 
-    uint32_t width;
-    uint32_t height;
-    VkFormat format;
-
-
+    uint32_t            width               = 0;
+    uint32_t            height              = 0;
+    VkFormat            format              = VK_FORMAT_UNDEFINED;
+    vector<VkImageView> colorImageViews     = {};
 
 };
 

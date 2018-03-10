@@ -32,7 +32,7 @@ private:
 public:
     PhysicalDevice& getPhysicalDevice();
     VkSurfaceKHR getSurface();
-    PresentDeviceInfo getPresentDeviceInfo();
+    PresentDeviceInfo getPresentDeviceInfo() const;
 
 };
 

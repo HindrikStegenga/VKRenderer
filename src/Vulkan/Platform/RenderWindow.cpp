@@ -3,6 +3,7 @@
 //
 
 #include "RenderWindow.h"
+#include "../VulkanRenderer.h"
 
 #ifdef WIN32
 #include <cstring>
@@ -147,19 +148,22 @@ void RenderWindow::onWindowResize(GLFWwindow *window, int width, int height) {
     if(renderWindow == nullptr)
         return;
 
-    renderWindow->nextWidth = static_cast<uint32_t>(width);
-    renderWindow->nextHeight = static_cast<uint32_t>(height);
+    if(renderWindow->renderer != nullptr) {
+        renderWindow->renderer->resizeWindow(static_cast<uint32_t>(width), static_cast<uint32_t>(height));
+    } else {
+        Logger::failure("Renderer pointer was not set!");
+    }
 }
 
-bool RenderWindow::mustWindowResize(uint32_t &pWidth, uint32_t &pHeight) {
-    if(nextWidth == 0 && nextHeight == 0)
-        return false;
+void RenderWindow::setRendererPointer(VulkanRenderer* renderer) {
+    this->renderer = renderer;
+}
 
-    pWidth = nextWidth;
-    pHeight = nextHeight;
+void RenderWindow::retrieveCurrentSize(uint32_t& width, uint32_t& height) const {
 
-    nextWidth = 0;
-    nextHeight = 0;
+    int iW, iH;
 
-    return true;
+    glfwGetWindowSize(window, &iW, &iH);
+    width = static_cast<uint32_t >(iW);
+    height = static_cast<uint32_t >(iH);
 }

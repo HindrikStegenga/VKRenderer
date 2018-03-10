@@ -34,6 +34,7 @@ private:
 public:
     bool processEvents();
     void render();
+    void resizeWindow(uint32_t width, uint32_t height);
 private:
     void setupDebugCallback();
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags,
