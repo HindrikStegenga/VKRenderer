@@ -156,13 +156,18 @@ void VulkanRenderer::render()
 
     renderMode->render(imageIndex, swapchain.get().retrieveImageAvailableSemaphore(), swapchain.get().retrieveRenderingFinishedSemaphore());
 
-    swapchain.getMutable().presentImage(imageIndex);
+    mustRecreateSwapchain = false;
+    swapchain.getMutable().presentImage(imageIndex, mustRecreateSwapchain);
+    if(mustRecreateSwapchain)
+    {
+        uint32_t width, height;
+        renderWindow.get().retrieveCurrentSize(width, height);
+        resizeWindow(width, height);
+    }
 }
 
 void VulkanRenderer::resizeWindow(uint32_t width, uint32_t height) {
-
-    //vkDeviceWaitIdle(device.get().getPresentDeviceInfo().logical);
-
+    
     Logger::log("Window will be resized: " + std::to_string(width) + " - " + std::to_string(height));
 
     vk_RendermodeSwapchainInfo swapchainInfo = swapchain.getMutable().recreateSwapchain(width, height);

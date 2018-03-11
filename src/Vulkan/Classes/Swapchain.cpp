@@ -108,6 +108,8 @@ VkExtent2D Swapchain::chooseExtent(uint32_t width, uint32_t height, VkSurfaceCap
 
 void Swapchain::createSwapchain(vk_SwapchainSettings settings) {
 
+    VKUH<VkSwapchainKHR> oldSwapchain = VKUH<VkSwapchainKHR>(std::move(swapchain));
+
     VkSwapchainCreateInfoKHR createInfo = {};
     createInfo.sType                        = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     createInfo.pNext                        = nullptr;
@@ -125,10 +127,14 @@ void Swapchain::createSwapchain(vk_SwapchainSettings settings) {
     createInfo.compositeAlpha               = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     createInfo.presentMode                  = settings.presentMode;
     createInfo.clipped                      = VK_TRUE;
-    createInfo.oldSwapchain                 = VK_NULL_HANDLE;
+    createInfo.oldSwapchain                 = oldSwapchain.get();
 
     VkResult result = vkCreateSwapchainKHR(device, &createInfo, nullptr, swapchain.reset(device, vkDestroySwapchainKHR));
     handleResult(result, "Swapchain creation failed!");
+
+    if(oldSwapchain.get() != VK_NULL_HANDLE) {
+        vkDeviceWaitIdle(device);
+    }
 
     this->settings = settings;
 
@@ -314,14 +320,16 @@ uint32_t Swapchain::retrieveNextImageIndex(bool& mustRecreateSwapchain) const {
         case VK_ERROR_OUT_OF_DATE_KHR:
             mustRecreateSwapchain = true;
             return std::numeric_limits<uint32_t >::max();
+        case VK_SUBOPTIMAL_KHR:
+            mustRecreateSwapchain = true;
+            return imageIndex;
         default:
             Logger::failure("Failed getting the next swapchain image!");
             return std::numeric_limits<uint32_t >::max();
     }
-    return imageIndex;
 }
 
-void Swapchain::presentImage(uint32_t imageIndex) {
+void Swapchain::presentImage(uint32_t imageIndex, bool& mustRecreateSwapchain) {
 
     VkSemaphore renderFinished = renderFinishedSemaphore.get();
     VkSwapchainKHR cSwapchain = swapchain.get();
@@ -336,5 +344,19 @@ void Swapchain::presentImage(uint32_t imageIndex) {
     presentInfo.swapchainCount      = 1;
     presentInfo.pSwapchains         = &cSwapchain;
 
-    vkQueuePresentKHR(presentQueue.queue, &presentInfo);
+    VkResult result = vkQueuePresentKHR(presentQueue.queue, &presentInfo);
+
+    switch(result) {
+        case VK_SUCCESS:
+            return;
+        case VK_ERROR_OUT_OF_DATE_KHR:
+            mustRecreateSwapchain = true;
+            return;
+        case VK_SUBOPTIMAL_KHR:
+            mustRecreateSwapchain = true;
+            return;
+        default:
+            Logger::failure("Failed getting the next swapchain image!");
+            return;
+    }
 }

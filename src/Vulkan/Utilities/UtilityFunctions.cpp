@@ -116,10 +116,10 @@ VkFormat chooseSupportedFormat(VkPhysicalDevice physicalDevice, const vector<VkF
         VkFormatProperties props = {};
         vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
 
-        if (tiling == VK_IMAGE_TILING_OPTIMAL && ((props.linearTilingFeatures & featureFlags) == featureFlags)) {
+        if (tiling == VK_IMAGE_TILING_OPTIMAL && ((props.optimalTilingFeatures & featureFlags) == featureFlags)) {
             return format;
 
-        } else if(tiling == VK_IMAGE_TILING_LINEAR && ((props.optimalTilingFeatures & featureFlags) == featureFlags)) {
+        } else if(tiling == VK_IMAGE_TILING_LINEAR && ((props.linearTilingFeatures & featureFlags) == featureFlags)) {
             return format;
         }
     }

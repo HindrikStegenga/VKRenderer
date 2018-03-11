@@ -58,8 +58,9 @@ public:
 
     VkSemaphore retrieveImageAvailableSemaphore() const;
     VkSemaphore retrieveRenderingFinishedSemaphore() const;
+
     uint32_t    retrieveNextImageIndex(bool& mustRecreateSwapchain) const;
-    void        presentImage(uint32_t imageIndex);
+    void        presentImage(uint32_t imageIndex, bool& mustRecreateSwapchain);
 };
 
 
