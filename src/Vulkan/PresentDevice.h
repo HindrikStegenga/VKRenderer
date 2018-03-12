@@ -20,8 +20,8 @@ public:
     PresentDevice& operator=(const PresentDevice&)      = delete;
     PresentDevice& operator=(PresentDevice&&) noexcept  = default;
 private:
-    VKUH<VkDevice>              device = VKUH<VkDevice>(vkDestroyDevice);
-    VKUH<VkSurfaceKHR>          surface = VKUH<VkSurfaceKHR>();
+    VKUH<VkDevice>              device = {};
+    VKUH<VkSurfaceKHR>          surface = {};
     Nullable<PhysicalDevice>    physicalDevice;
     vk_Queue                    presentationQueue;
     VkInstance                  instance;

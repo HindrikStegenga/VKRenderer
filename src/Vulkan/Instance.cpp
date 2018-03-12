@@ -53,7 +53,7 @@ Instance::Instance(const map<string, string>& params, const VulkanInstanceCreate
     instanceCreateInfo.enabledExtensionCount    = static_cast<uint32_t>(usedExtensions.size());
     instanceCreateInfo.ppEnabledExtensionNames  = usedExtensions.data();
 
-    auto result = vkCreateInstance(&instanceCreateInfo, nullptr, instance.reset());
+    auto result = vkCreateInstance(&instanceCreateInfo, nullptr, instance.reset(vkDestroyInstance));
     handleResult(result, "Instance creation failed!");
 
     for(auto& item : usedValidationLayers)

@@ -27,31 +27,42 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
     renderWindow.set(RenderWindow(width, height, true));
 
     vector<const char*> extensions;
+	vector<const char*> layers;
+	vector<const char*> debugExtensions;
+	vector<const char*> debugLayers;
+	vector<const char*> dExtensions;
+	vector<const char*> ddExtensions;
+
+#ifdef USE_INSTANCE_EXT
     for (auto instanceExtension : instanceExtensions) {
         extensions.push_back(instanceExtension);
     }
-    vector<const char*> layers;
+#endif
+#ifdef USE_INSTANCE_LAYERS
     for (auto instanceLayer : instanceLayers) {
         layers.push_back(instanceLayer);
     }
-    vector<const char*> debugExtensions;
+#endif
+#ifdef USE_DEBUG_INSTANCE_EXT
     for (auto instanceExtension : debugInstanceExtensions) {
         debugExtensions.push_back(instanceExtension);
     }
-    vector<const char*> debugLayers;
+#endif
+#ifdef USE_DEBUG_INSTANCE_LAYERS
     for (auto instanceLayer : debugInstanceLayers) {
         debugLayers.push_back(instanceLayer);
     }
-
-    vector<const char*> dExtensions;
+#endif
+#ifdef USE_DEVICE_EXT
     for (auto extension : deviceExtensions) {
         dExtensions.push_back(extension);
     }
-
-    vector<const char*> ddExtensions;
+#endif
+#ifdef USE_DEBUG_DEVICE_EXT
     for (auto extension : debugDeviceExtensions) {
         ddExtensions.push_back(extension);
     }
+#endif
 
     auto processedExtensions = renderWindow.get().processExtensions(extensions);
 
@@ -155,6 +166,8 @@ void VulkanRenderer::render()
     }
 
     renderMode->render(imageIndex, swapchain.get().retrieveImageAvailableSemaphore(), swapchain.get().retrieveRenderingFinishedSemaphore());
+
+    //swapchain.getMutable().waitForPreviousFramePresented();
 
     mustRecreateSwapchain = false;
     swapchain.getMutable().presentImage(imageIndex, mustRecreateSwapchain);

@@ -19,16 +19,18 @@ public:
     Swapchain& operator=(Swapchain&&) noexcept  = default;
     Swapchain& operator=(const Swapchain&)      = delete;
 private:
-    VKUH<VkSwapchainKHR>        swapchain               = VKUH<VkSwapchainKHR>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkDestroySwapchainKHR);
+    VKUH<VkSwapchainKHR>        swapchain               = {};
     vector<VkImage>             images;
     vector<VKUH<VkImageView>>   imageViews;
 
-    VKUH<VkSemaphore>           imageAvailableSemaphore = VKUH<VkSemaphore>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkDestroySemaphore);
-    VKUH<VkSemaphore>           renderFinishedSemaphore = VKUH<VkSemaphore>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkDestroySemaphore);
+    VKUH<VkSemaphore>           imageAvailableSemaphore = {};
+    VKUH<VkSemaphore>           renderFinishedSemaphore = {};
+    VKUH<VkFence>               previousFramePresented  = {};
 
-    VKUH<VkDeviceMemory>        depthStencilMemory      = VKUH<VkDeviceMemory>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkFreeMemory);
-    VKUH<VkImage>               depthStencilImage       = VKUH<VkImage>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkDestroyImage);
-    VKUH<VkImageView>           depthStencilImageView   = VKUH<VkImageView>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkDestroyImageView);
+
+    VKUH<VkDeviceMemory>        depthStencilMemory      = {};
+    VKUH<VkImage>               depthStencilImage       = {};
+    VKUH<VkImageView>           depthStencilImageView   = {};
 
     VkDevice                device                      = VK_NULL_HANDLE;
     vk_Queue                presentQueue                = {};
@@ -60,6 +62,8 @@ public:
     VkSemaphore retrieveRenderingFinishedSemaphore() const;
 
     uint32_t    retrieveNextImageIndex(bool& mustRecreateSwapchain) const;
+
+    void        waitForPreviousFramePresented();
     void        presentImage(uint32_t imageIndex, bool& mustRecreateSwapchain);
 };
 

@@ -15,7 +15,7 @@ template<typename T>
 class VkUniqueHandle final {
 private:
     T object = VK_NULL_HANDLE;
-    function<void(T)> deleteFunc;
+    function<void(T)> deleteFunc = nullptr;
 public:
     VkUniqueHandle() = default;
     explicit VkUniqueHandle(function<void(T, VkAllocationCallbacks*)> deleteFunc);

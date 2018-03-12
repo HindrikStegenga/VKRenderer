@@ -9,11 +9,19 @@ link_directories($ENV{VULKAN_SDK}/lib)
 if (WIN32)
 
     include_directories("libraries/GLFW/include")
-    link_directories("libraries/GLFW/lib")
+    
+	if (MSVC)
+		link_directories("libraries/GLFW/lib_msvc")
 
+	endif()
+	if (NOT MSVC)
 
-    set(CMAKE_SHARED_LINKER_FLAGS -static -static-libgcc -static-libstdc++)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -static-libgcc -static-libstdc++")
+		link_directories("libraries/GLFW/lib_mingw")
+
+		set(CMAKE_SHARED_LINKER_FLAGS -static -static-libgcc -static-libstdc++)
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static -static-libgcc -static-libstdc++")
+
+	endif()
 
 endif()
 
@@ -24,7 +32,11 @@ endif()
 
 
 if (WIN32)
-    link_libraries(vulkan-1 glfw3 pthread)
+	if (NOT MSVC)
+		link_libraries(vulkan-1 glfw3 pthread)
+	elseif (MSVC)
+		link_libraries(vulkan-1 glfw3)
+	endif()
 elseif(APPLE)
     link_libraries(glfw vulkan)
 else()

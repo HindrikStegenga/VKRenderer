@@ -19,7 +19,7 @@ enum class ShaderModuleType : uint8_t
 
 class ShaderModule final {
 private:
-    VKUH<VkShaderModule>    shaderModule        = VKUH<VkShaderModule>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkDestroyShaderModule);
+    VKUH<VkShaderModule>    shaderModule        = {};
     ShaderModuleType        shaderModuleType    = ShaderModuleType::Null;
     VkDevice                device              = VK_NULL_HANDLE;
 public:

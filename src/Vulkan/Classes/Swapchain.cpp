@@ -298,6 +298,14 @@ void Swapchain::createSemaphores() {
     result = vkCreateSemaphore(device, &createInfo, nullptr, renderFinishedSemaphore.reset(device, vkDestroySemaphore));
     handleResult(result, "Failed to create render finished semaphore!");
 
+    VkFenceCreateInfo fenceCreateInfo = {};
+    fenceCreateInfo.sType   = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    fenceCreateInfo.pNext   = nullptr;
+    fenceCreateInfo.flags   = {};
+
+    result = vkCreateFence(device, &fenceCreateInfo, nullptr, previousFramePresented.reset(device, vkDestroyFence));
+    handleResult(result, "Failed to create previous frame wait fence!");
+
     Logger::success("Succesfully created semaphores!");
 }
 
@@ -359,4 +367,12 @@ void Swapchain::presentImage(uint32_t imageIndex, bool& mustRecreateSwapchain) {
             Logger::failure("Failed getting the next swapchain image!");
             return;
     }
+}
+
+void Swapchain::waitForPreviousFramePresented() {
+
+    VkFence fences[] = { previousFramePresented.get() };
+
+    vkWaitForFences(device, 1, fences, VK_TRUE, std::numeric_limits<uint64_t>::max());
+    vkResetFences(device, 1, fences);
 }

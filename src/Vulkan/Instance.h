@@ -18,7 +18,7 @@ public:
     Instance& operator=(const Instance&)        = delete;
     Instance& operator=(Instance&&) noexcept    = default;
 private:
-    VKUH<VkInstance> instance = VKUH<VkInstance>(vkDestroyInstance);
+    VKUH<VkInstance> instance = {};
 private:
     static void checkLayersAndExtensionsSupport(const vector<const char*>& validationLayers, const vector<const char*>& extensions);
     static pair<bool, string> checkValidationLayerSupport(const vector<const char*>& layers);

@@ -15,7 +15,7 @@ private:
     vector<VKUH<VkRenderPass>> renderPasses             = {};
     vector<VKUH<VkPipeline>> pipelines                  = {};
     vector<VKUH<VkFramebuffer>> frameBuffers            = {};
-    VKUH<VkCommandPool> commandPool                     = VKUH<VkCommandPool>(VK_NULL_HANDLE, VK_NULL_HANDLE, vkDestroyCommandPool);
+    VKUH<VkCommandPool> commandPool                     = {};
     vector<VkCommandBuffer> commandBuffers              = {};
     vk_Queue presentationQueue                          = {};
 public:
