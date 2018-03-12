@@ -17,7 +17,7 @@ vk_RendermodeSwapchainInfo Swapchain::recreateSwapchain(uint32_t width, uint32_t
     vk_SwapchainSettings swapchainSettings = chooseSettings(width, height);
     createSwapchain(swapchainSettings);
 
-    return retrieveRendermodeSwapchainInfo();
+    return getRendermodeSwapchainInfo();
 }
 
 vk_SwapchainSettings Swapchain::chooseSettings(uint32_t width, uint32_t height) {
@@ -270,7 +270,7 @@ void Swapchain::createDepthStencilImageView(VkFormat format) {
     handleResult(result, "Depth/stencil imageView creation has failed!");
 }
 
-vk_RendermodeSwapchainInfo Swapchain::retrieveRendermodeSwapchainInfo() const {
+vk_RendermodeSwapchainInfo Swapchain::getRendermodeSwapchainInfo() const {
 
     vk_RendermodeSwapchainInfo swapchainInfo = {};
 
@@ -298,26 +298,18 @@ void Swapchain::createSemaphores() {
     result = vkCreateSemaphore(device, &createInfo, nullptr, renderFinishedSemaphore.reset(device, vkDestroySemaphore));
     handleResult(result, "Failed to create render finished semaphore!");
 
-    VkFenceCreateInfo fenceCreateInfo = {};
-    fenceCreateInfo.sType   = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    fenceCreateInfo.pNext   = nullptr;
-    fenceCreateInfo.flags   = {};
-
-    result = vkCreateFence(device, &fenceCreateInfo, nullptr, previousFramePresented.reset(device, vkDestroyFence));
-    handleResult(result, "Failed to create previous frame wait fence!");
-
     Logger::success("Succesfully created semaphores!");
 }
 
-VkSemaphore Swapchain::retrieveImageAvailableSemaphore() const {
+VkSemaphore Swapchain::getImageAvailableSemaphore() const {
     return imageAvailableSemaphore.get();
 }
 
-VkSemaphore Swapchain::retrieveRenderingFinishedSemaphore() const {
+VkSemaphore Swapchain::getRenderingFinishedSemaphore() const {
     return renderFinishedSemaphore.get();
 }
 
-uint32_t Swapchain::retrieveNextImageIndex(bool& mustRecreateSwapchain) const {
+uint32_t Swapchain::requestNextImage(bool &mustRecreateSwapchain) const {
 
     uint32_t imageIndex = 0;
     VkResult result = vkAcquireNextImageKHR(device, swapchain.get(), std::numeric_limits<uint64_t>::max(), imageAvailableSemaphore.get(), VK_NULL_HANDLE, &imageIndex);
@@ -337,7 +329,12 @@ uint32_t Swapchain::retrieveNextImageIndex(bool& mustRecreateSwapchain) const {
     }
 }
 
-void Swapchain::presentImage(uint32_t imageIndex, bool& mustRecreateSwapchain) {
+void Swapchain::returnImageForPresent(uint32_t imageIndex, bool &mustRecreateSwapchain) const {
+
+#ifdef __APPLE__
+    //Because MoltenVK is fucking broken, so we need a full gpu sync here....
+    vkDeviceWaitIdle(device);
+#endif
 
     VkSemaphore renderFinished = renderFinishedSemaphore.get();
     VkSwapchainKHR cSwapchain = swapchain.get();
@@ -367,12 +364,4 @@ void Swapchain::presentImage(uint32_t imageIndex, bool& mustRecreateSwapchain) {
             Logger::failure("Failed getting the next swapchain image!");
             return;
     }
-}
-
-void Swapchain::waitForPreviousFramePresented() {
-
-    VkFence fences[] = { previousFramePresented.get() };
-
-    vkWaitForFences(device, 1, fences, VK_TRUE, std::numeric_limits<uint64_t>::max());
-    vkResetFences(device, 1, fences);
 }

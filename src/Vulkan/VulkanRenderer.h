@@ -36,6 +36,8 @@ public:
     void render();
     void resizeWindow(uint32_t width, uint32_t height);
 private:
+    VkDevice getDevice();
+    void resizeWindow(bool mustResize);
     void setupDebugCallback();
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags,
                                                         VkDebugReportObjectTypeEXT objType,

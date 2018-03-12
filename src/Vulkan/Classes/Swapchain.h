@@ -23,10 +23,8 @@ private:
     vector<VkImage>             images;
     vector<VKUH<VkImageView>>   imageViews;
 
-    VKUH<VkSemaphore>           imageAvailableSemaphore = {};
-    VKUH<VkSemaphore>           renderFinishedSemaphore = {};
-    VKUH<VkFence>               previousFramePresented  = {};
-
+    VKUH<VkSemaphore>           imageAvailableSemaphore     = {};
+    VKUH<VkSemaphore>           renderFinishedSemaphore     = {};
 
     VKUH<VkDeviceMemory>        depthStencilMemory      = {};
     VKUH<VkImage>               depthStencilImage       = {};
@@ -56,15 +54,14 @@ private:
     VkFormat chooseDepthStencilFormat(bool requiresStencil = false) const;
 public:
     vk_RendermodeSwapchainInfo recreateSwapchain(uint32_t width, uint32_t height);
-    vk_RendermodeSwapchainInfo retrieveRendermodeSwapchainInfo() const;
+    vk_RendermodeSwapchainInfo getRendermodeSwapchainInfo() const;
 
-    VkSemaphore retrieveImageAvailableSemaphore() const;
-    VkSemaphore retrieveRenderingFinishedSemaphore() const;
+    VkSemaphore getImageAvailableSemaphore() const;
+    VkSemaphore getRenderingFinishedSemaphore() const;
 
-    uint32_t    retrieveNextImageIndex(bool& mustRecreateSwapchain) const;
+    uint32_t    requestNextImage(bool &mustRecreateSwapchain) const;
 
-    void        waitForPreviousFramePresented();
-    void        presentImage(uint32_t imageIndex, bool& mustRecreateSwapchain);
+    void        returnImageForPresent(uint32_t imageIndex, bool &mustRecreateSwapchain) const;
 };
 
 
