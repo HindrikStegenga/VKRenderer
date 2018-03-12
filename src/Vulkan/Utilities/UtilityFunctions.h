@@ -6,6 +6,7 @@
 #define VKRENDERER_VULKANUTILITYFUNCTIONS_H
 
 #include "../Platform/VulkanPlatform.h"
+#include "VkEnums.h"
 #include <iostream>
 
 using std::ostream;
@@ -28,9 +29,18 @@ uint32_t chooseMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t typeFil
 
 VkFormat chooseSupportedFormat(VkPhysicalDevice physicalDevice, const vector<VkFormat>& availableFormats, VkImageTiling tiling, VkFormatFeatureFlags featureFlags);
 
+
+VkCommandPoolCreateInfo getCommandPoolInfo(uint32_t familyIndex, bool individualReset, bool isTransient);
+
+VkCommandBufferAllocateInfo getCommandBufferAllocateInfo(VkCommandPool pool, uint32_t bufferCount, VkCommandBufferLevel level);
+
+VkCommandBufferBeginInfo getCommandBufferBeginInfoPrimary(PrimaryCommandBufferUsage usage);
+
+
+
 VkPipelineInputAssemblyStateCreateInfo getAssemblyInputState(VkPrimitiveTopology topology, bool restartEnable);
 
-VkPipelineViewportStateCreateInfo getViewportState(VkViewport& viewport, VkRect2D& scissors);
+VkPipelineViewportStateCreateInfo getViewportState(const VkViewport& viewport, const VkRect2D& scissors);
 
 
 #endif //VKRENDERER_VULKANUTILITYFUNCTIONS_H

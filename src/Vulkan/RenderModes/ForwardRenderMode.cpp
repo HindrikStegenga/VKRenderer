@@ -216,12 +216,7 @@ void ForwardRenderMode::createRenderpassAndFramebuffers(vk_RendermodeSwapchainIn
 
 void ForwardRenderMode::createCommandPool() {
 
-    VkCommandPoolCreateInfo commandPoolCreateInfo = {};
-
-    commandPoolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-    commandPoolCreateInfo.pNext = nullptr;
-    commandPoolCreateInfo.flags = {};
-    commandPoolCreateInfo.queueFamilyIndex = presentQueue.queueFamily.queueFamilyIndex;
+    auto commandPoolCreateInfo = getCommandPoolInfo(presentQueue.queueFamily.queueFamilyIndex, false, false);
 
     VkResult result = vkCreateCommandPool(device, &commandPoolCreateInfo, nullptr, commandPool.reset(device, vkDestroyCommandPool));
     handleResult(result, "Command pool creation failed!");
@@ -234,12 +229,7 @@ void ForwardRenderMode::createCommandBuffers(vk_RendermodeSwapchainInfo swapchai
     commandBuffers.clear();
     commandBuffers.resize(swapchainInfo.colorImageViews.size());
 
-    VkCommandBufferAllocateInfo allocateInfo    = {};
-    allocateInfo.sType                          = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocateInfo.pNext                          = nullptr;
-    allocateInfo.commandPool                    = commandPool.get();
-    allocateInfo.commandBufferCount             = static_cast<uint32_t >(commandBuffers.size());
-    allocateInfo.level                          = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    auto allocateInfo = getCommandBufferAllocateInfo(commandPool.get(),static_cast<uint32_t >(commandBuffers.size()), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
     VkResult result = vkAllocateCommandBuffers(device, &allocateInfo, commandBuffers.data());
     handleResult(result, "Failed allocating command buffers!");
@@ -249,11 +239,7 @@ void ForwardRenderMode::createCommandBuffers(vk_RendermodeSwapchainInfo swapchai
 
         //Record buffers here!
 
-        VkCommandBufferBeginInfo beginInfo  = {};
-        beginInfo.sType                     = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        beginInfo.pNext                     = nullptr;
-        beginInfo.flags                     = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-        beginInfo.pInheritanceInfo          = nullptr;
+        auto beginInfo = getCommandBufferBeginInfoPrimary(PrimaryCommandBufferUsage::Simultaneous);
 
         vkBeginCommandBuffer(commandBuffers[i], &beginInfo);
 

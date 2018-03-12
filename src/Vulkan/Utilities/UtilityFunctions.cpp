@@ -167,7 +167,7 @@ VkPipelineInputAssemblyStateCreateInfo getAssemblyInputState(VkPrimitiveTopology
     return inputAssemblyStateCreateInfo;
 }
 
-VkPipelineViewportStateCreateInfo getViewportState(VkViewport &viewport, VkRect2D &scissor) {
+VkPipelineViewportStateCreateInfo getViewportState(const VkViewport &viewport, const VkRect2D &scissor) {
 
     VkPipelineViewportStateCreateInfo viewportStateCreateInfo   = {};
     viewportStateCreateInfo.sType                               = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -180,4 +180,44 @@ VkPipelineViewportStateCreateInfo getViewportState(VkViewport &viewport, VkRect2
     return viewportStateCreateInfo;
 }
 
+VkCommandPoolCreateInfo getCommandPoolInfo(uint32_t familyIndex, bool individualReset, bool isTransient) {
 
+    VkCommandPoolCreateInfo commandPoolCreateInfo = {};
+
+    VkCommandPoolCreateFlags bits = {};
+
+    if(isTransient)
+        bits |= VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
+    if (individualReset)
+        bits |= VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+
+    commandPoolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    commandPoolCreateInfo.pNext = nullptr;
+    commandPoolCreateInfo.flags = bits;
+    commandPoolCreateInfo.queueFamilyIndex = familyIndex;
+
+    return commandPoolCreateInfo;
+}
+
+VkCommandBufferBeginInfo getCommandBufferBeginInfoPrimary(PrimaryCommandBufferUsage usage) {
+
+    VkCommandBufferBeginInfo beginInfo  = {};
+    beginInfo.sType                     = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.pNext                     = nullptr;
+    beginInfo.flags                     = static_cast<VkCommandBufferUsageFlags>(usage);
+    beginInfo.pInheritanceInfo          = nullptr;
+
+    return beginInfo;
+}
+
+VkCommandBufferAllocateInfo getCommandBufferAllocateInfo(VkCommandPool pool, uint32_t bufferCount, VkCommandBufferLevel level) {
+
+    VkCommandBufferAllocateInfo allocateInfo    = {};
+    allocateInfo.sType                          = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocateInfo.pNext                          = nullptr;
+    allocateInfo.commandPool                    = pool;
+    allocateInfo.commandBufferCount             = bufferCount;
+    allocateInfo.level                          = level;
+
+    return allocateInfo;
+}
