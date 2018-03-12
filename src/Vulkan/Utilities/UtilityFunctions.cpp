@@ -155,4 +155,29 @@ uint32_t chooseMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t typeFil
     return std::numeric_limits<uint32_t>::max();
 }
 
+VkPipelineInputAssemblyStateCreateInfo getAssemblyInputState(VkPrimitiveTopology topology, bool restartEnable) {
+
+    VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo = {};
+    inputAssemblyStateCreateInfo.sType                                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+    inputAssemblyStateCreateInfo.pNext                                  = nullptr;
+    inputAssemblyStateCreateInfo.topology                               = topology;
+    inputAssemblyStateCreateInfo.primitiveRestartEnable                 = restartEnable ? VK_TRUE : VK_FALSE;
+    inputAssemblyStateCreateInfo.flags                                  = {};
+
+    return inputAssemblyStateCreateInfo;
+}
+
+VkPipelineViewportStateCreateInfo getViewportState(VkViewport &viewport, VkRect2D &scissor) {
+
+    VkPipelineViewportStateCreateInfo viewportStateCreateInfo   = {};
+    viewportStateCreateInfo.sType                               = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+    viewportStateCreateInfo.pNext                               = nullptr;
+    viewportStateCreateInfo.viewportCount                       = 1;
+    viewportStateCreateInfo.pViewports                          = &viewport;
+    viewportStateCreateInfo.scissorCount                        = 1;
+    viewportStateCreateInfo.pScissors                           = &scissor;
+
+    return viewportStateCreateInfo;
+}
+
 

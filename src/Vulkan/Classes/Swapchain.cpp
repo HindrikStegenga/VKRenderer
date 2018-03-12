@@ -278,6 +278,21 @@ vk_RendermodeSwapchainInfo Swapchain::getRendermodeSwapchainInfo() const {
     swapchainInfo.height = settings.extent.height;
     swapchainInfo.format = settings.surfaceFormat.format;
 
+    VkViewport viewport = {};
+    viewport.x          = 0.0f;
+    viewport.y          = 0.0f;
+    viewport.maxDepth   = 1.0;
+    viewport.minDepth   = 0.0f;
+    viewport.width      = swapchainInfo.width;
+    viewport.height     = swapchainInfo.height;
+
+    VkRect2D scissor    = {};
+    scissor.offset      = VkOffset2D { 0, 0 };
+    scissor.extent      = VkExtent2D { swapchainInfo.width, swapchainInfo.height };
+
+    swapchainInfo.fullscreenViewport = viewport;
+    swapchainInfo.fullscreenScissor = scissor;
+
     swapchainInfo.colorImageViews.resize(imageViews.size());
     for(size_t i = 0; i < imageViews.size(); ++i) {
         swapchainInfo.colorImageViews[i] = imageViews[i].get();

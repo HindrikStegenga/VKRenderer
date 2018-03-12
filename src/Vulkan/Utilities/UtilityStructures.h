@@ -33,6 +33,8 @@ struct vk_RendermodeSwapchainInfo {
     uint32_t            height              = 0;
     VkFormat            format              = VK_FORMAT_UNDEFINED;
     vector<VkImageView> colorImageViews     = {};
+    VkViewport          fullscreenViewport  = {};
+    VkRect2D            fullscreenScissor   = {};
 
 };
 

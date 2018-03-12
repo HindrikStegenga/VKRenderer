@@ -38,7 +38,7 @@ private:
     static void onWindowResize(GLFWwindow* window, int width, int height);
 public:
     bool pollWindowEvents() const;
-    void retrieveCurrentSize(uint32_t& width, uint32_t& height) const;
+    void getCurrentSize(uint32_t &width, uint32_t &height) const;
     VkSurfaceKHR getWindowSurface(VkInstance instance);
     vector<const char*> processExtensions(const vector<const char *> & instanceExtensions) const;
 };

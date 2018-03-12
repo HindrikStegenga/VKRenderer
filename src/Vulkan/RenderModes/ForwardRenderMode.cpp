@@ -4,6 +4,7 @@
 
 #include "ForwardRenderMode.h"
 #include "../Classes/ShaderModule.h"
+#include "../Utilities/UtilityFunctions.h"
 
 ForwardRenderMode::ForwardRenderMode(const ForwardRenderModeCreateInfo &createInfo) : VulkanRenderMode({ "Forward", createInfo.deviceInfo, createInfo.surface })
 {
@@ -57,32 +58,10 @@ void ForwardRenderMode::createRenderMode(vk_RendermodeSwapchainInfo swapchainInf
     vertexInputStateCreateInfo.vertexAttributeDescriptionCount      = 0;
     vertexInputStateCreateInfo.pVertexAttributeDescriptions         = nullptr;
 
-    VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo = {};
-    inputAssemblyStateCreateInfo.sType                                  = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-    inputAssemblyStateCreateInfo.pNext                                  = nullptr;
-    inputAssemblyStateCreateInfo.topology                               = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-    inputAssemblyStateCreateInfo.primitiveRestartEnable                 = VK_FALSE;
-    inputAssemblyStateCreateInfo.flags                                  = {};
-
-    VkViewport viewport = {};
-    viewport.x          = 0.0f;
-    viewport.y          = 0.0f;
-    viewport.maxDepth   = 1.0;
-    viewport.minDepth   = 0.0f;
-    viewport.width      = swapchainInfo.width;
-    viewport.height     = swapchainInfo.height;
-
-    VkRect2D scissor    = {};
-    scissor.offset      = VkOffset2D { 0, 0 };
-    scissor.extent      = VkExtent2D { swapchainInfo.width, swapchainInfo.height };
-
-    VkPipelineViewportStateCreateInfo viewportStateCreateInfo   = {};
-    viewportStateCreateInfo.sType                               = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-    viewportStateCreateInfo.pNext                               = nullptr;
-    viewportStateCreateInfo.viewportCount                       = 1;
-    viewportStateCreateInfo.pViewports                          = &viewport;
-    viewportStateCreateInfo.scissorCount                        = 1;
-    viewportStateCreateInfo.pScissors                           = &scissor;
+    auto inputAssemblyState = getAssemblyInputState(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, false);
+    auto viewport           = swapchainInfo.fullscreenViewport;
+    auto scissor            = swapchainInfo.fullscreenScissor;
+    auto viewportState      = getViewportState(viewport, scissor);
 
     VkPipelineRasterizationStateCreateInfo rasterizationStateCreateInfo = {};
     rasterizationStateCreateInfo.sType                                  = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
@@ -132,13 +111,6 @@ void ForwardRenderMode::createRenderMode(vk_RendermodeSwapchainInfo swapchainInf
     colorBlendStateCreateInfo.blendConstants[2]                     = 0.0f;
     colorBlendStateCreateInfo.blendConstants[3]                     = 0.0f;
 
-    VkPipelineDynamicStateCreateInfo dynamicStateCreateInfo = {};
-    dynamicStateCreateInfo.sType                            = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-    dynamicStateCreateInfo.pNext                            = nullptr;
-    dynamicStateCreateInfo.flags                            = {};
-    dynamicStateCreateInfo.dynamicStateCount                = 0;
-    dynamicStateCreateInfo.pDynamicStates                   = nullptr;
-
     VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {};
     pipelineLayoutCreateInfo.sType                      = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutCreateInfo.pNext                      = nullptr;
@@ -166,10 +138,10 @@ void ForwardRenderMode::createRenderMode(vk_RendermodeSwapchainInfo swapchainInf
     graphicsPipelineCreateInfo.layout                       = pipelineLayouts.front().get();
     graphicsPipelineCreateInfo.basePipelineHandle           = VK_NULL_HANDLE;
     graphicsPipelineCreateInfo.basePipelineIndex            = -1;
-    graphicsPipelineCreateInfo.pInputAssemblyState          = &inputAssemblyStateCreateInfo;
+    graphicsPipelineCreateInfo.pInputAssemblyState          = &inputAssemblyState;
     graphicsPipelineCreateInfo.pVertexInputState            = &vertexInputStateCreateInfo;
     graphicsPipelineCreateInfo.pDepthStencilState           = nullptr; //No depth buffering
-    graphicsPipelineCreateInfo.pViewportState               = &viewportStateCreateInfo;
+    graphicsPipelineCreateInfo.pViewportState               = &viewportState;
     graphicsPipelineCreateInfo.pRasterizationState          = &rasterizationStateCreateInfo;
     graphicsPipelineCreateInfo.pMultisampleState            = &multisampleStateCreateInfo;
     graphicsPipelineCreateInfo.pColorBlendState             = &colorBlendStateCreateInfo;

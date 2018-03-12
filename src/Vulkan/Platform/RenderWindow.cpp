@@ -159,7 +159,7 @@ void RenderWindow::setRendererPointer(VulkanRenderer* renderer) {
     this->renderer = renderer;
 }
 
-void RenderWindow::retrieveCurrentSize(uint32_t& width, uint32_t& height) const {
+void RenderWindow::getCurrentSize(uint32_t &width, uint32_t &height) const {
 
     int iW, iH;
 

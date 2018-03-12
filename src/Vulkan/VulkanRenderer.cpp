@@ -133,7 +133,7 @@ void VulkanRenderer::resizeWindow(bool mustResize) {
     if(mustResize)
     {
         uint32_t width, height;
-        renderWindow.get().retrieveCurrentSize(width, height);
+        renderWindow.get().getCurrentSize(width, height);
         resizeWindow(width, height);
     }
 }
@@ -189,5 +189,3 @@ void VulkanRenderer::render()
 VkDevice VulkanRenderer::getDevice() {
     return device.get().getPresentDeviceInfo().logical;
 }
-
-

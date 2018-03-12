@@ -28,7 +28,9 @@ uint32_t chooseMemoryTypeIndex(VkPhysicalDevice physicalDevice, uint32_t typeFil
 
 VkFormat chooseSupportedFormat(VkPhysicalDevice physicalDevice, const vector<VkFormat>& availableFormats, VkImageTiling tiling, VkFormatFeatureFlags featureFlags);
 
+VkPipelineInputAssemblyStateCreateInfo getAssemblyInputState(VkPrimitiveTopology topology, bool restartEnable);
 
+VkPipelineViewportStateCreateInfo getViewportState(VkViewport& viewport, VkRect2D& scissors);
 
 
 #endif //VKRENDERER_VULKANUTILITYFUNCTIONS_H
