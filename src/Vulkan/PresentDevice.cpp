@@ -64,21 +64,45 @@ pair<PhysicalDevice, vk_QueueFamily> PresentDevice::selectPhysicalDevice(VkInsta
 
 void PresentDevice::createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice, vk_QueueFamily> deviceAndQueueFamily, const vector<const char*>& extensions, VkPhysicalDeviceFeatures features)
 {
+    vector<VkDeviceQueueCreateInfo> queues = {};
+
+    float priority = 1.0;
+
     VkDeviceQueueCreateInfo presentQueueCreateInfo  = {};
     presentQueueCreateInfo.sType                    = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
     presentQueueCreateInfo.pNext                    = nullptr;
     presentQueueCreateInfo.queueCount               = 1;
     presentQueueCreateInfo.queueFamilyIndex         = deviceAndQueueFamily.second.queueFamilyIndex;
     presentQueueCreateInfo.flags                    = {};
-    float priority = 1.0;
     presentQueueCreateInfo.pQueuePriorities         = &priority;
+
+    queues.push_back(presentQueueCreateInfo);
+
+
+    pair<bool, vk_QueueFamily> transferFamily = deviceAndQueueFamily.first.hasTransferQueueFamily();
+
+    if(transferFamily.first) {
+
+        VkDeviceQueueCreateInfo transferQueue  = {};
+        transferQueue.sType                    = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        transferQueue.pNext                    = nullptr;
+        transferQueue.queueCount               = transferFamily.second.queueFamilyProperties.queueCount;
+        transferQueue.queueFamilyIndex         = transferFamily.second.queueFamilyIndex;
+        transferQueue.flags                    = {};
+        transferQueue.pQueuePriorities         = &priority;
+
+        queues.push_back(transferQueue);
+
+        Logger::log("Found transfer queue. Will enable it!");
+    }
+
 
     VkDeviceCreateInfo deviceCreateInfo     = {};
     deviceCreateInfo.sType                  = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     deviceCreateInfo.pNext                  = nullptr;
     deviceCreateInfo.flags                  = {};
-    deviceCreateInfo.queueCreateInfoCount   = 1;
-    deviceCreateInfo.pQueueCreateInfos      = &presentQueueCreateInfo;
+    deviceCreateInfo.queueCreateInfoCount   = static_cast<uint32_t >(queues.size());
+    deviceCreateInfo.pQueueCreateInfos      = queues.data();
     deviceCreateInfo.enabledLayerCount      = 0;
     deviceCreateInfo.ppEnabledLayerNames    = nullptr;
     deviceCreateInfo.enabledExtensionCount  = static_cast<uint32_t >(extensions.size());
@@ -88,10 +112,26 @@ void PresentDevice::createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice,
     VkResult result = vkCreateDevice(deviceAndQueueFamily.first.physicalDevice, &deviceCreateInfo, nullptr, device.reset(vkDestroyDevice));
     handleResult(result, "Device creation has failed!");
 
+    //TODO: FIX THE PRIORITIES!
+
     physicalDevice.set(deviceAndQueueFamily.first);
     vk_Queue present = {};
     present.queueFamily = deviceAndQueueFamily.second;
+
     vkGetDeviceQueue(device.get(), deviceAndQueueFamily.second.queueFamilyIndex, 0, &present.queue);
+
+    if(transferFamily.first) {
+        transferQueues.clear();
+        transferQueues.resize(transferFamily.second.queueFamilyProperties.queueCount);
+        for(uint32_t i = 0; i < transferFamily.second.queueFamilyProperties.queueCount; ++i) {
+
+            vk_Queue transfer = {};
+            transfer.queueFamily = transferFamily.second;
+            vkGetDeviceQueue(device.get(), transferFamily.second.queueFamilyIndex, i, &transfer.queue);
+            transferQueues[i] = transfer;
+        }
+    }
+
     presentationQueue = present;
     Logger::success("Logical device creation succeeded!");
 

@@ -36,7 +36,7 @@ VkCommandBufferAllocateInfo getCommandBufferAllocateInfo(VkCommandPool pool, uin
 
 VkCommandBufferBeginInfo getCommandBufferBeginInfoPrimary(PrimaryCommandBufferUsage usage);
 
-
+VkPipelineMultisampleStateCreateInfo getMultisampleState(VkSampleCountFlagBits sampleCount);
 
 VkPipelineInputAssemblyStateCreateInfo getAssemblyInputState(VkPrimitiveTopology topology, bool restartEnable);
 

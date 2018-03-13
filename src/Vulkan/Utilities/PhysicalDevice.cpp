@@ -172,3 +172,20 @@ pair<bool, vk_QueueFamily> PhysicalDevice::meetsRequiredSurfaceSupport(VkPhysica
     }
     return make_pair(false, vk_QueueFamily {});
 }
+
+pair<bool, vk_QueueFamily> PhysicalDevice::hasTransferQueueFamily() const
+{
+
+    for (const auto& qf : queueFamilies) {
+
+        if(qf.queueFamilyProperties.queueCount == 0)
+            continue;
+
+        if(qf.queueFamilyProperties.queueFlags & VK_QUEUE_COMPUTE_BIT || qf.queueFamilyProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+            continue;
+
+        if(qf.queueFamilyProperties.queueFlags & VK_QUEUE_TRANSFER_BIT)
+            return make_pair(true, qf);
+    }
+    return make_pair(false, vk_QueueFamily{});
+}

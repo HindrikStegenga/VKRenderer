@@ -122,6 +122,9 @@ VkBool32 VulkanRenderer::debugCallback(VkDebugReportFlagsEXT flags, VkDebugRepor
 
 void VulkanRenderer::resizeWindow(uint32_t width, uint32_t height) {
 
+    if(width == 0 && height == 0)
+        return;
+
     Logger::log("Window will be resized: " + std::to_string(width) + " - " + std::to_string(height));
 
     vk_RendermodeSwapchainInfo swapchainInfo = swapchain.getMutable().recreateSwapchain(width, height);
@@ -177,6 +180,8 @@ void VulkanRenderer::render()
     bool mustResize = false;
     uint32_t imageIndex = swap.requestNextImage(mustResize);
     resizeWindow(mustResize);
+    if(imageIndex == std::numeric_limits<uint32_t>::max())
+        return;
 
 
     renderMode->render(imageIndex, swap.getImageAvailableSemaphore(), swap.getRenderingFinishedSemaphore());

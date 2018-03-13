@@ -77,16 +77,7 @@ void ForwardRenderMode::createRenderMode(vk_RendermodeSwapchainInfo swapchainInf
     rasterizationStateCreateInfo.depthBiasClamp                         = 0.0f;
     rasterizationStateCreateInfo.depthBiasSlopeFactor                   = 0.0f;
 
-    VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo = {};
-    multisampleStateCreateInfo.sType                                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-    multisampleStateCreateInfo.pNext                                = nullptr;
-    multisampleStateCreateInfo.flags                                = {};
-    multisampleStateCreateInfo.alphaToCoverageEnable                = VK_FALSE;
-    multisampleStateCreateInfo.alphaToOneEnable                     = VK_FALSE;
-    multisampleStateCreateInfo.sampleShadingEnable                  = VK_FALSE;
-    multisampleStateCreateInfo.minSampleShading                     = 1.0f;
-    multisampleStateCreateInfo.pSampleMask                          = nullptr;
-    multisampleStateCreateInfo.rasterizationSamples                 = VK_SAMPLE_COUNT_1_BIT;
+    auto multisampleStateCreateInfo = getMultisampleState(VK_SAMPLE_COUNT_1_BIT);
 
     VkPipelineColorBlendAttachmentState colorBlendAttachmentState   = {};
     colorBlendAttachmentState.colorWriteMask                        = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;

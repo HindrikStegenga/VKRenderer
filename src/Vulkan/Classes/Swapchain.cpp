@@ -336,7 +336,6 @@ uint32_t Swapchain::requestNextImage(bool &mustRecreateSwapchain) const {
             mustRecreateSwapchain = true;
             return std::numeric_limits<uint32_t >::max();
         case VK_SUBOPTIMAL_KHR:
-            mustRecreateSwapchain = true;
             return imageIndex;
         default:
             Logger::failure("Failed getting the next swapchain image!");
@@ -373,7 +372,6 @@ void Swapchain::returnImageForPresent(uint32_t imageIndex, bool &mustRecreateSwa
             mustRecreateSwapchain = true;
             return;
         case VK_SUBOPTIMAL_KHR:
-            mustRecreateSwapchain = true;
             return;
         default:
             Logger::failure("Failed getting the next swapchain image!");

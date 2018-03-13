@@ -221,3 +221,19 @@ VkCommandBufferAllocateInfo getCommandBufferAllocateInfo(VkCommandPool pool, uin
 
     return allocateInfo;
 }
+
+VkPipelineMultisampleStateCreateInfo getMultisampleState(VkSampleCountFlagBits sampleCount) {
+
+    VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo = {};
+    multisampleStateCreateInfo.sType                                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+    multisampleStateCreateInfo.pNext                                = nullptr;
+    multisampleStateCreateInfo.flags                                = {};
+    multisampleStateCreateInfo.alphaToCoverageEnable                = VK_FALSE;
+    multisampleStateCreateInfo.alphaToOneEnable                     = VK_FALSE;
+    multisampleStateCreateInfo.sampleShadingEnable                  = VK_FALSE;
+    multisampleStateCreateInfo.minSampleShading                     = 1.0f;
+    multisampleStateCreateInfo.pSampleMask                          = nullptr;
+    multisampleStateCreateInfo.rasterizationSamples                 = sampleCount;
+
+    return multisampleStateCreateInfo;
+}

@@ -24,6 +24,7 @@ private:
     VKUH<VkSurfaceKHR>          surface = {};
     Nullable<PhysicalDevice>    physicalDevice;
     vk_Queue                    presentationQueue;
+    vector<vk_Queue>            transferQueues;
     VkInstance                  instance;
 private:
     pair<PhysicalDevice, vk_QueueFamily>

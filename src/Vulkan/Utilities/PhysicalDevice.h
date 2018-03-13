@@ -28,6 +28,8 @@ public:
     pair<bool, vk_QueueFamily> isSuitableAndReturnPresentQueue(const vector<const char *> &extensionNames,
                                                               const VkPhysicalDeviceFeatures &requiredFeatures,
                                                               VkSurfaceKHR surface);
+
+    pair<bool, vk_QueueFamily> hasTransferQueueFamily() const;
 private:
     static bool meetsRequiredPhysicalDeviceFeatures(const VkPhysicalDeviceFeatures& features, const VkPhysicalDeviceFeatures& requirements);
     static pair<bool, string> meetsRequiredExtensions(const vector<VkExtensionProperties> &extensions, const vector<const char *>& requirements);
