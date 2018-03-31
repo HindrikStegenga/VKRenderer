@@ -5,10 +5,11 @@
 #include "VulkanRenderer.h"
 #include "../Utilities/ConfigFileReader.h"
 #include "RenderModes/ForwardRenderMode.h"
+#include "Utilities/Parsable/VertexLayout.h"
+
 
 VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEnabled) : debugEnabled(debugEnabled ? VK_TRUE : VK_FALSE)
 {
-
     auto configReader = ConfigFileReader();
 
     configReader.parseFile("config/vulkan.cfg");
@@ -90,6 +91,9 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
     swapchain.set(Swapchain(swapchainCreateInfo));
     
     const string renderMode = configReader.map().at("renderMode");
+
+    VertexLayout layout("PositionTexCoordNormals");
+
     if (renderMode == string("Forward")) {
 
         ForwardRenderModeCreateInfo createInfo = {};

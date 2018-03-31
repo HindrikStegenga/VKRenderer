@@ -347,7 +347,7 @@ void Swapchain::returnImageForPresent(uint32_t imageIndex, bool &mustRecreateSwa
 
 #ifdef __APPLE__
     //Because MoltenVK is fucking broken, so we need a full gpu sync here....
-    vkDeviceWaitIdle(device);
+    vkQueueWaitIdle(presentQueue.queue);
 #endif
 
     VkSemaphore renderFinished = renderFinishedSemaphore.get();
