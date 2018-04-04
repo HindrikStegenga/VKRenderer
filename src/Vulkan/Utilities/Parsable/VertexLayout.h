@@ -14,7 +14,7 @@ using json = nlohmann::json;
 
 class VertexLayout final {
 private:
-    string                  name            = "";
+    string                  vlName            = "";
     VkVertexInputRate       inputRate       = VK_VERTEX_INPUT_RATE_MAX_ENUM;
     uint32_t                stride          = 0;
     uint32_t                binding         = 0;
@@ -30,6 +30,7 @@ public:
     VertexLayout& operator=(const VertexLayout&) = default;
     VertexLayout& operator=(VertexLayout&) = delete;
 
+    const string& name();
 
 
 

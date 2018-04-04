@@ -37,7 +37,7 @@ bool VertexLayout::parseInputRate(string &value, VkVertexInputRate &inputRate) {
 
 void VertexLayout::parseLayout(json& object) {
 
-    name = object["name"];
+    vlName = object["name"];
     binding = object["binding"];
 
     string pInput = object["inputRate"];
@@ -62,5 +62,9 @@ void VertexLayout::parseLayout(json& object) {
         offset += attribute.size();
     }
     stride = offset;
+}
+
+const string &VertexLayout::name() {
+    return vlName;
 }
 
