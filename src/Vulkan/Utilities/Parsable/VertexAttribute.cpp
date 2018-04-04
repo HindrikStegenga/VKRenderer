@@ -4,33 +4,6 @@
 
 #include "VertexAttribute.h"
 
-VertexAttribute VertexAttribute::parseFromJSON(json object) {
-
-    VertexAttribute attrib = {};
-
-    string parsedName = object["name"];
-
-    if(parsedName.size() >= attribNameMaxSize) {
-        Logger::failure("Too large name size!");
-    }
-
-    uint32_t idx = 0;
-    for(char& a : parsedName) {
-        attrib.attribName[idx] = a;
-        idx++;
-    }
-
-    attrib.attribute.location = object["location"];
-    if(!parseFormat(object["type"], attrib.attribute.format))
-    {
-        Logger::failure("Failed to parse type!");
-    }
-
-    attrib.attribute.binding = object["binding"];
-
-    return attrib;
-}
-
 string VertexAttribute::name() {
     return std::string(attribName.data());
 }
@@ -168,4 +141,35 @@ uint32_t VertexAttribute::size() {
         default:
             return 0;
     }
+}
+
+VertexAttribute::VertexAttribute(json object) {
+
+    string parsedName = object["name"];
+
+    if(parsedName.size() >= attribNameMaxSize) {
+        Logger::failure("Too large name size!");
+    }
+
+    uint32_t idx = 0;
+    for(char& a : parsedName) {
+        attribName[idx] = a;
+        idx++;
+    }
+
+    attribute.location = object["location"];
+    if(!parseFormat(object["type"], attribute.format))
+    {
+        Logger::failure("Failed to parse type!");
+    }
+
+    attribute.binding = object["binding"];
+}
+
+VkVertexInputAttributeDescription VertexAttribute::attributeDescription() {
+    return attribute;
+}
+
+void VertexAttribute::setOffset(uint32_t offset) {
+    attribute.offset = offset;
 }

@@ -13,17 +13,27 @@ using json = nlohmann::json;
 
 struct VertexAttribute {
 private:
-
     constexpr static uint32_t attribNameMaxSize = 16;
 
-    std::array<char, attribNameMaxSize>  attribName      = {};
+    std::array<char, attribNameMaxSize>  attribName     = {};
+    VkVertexInputAttributeDescription attribute         = {};
+
 public:
-    VkVertexInputAttributeDescription attribute = {};
+    explicit VertexAttribute(json object);
+    ~VertexAttribute() = default;
+
+    VertexAttribute(const VertexAttribute&) = default;
+    VertexAttribute(VertexAttribute&&)      = default;
+
+    VertexAttribute& operator=(const VertexAttribute&)  = default;
+    VertexAttribute& operator=(VertexAttribute&&)       = default;
+
 public:
     string name();
     uint32_t size();
+    void setOffset(uint32_t offset);
+    VkVertexInputAttributeDescription attributeDescription();
 public:
-    static VertexAttribute parseFromJSON(json object);
     static bool parseFormat(string value, VkFormat& format);
 };
 

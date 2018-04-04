@@ -93,6 +93,8 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
     const string renderMode = configReader.map().at("renderMode");
 
     VertexLayout layout("PositionTexCoordNormals");
+    VertexLayout layout2("PositionColor");
+
 
     if (renderMode == string("Forward")) {
 

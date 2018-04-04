@@ -49,14 +49,7 @@ void ForwardRenderMode::createRenderMode(vk_RendermodeSwapchainInfo swapchainInf
 
     std::array<VkPipelineShaderStageCreateInfo, 2> shaderModules = { vertexModule.retrieveShaderStageInfo(), fragmentModule.retrieveShaderStageInfo() };
 
-
-    VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = {};
-    vertexInputStateCreateInfo.sType                                = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    vertexInputStateCreateInfo.pNext                                = nullptr;
-    vertexInputStateCreateInfo.vertexBindingDescriptionCount        = 0;
-    vertexInputStateCreateInfo.pVertexBindingDescriptions           = nullptr;
-    vertexInputStateCreateInfo.vertexAttributeDescriptionCount      = 0;
-    vertexInputStateCreateInfo.pVertexAttributeDescriptions         = nullptr;
+    auto vertexInputState   = getVertexInputState({},{});
 
     auto inputAssemblyState = getAssemblyInputState(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, false);
     auto viewport           = swapchainInfo.fullscreenViewport;
@@ -130,7 +123,7 @@ void ForwardRenderMode::createRenderMode(vk_RendermodeSwapchainInfo swapchainInf
     graphicsPipelineCreateInfo.basePipelineHandle           = VK_NULL_HANDLE;
     graphicsPipelineCreateInfo.basePipelineIndex            = -1;
     graphicsPipelineCreateInfo.pInputAssemblyState          = &inputAssemblyState;
-    graphicsPipelineCreateInfo.pVertexInputState            = &vertexInputStateCreateInfo;
+    graphicsPipelineCreateInfo.pVertexInputState            = &vertexInputState;
     graphicsPipelineCreateInfo.pDepthStencilState           = nullptr; //No depth buffering
     graphicsPipelineCreateInfo.pViewportState               = &viewportState;
     graphicsPipelineCreateInfo.pRasterizationState          = &rasterizationStateCreateInfo;

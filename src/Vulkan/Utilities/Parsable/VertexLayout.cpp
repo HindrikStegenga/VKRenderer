@@ -4,6 +4,8 @@
 
 #include "VertexLayout.h"
 
+
+
 VertexLayout::VertexLayout(const string &name)
 {
 
@@ -17,54 +19,45 @@ VertexLayout::VertexLayout(const string &name)
 
     auto json_rep = json::parse(buffer.str());
 
-    parseLayout(json_rep);
+    vlName = json_rep["name"];
+
+    auto bindingSet = json_rep["bindings"];
+    for(const auto& binding : bindingSet)
+    {
+        VertexBinding b(binding);
+        bindings.emplace_back(b);
+    }
+
     file.close();
 
 }
 
-bool VertexLayout::parseInputRate(string &value, VkVertexInputRate &inputRate) {
-
-    if(value == "perVertex") {
-        inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-        return true;
-    }
-    if(value == "perInstance") {
-        inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
-        return true;
-    }
-    return false;
-}
-
-void VertexLayout::parseLayout(json& object) {
-
-    vlName = object["name"];
-    binding = object["binding"];
-
-    string pInput = object["inputRate"];
-    if(!parseInputRate(pInput, inputRate)){
-        Logger::failure("Could not parse vertex layout inputrate!");
-    }
-
-    auto attribs = object["attributes"];
-    for(auto& attrib : attribs)
-    {
-        VertexAttribute a = VertexAttribute::parseFromJSON(attrib);
-        attributes.emplace_back(a);
-    }
-
-    std::sort(std::begin(attributes), std::end(attributes), [](const VertexAttribute& a, const VertexAttribute& b) -> bool {
-         return a.attribute.location < b.attribute.location;
-    });
-
-    uint32_t offset = 0;
-    for (auto &attribute : attributes) {
-        attribute.attribute.offset = offset;
-        offset += attribute.size();
-    }
-    stride = offset;
-}
-
-const string &VertexLayout::name() {
+const string& VertexLayout::name() {
     return vlName;
 }
 
+const vector<VkVertexInputAttributeDescription> VertexLayout::attributeDescriptions() {
+
+    vector<VkVertexInputAttributeDescription> values;
+
+    for(auto& binding : bindings)
+    {
+        for(auto& attribute : binding.attributeDescriptions())
+        {
+            values.push_back(attribute);
+        }
+    }
+    return values;
+}
+
+const vector<VkVertexInputBindingDescription> VertexLayout::bindingDescriptions() {
+
+    vector<VkVertexInputBindingDescription> descriptions = {};
+
+    for(auto& item : bindings)
+    {
+        descriptions.emplace_back(item.bindingDescription());
+    }
+
+    return descriptions;
+}

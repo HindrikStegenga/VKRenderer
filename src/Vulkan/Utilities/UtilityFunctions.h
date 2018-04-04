@@ -7,6 +7,7 @@
 
 #include "../Platform/VulkanPlatform.h"
 #include "VkEnums.h"
+#include "Parsable/VertexLayout.h"
 #include <iostream>
 
 using std::ostream;
@@ -42,5 +43,6 @@ VkPipelineInputAssemblyStateCreateInfo getAssemblyInputState(VkPrimitiveTopology
 
 VkPipelineViewportStateCreateInfo getViewportState(const VkViewport& viewport, const VkRect2D& scissors);
 
+VkPipelineVertexInputStateCreateInfo getVertexInputState(const vector<VkVertexInputBindingDescription>& bindings, const vector<VkVertexInputAttributeDescription>& attributes);
 
 #endif //VKRENDERER_VULKANUTILITYFUNCTIONS_H

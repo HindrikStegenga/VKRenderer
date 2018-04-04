@@ -237,3 +237,20 @@ VkPipelineMultisampleStateCreateInfo getMultisampleState(VkSampleCountFlagBits s
 
     return multisampleStateCreateInfo;
 }
+
+VkPipelineVertexInputStateCreateInfo getVertexInputState(const vector<VkVertexInputBindingDescription>& bindings,
+                                                         const vector<VkVertexInputAttributeDescription>& attributes) {
+
+    auto bindingCount = static_cast<uint32_t >(bindings.size());
+    auto attributesCount = static_cast<uint32_t >(attributes.size());
+
+    VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = {};
+    vertexInputStateCreateInfo.sType                                = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+    vertexInputStateCreateInfo.pNext                                = nullptr;
+    vertexInputStateCreateInfo.vertexBindingDescriptionCount        = bindingCount;
+    vertexInputStateCreateInfo.pVertexBindingDescriptions           = bindingCount == 0 ? nullptr : bindings.data();
+    vertexInputStateCreateInfo.vertexAttributeDescriptionCount      = attributesCount;
+    vertexInputStateCreateInfo.pVertexAttributeDescriptions         = attributesCount == 0 ? nullptr : attributes.data();
+
+    return vertexInputStateCreateInfo;
+}
