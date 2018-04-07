@@ -10,6 +10,7 @@
 
 VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEnabled) : debugEnabled(debugEnabled ? VK_TRUE : VK_FALSE)
 {
+
     auto configReader = ConfigFileReader();
 
     configReader.parseFile("config/vulkan.cfg");
@@ -185,9 +186,12 @@ void VulkanRenderer::render()
 
     vk_PresentImageInfo presentImageInfo = swap.acquireNextImage();
 
-    swap.waitForImageWorkCompleted(presentImageInfo.imageIndex);
-
     resizeWindow(presentImageInfo.mustRecreateSwapchain);
+
+    if(presentImageInfo.imageIndex == std::numeric_limits<uint32_t>::max())
+        return;
+
+    swap.waitForImageWorkCompleted(presentImageInfo.imageIndex);
 
     if(presentImageInfo.imageIndex == std::numeric_limits<uint32_t>::max())
         return;

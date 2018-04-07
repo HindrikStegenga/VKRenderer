@@ -133,7 +133,6 @@ void Swapchain::createSwapchain(vk_SwapchainSettings settings) {
     handleResult(result, "Swapchain creation failed!");
 
     if(oldSwapchain.get() != VK_NULL_HANDLE) {
-
         vkDeviceWaitIdle(device);
     }
 
@@ -355,7 +354,6 @@ vk_PresentImageInfo Swapchain::acquireNextImage() {
         default:
             Logger::failure("Failed getting the next swapchain image!");
     }
-
     return info;
 }
 

@@ -7,7 +7,7 @@
 
 Application::Application() {
 
-    auto cg = ConfigFileReader();
+    auto cg = ConfigFileReader(true);
     cg.parseFile("config/application.cfg");
 
     applicationName = cg.map().at("name");
