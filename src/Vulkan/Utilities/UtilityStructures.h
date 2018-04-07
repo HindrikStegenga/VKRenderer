@@ -38,4 +38,29 @@ struct vk_RendermodeSwapchainInfo {
 
 };
 
+class Fence;
+
+struct vk_PresentImageInfo {
+
+    Fence*      waitFence               = nullptr;
+    uint32_t    imageIndex              = 0;
+    bool        mustRecreateSwapchain   = false;
+
+};
+
+
+struct vk_RenderFrameInfo {
+
+    uint32_t    imageIndex      = 0;
+    VkSemaphore imageAvailable  = VK_NULL_HANDLE;
+    VkSemaphore renderFinished  = VK_NULL_HANDLE;
+    Fence*      waitFence       = nullptr;
+
+};
+
+
+
+
+
+
 #endif //VKRENDERER_UTILITYSTRUCTURES_H

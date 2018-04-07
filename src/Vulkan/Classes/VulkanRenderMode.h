@@ -25,7 +25,7 @@ public:
     VulkanRenderMode& operator=(const VulkanRenderMode&)    = delete;
     VulkanRenderMode& operator=(VulkanRenderMode&&)         = default;
 public:
-    virtual void render(uint32_t imageIndex, VkSemaphore imageAvailable, VkSemaphore renderFinished) = 0;
+    virtual void render(vk_RenderFrameInfo renderFrameInfo) = 0;
     virtual void windowHasResized(vk_RendermodeSwapchainInfo swapchainInfo) = 0;
 protected:
     vector<VKUH<VkFramebuffer>> createFrameBuffersFromSwapchain(VkRenderPass renderPass, vk_RendermodeSwapchainInfo swapchainInfo);

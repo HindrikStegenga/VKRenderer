@@ -75,7 +75,7 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
         setupDebugCallback();
     }
 
-    VkSurfaceKHR surface = renderWindow.getMutable().getWindowSurface(instance.getMutable().getHandle());
+    VkSurfaceKHR surface = renderWindow.get().getWindowSurface(instance.get().getHandle());
 
     PresentDeviceCreateInfo deviceSupportDescription { dExtensions, ddExtensions, requiredDeviceFeatures, surface };
 
@@ -83,8 +83,8 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
 
     SwapchainCreateInfo swapchainCreateInfo = {};
 
-    swapchainCreateInfo.deviceInfo  = device.getMutable().getPresentDeviceInfo();
-    swapchainCreateInfo.surface     = device.getMutable().getSurface();
+    swapchainCreateInfo.deviceInfo  = device.get().getPresentDeviceInfo();
+    swapchainCreateInfo.surface     = device.get().getSurface();
     swapchainCreateInfo.width       = width;
     swapchainCreateInfo.height      = height;
 
@@ -100,7 +100,7 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
 
         ForwardRenderModeCreateInfo createInfo = {};
 
-        createInfo.deviceInfo       = device.getMutable().getPresentDeviceInfo();
+        createInfo.deviceInfo       = device.get().getPresentDeviceInfo();
         createInfo.surface          = surface;
         createInfo.swapchainInfo    = swapchain.get().getRendermodeSwapchainInfo();
 
@@ -114,7 +114,7 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
 
 bool VulkanRenderer::processEvents()
 {
-    renderWindow.getMutable().setRendererPointer(this);
+    renderWindow.get().setRendererPointer(this);
     return renderWindow.get().pollWindowEvents();
 }
 
@@ -133,7 +133,7 @@ void VulkanRenderer::resizeWindow(uint32_t width, uint32_t height) {
 
     Logger::log("Window will be resized: " + std::to_string(width) + " - " + std::to_string(height));
 
-    vk_RendermodeSwapchainInfo swapchainInfo = swapchain.getMutable().recreateSwapchain(width, height);
+    vk_RendermodeSwapchainInfo swapchainInfo = swapchain.get().recreateSwapchain(width, height);
 
     renderMode->windowHasResized(swapchainInfo);
 }
@@ -181,19 +181,27 @@ VulkanRenderer::~VulkanRenderer()
 void VulkanRenderer::render()
 {
 
-    const Swapchain& swap = swapchain.get();
+    Swapchain& swap = swapchain.get();
 
-    bool mustResize = false;
-    uint32_t imageIndex = swap.requestNextImage(mustResize);
-    resizeWindow(mustResize);
-    if(imageIndex == std::numeric_limits<uint32_t>::max())
+    vk_PresentImageInfo presentImageInfo = swap.acquireNextImage();
+
+    swap.waitForImageWorkCompleted(presentImageInfo.imageIndex);
+
+    resizeWindow(presentImageInfo.mustRecreateSwapchain);
+
+    if(presentImageInfo.imageIndex == std::numeric_limits<uint32_t>::max())
         return;
 
+    vk_RenderFrameInfo renderFrameInfo = {};
+    renderFrameInfo.waitFence       = presentImageInfo.waitFence;
+    renderFrameInfo.imageIndex      = presentImageInfo.imageIndex;
+    renderFrameInfo.imageAvailable  = swap.getImageAvailableSemaphore();
+    renderFrameInfo.renderFinished  = swap.getRenderingFinishedSemaphore();
 
-    renderMode->render(imageIndex, swap.getImageAvailableSemaphore(), swap.getRenderingFinishedSemaphore());
+    renderMode->render(renderFrameInfo);
 
-    mustResize = false;
-    swap.returnImageForPresent(imageIndex, mustResize);
+    bool mustResize = false;
+    swap.presentImage(presentImageInfo.imageIndex, mustResize);
     resizeWindow(mustResize);
 }
 

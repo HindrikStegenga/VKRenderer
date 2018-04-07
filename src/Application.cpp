@@ -26,11 +26,11 @@ Application::Application() {
 void Application::run() {
 
     while (!mustStop) {
-        bool eventsSucceeded = renderer.getMutable().processEvents();
+        bool eventsSucceeded = renderer.get().processEvents();
         if (!eventsSucceeded) {
             mustStop = true;
         }
-        renderer.getMutable().render();
+        renderer.get().render();
     }
 }
 

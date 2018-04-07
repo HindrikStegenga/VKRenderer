@@ -133,12 +133,14 @@ void Swapchain::createSwapchain(vk_SwapchainSettings settings) {
     handleResult(result, "Swapchain creation failed!");
 
     if(oldSwapchain.get() != VK_NULL_HANDLE) {
+
         vkDeviceWaitIdle(device);
     }
 
     this->settings = settings;
 
     retrieveImages();
+    createFences();
     createImageViews();
     createDepthStencil();
 
@@ -324,31 +326,40 @@ VkSemaphore Swapchain::getRenderingFinishedSemaphore() const {
     return renderFinishedSemaphore.get();
 }
 
-uint32_t Swapchain::requestNextImage(bool &mustRecreateSwapchain) const {
+vk_PresentImageInfo Swapchain::acquireNextImage() {
 
     uint32_t imageIndex = 0;
-    VkResult result = vkAcquireNextImageKHR(device, swapchain.get(), std::numeric_limits<uint64_t>::max(), imageAvailableSemaphore.get(), VK_NULL_HANDLE, &imageIndex);
+
+    VkResult result = vkAcquireNextImageKHR(device, swapchain.get(), std::numeric_limits<uint64_t >::max(), imageAvailableSemaphore.get(), VK_NULL_HANDLE, &imageIndex);
+
+    vk_PresentImageInfo info = {};
+
+    Fence& fence = fences[imageIndex].first;
 
     switch(result) {
         case VK_SUCCESS:
-            return imageIndex;
-        case VK_ERROR_OUT_OF_DATE_KHR:
-            mustRecreateSwapchain = true;
-            return std::numeric_limits<uint32_t >::max();
         case VK_SUBOPTIMAL_KHR:
-            return imageIndex;
+
+            info.imageIndex = imageIndex;
+            info.waitFence  = &fence;
+            info.mustRecreateSwapchain = false;
+
+            break;
+        case VK_ERROR_OUT_OF_DATE_KHR:
+
+            info.imageIndex = std::numeric_limits<uint32_t >::max();
+            info.waitFence  = nullptr;
+            info.mustRecreateSwapchain = true;
+
+            break;
         default:
             Logger::failure("Failed getting the next swapchain image!");
-            return std::numeric_limits<uint32_t >::max();
     }
+
+    return info;
 }
 
-void Swapchain::returnImageForPresent(uint32_t imageIndex, bool &mustRecreateSwapchain) const {
-
-#ifdef __APPLE__
-    //Because MoltenVK is fucking broken, so we need a full gpu sync here....
-    vkQueueWaitIdle(presentQueue.queue);
-#endif
+void Swapchain::presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain) const {
 
     VkSemaphore renderFinished = renderFinishedSemaphore.get();
     VkSwapchainKHR cSwapchain = swapchain.get();
@@ -377,4 +388,39 @@ void Swapchain::returnImageForPresent(uint32_t imageIndex, bool &mustRecreateSwa
             Logger::failure("Failed getting the next swapchain image!");
             return;
     }
+}
+
+void Swapchain::createFences() {
+
+    fences.clear();
+    fences.reserve(images.size());
+
+    for(uint32_t i = 0; i < images.size(); ++i)
+    {
+       fences.emplace_back(make_pair(device, false));
+    }
+}
+
+void Swapchain::waitForImageWorkCompleted(uint32_t imageIndex)
+{
+    if(!fences[imageIndex].second)
+    {
+        fences[imageIndex].second = true;
+        return;
+    }
+
+    VkResult result = fences[imageIndex].first.status();
+    switch(result)
+    {
+        case VK_SUCCESS:
+            Logger::log("Waited for commandbuffer for image: " + std::to_string(imageIndex));
+            break;
+        case VK_NOT_READY:
+            Logger::log("Waited for commandbuffer for image: " + std::to_string(imageIndex));
+            fences[imageIndex].first.wait();
+            break;
+        default:
+            Logger::failure("An error occured during fence waiting, did the device get lost?");
+    }
+    fences[imageIndex].first.reset();
 }

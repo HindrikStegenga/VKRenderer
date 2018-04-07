@@ -7,6 +7,7 @@
 
 #include "../Platform/VulkanPlatform.h"
 #include "../Utilities/UtilityStructures.h"
+#include "Fence.h"
 
 class Swapchain final {
 public:
@@ -20,6 +21,7 @@ public:
     Swapchain& operator=(const Swapchain&)      = delete;
 private:
     VKUH<VkSwapchainKHR>        swapchain               = {};
+    vector<pair<Fence, bool>>   fences                  = {};
     vector<VkImage>             images;
     vector<VKUH<VkImageView>>   imageViews;
 
@@ -40,6 +42,7 @@ private:
     vk_SwapchainSettings    chooseSettings(uint32_t width, uint32_t height);
     void                    createSwapchain(vk_SwapchainSettings settings);
     void                    retrieveImages();
+    void                    createFences();
     void                    createImageViews();
     void                    createDepthStencil();
     void                    createDepthStencilImage(VkFormat format);
@@ -59,9 +62,12 @@ public:
     VkSemaphore getImageAvailableSemaphore() const;
     VkSemaphore getRenderingFinishedSemaphore() const;
 
-    uint32_t    requestNextImage(bool &mustRecreateSwapchain) const;
+    vk_PresentImageInfo    acquireNextImage();
+    void        presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain) const;
 
-    void        returnImageForPresent(uint32_t imageIndex, bool &mustRecreateSwapchain) const;
+
+    void waitForImageWorkCompleted(uint32_t imageIndex);
+
 };
 
 

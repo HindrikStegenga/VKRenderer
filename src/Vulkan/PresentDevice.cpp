@@ -145,7 +145,7 @@ void PresentDevice::createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice,
 
 PhysicalDevice& PresentDevice::getPhysicalDevice()
 {
-    return physicalDevice.getMutable();
+    return physicalDevice.get();
 }
 
 VkSurfaceKHR PresentDevice::getSurface()

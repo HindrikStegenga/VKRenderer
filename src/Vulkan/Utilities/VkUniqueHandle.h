@@ -37,7 +37,8 @@ private:
     auto cleanUp()                      -> void;
 public:
     auto release()                      -> T;
-    auto get()              const       -> T;
+    auto get()       const              -> T;
+    auto getPointer()                   -> T*;
     auto reset(T handle)                -> void;
     auto reset()                        -> T*;
 
@@ -157,6 +158,7 @@ auto VkUniqueHandle<T>::release() -> T {
     return handle;
 }
 
+
 template<typename T>
 auto VkUniqueHandle<T>::get() const -> T {
     return object;
@@ -275,6 +277,11 @@ auto VkUniqueHandle<T>::reset() -> T* {
 template<typename T>
 VkUniqueHandle<T>::operator T() const {
     return object;
+}
+
+template<typename T>
+T * VkUniqueHandle<T>::getPointer() {
+    return &object;
 }
 
 

@@ -3,6 +3,7 @@ cmake-build-release/
 .idea/
 logs/
 libraries/GLFW/
+libraries/glm/
 shaders/*.spv
 CMakeSettings.json
 .vs/
