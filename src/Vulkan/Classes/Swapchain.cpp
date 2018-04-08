@@ -339,15 +339,21 @@ vk_PresentImageInfo Swapchain::acquireNextImage() {
 
         if(status == VK_NOT_READY)
         {
+#ifdef VSYNC_TIMING
             using std::chrono::high_resolution_clock;
             using std::chrono::duration_cast;
 
             high_resolution_clock::time_point t1 = high_resolution_clock::now();
+#endif
+
             fences[nextFrame].first.wait();
+
+#ifdef VSYNC_TIMING
             high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
             auto duration = duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
             Logger::log("Waited on " + std::to_string(nextFrame) + " for " + std::to_string(duration) + "ms");
+#endif
         }
 
         fences[nextFrame].first.reset();
@@ -423,28 +429,4 @@ void Swapchain::createFences() {
     {
        fences.emplace_back(make_pair(device, false));
     }
-}
-
-void Swapchain::waitForPeviousCommandBufferCompleted(uint32_t imageIndex)
-{
-    if(!fences[imageIndex].second)
-    {
-        fences[imageIndex].second = true;
-        return;
-    }
-
-    VkResult result = fences[imageIndex].first.status();
-    switch(result)
-    {
-        case VK_SUCCESS:
-            Logger::log("Waited for commandbuffer for image: " + std::to_string(imageIndex));
-            break;
-        case VK_NOT_READY:
-            Logger::log("Waited for commandbuffer for image: " + std::to_string(imageIndex));
-            fences[imageIndex].first.wait();
-            break;
-        default:
-            Logger::failure("An error occured during fence waiting, did the device get lost?");
-    }
-    fences[imageIndex].first.reset();
 }

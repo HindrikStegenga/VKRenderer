@@ -63,12 +63,8 @@ public:
     VkSemaphore getImageAvailableSemaphore() const;
     VkSemaphore getRenderingFinishedSemaphore() const;
 
-    vk_PresentImageInfo    acquireNextImage();
-    void        presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain) const;
-
-
-    void waitForPeviousCommandBufferCompleted(uint32_t imageIndex);
-
+    vk_PresentImageInfo     acquireNextImage();
+    void                    presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain) const;
 };
 
 

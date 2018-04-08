@@ -196,8 +196,6 @@ void VulkanRenderer::render()
     if(presentImageInfo.imageIndex == std::numeric_limits<uint32_t>::max())
         return;
 
-    //swap.waitForPeviousCommandBufferCompleted(presentImageInfo.imageIndex);
-
     vk_RenderFrameInfo renderFrameInfo = {};
     renderFrameInfo.waitFence       = presentImageInfo.waitFence;
     renderFrameInfo.imageIndex      = presentImageInfo.imageIndex;
