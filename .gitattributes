@@ -1,0 +1,8 @@
+* text=auto
+
+*.h text
+*.cpp text
+*.json text
+*.geom text
+*.frag text
+*.vert text
