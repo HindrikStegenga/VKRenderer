@@ -327,7 +327,7 @@ VkSemaphore Swapchain::getRenderingFinishedSemaphore() const {
 
 vk_PresentImageInfo Swapchain::acquireNextImage() {
 
-    uint32_t nextFrame = (nextQueuedFrame++) % static_cast<uint32_t >(images.size() - 1);
+    uint32_t nextFrame = (queuedFrameCount++) % static_cast<uint32_t >(images.size() - 1);
 
     if(!fences[nextFrame].second)
     {
@@ -335,7 +335,21 @@ vk_PresentImageInfo Swapchain::acquireNextImage() {
     }
     else
     {
-        fences[nextFrame].first.wait();
+        VkResult status = fences[nextFrame].first.status();
+
+        if(status == VK_NOT_READY)
+        {
+            using std::chrono::high_resolution_clock;
+            using std::chrono::duration_cast;
+
+            high_resolution_clock::time_point t1 = high_resolution_clock::now();
+            fences[nextFrame].first.wait();
+            high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+            auto duration = duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
+            Logger::log("Waited on " + std::to_string(nextFrame) + " for " + std::to_string(duration) + "ms");
+        }
+
         fences[nextFrame].first.reset();
     }
 

@@ -38,7 +38,7 @@ private:
     VkSurfaceKHR            surface                     = VK_NULL_HANDLE;
     vk_SwapchainSettings    settings                    = {};
 
-    uint32_t                nextQueuedFrame             = 0;
+    uint32_t                queuedFrameCount             = 0;
 private:
     vk_SwapchainSettings    chooseSettings(uint32_t width, uint32_t height);
     void                    createSwapchain(vk_SwapchainSettings settings);
