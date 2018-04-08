@@ -399,7 +399,7 @@ void Swapchain::createFences() {
     }
 }
 
-void Swapchain::waitForImageWorkCompleted(uint32_t imageIndex)
+void Swapchain::waitForPeviousCommandBufferCompleted(uint32_t imageIndex)
 {
     if(!fences[imageIndex].second)
     {

@@ -26,7 +26,10 @@ Application::Application() {
 void Application::run() {
 
     while (!mustStop) {
-        bool eventsSucceeded = renderer.get().processEvents();
+
+        std::chrono::nanoseconds deltaTime = internalClock.getDeltaTime();
+
+        bool eventsSucceeded = renderer.get().processEvents(deltaTime);
         if (!eventsSucceeded) {
             mustStop = true;
         }

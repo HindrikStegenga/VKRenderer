@@ -167,3 +167,7 @@ void RenderWindow::getCurrentSize(uint32_t &width, uint32_t &height) const {
     width = static_cast<uint32_t >(iW);
     height = static_cast<uint32_t >(iH);
 }
+
+void RenderWindow::setWindowTitle(string title) const {
+    glfwSetWindowTitle(window, title.c_str());
+}

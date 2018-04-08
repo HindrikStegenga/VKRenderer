@@ -113,9 +113,14 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
     }
 }
 
-bool VulkanRenderer::processEvents()
+bool VulkanRenderer::processEvents(std::chrono::nanoseconds deltaTime)
 {
     renderWindow.get().setRendererPointer(this);
+
+    std::chrono::milliseconds milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(deltaTime);
+
+    renderWindow.get().setWindowTitle(std::to_string(milliseconds.count()) + "ms");
+
     return renderWindow.get().pollWindowEvents();
 }
 
@@ -191,7 +196,7 @@ void VulkanRenderer::render()
     if(presentImageInfo.imageIndex == std::numeric_limits<uint32_t>::max())
         return;
 
-    swap.waitForImageWorkCompleted(presentImageInfo.imageIndex);
+    swap.waitForPeviousCommandBufferCompleted(presentImageInfo.imageIndex);
 
     if(presentImageInfo.imageIndex == std::numeric_limits<uint32_t>::max())
         return;
@@ -206,6 +211,7 @@ void VulkanRenderer::render()
 
     bool mustResize = false;
     swap.presentImage(presentImageInfo.imageIndex, mustResize);
+
     resizeWindow(mustResize);
 }
 

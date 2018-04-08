@@ -66,7 +66,7 @@ public:
     void        presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain) const;
 
 
-    void waitForImageWorkCompleted(uint32_t imageIndex);
+    void waitForPeviousCommandBufferCompleted(uint32_t imageIndex);
 
 };
 

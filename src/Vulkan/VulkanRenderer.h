@@ -32,7 +32,7 @@ private:
     Nullable<Swapchain>             swapchain;
     unique_ptr<VulkanRenderMode>    renderMode = nullptr;
 public:
-    bool processEvents();
+    bool processEvents(std::chrono::nanoseconds deltaTime);
     void render();
     void resizeWindow(uint32_t width, uint32_t height);
 private:
