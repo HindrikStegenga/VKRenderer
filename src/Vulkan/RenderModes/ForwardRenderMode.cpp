@@ -40,10 +40,6 @@ void ForwardRenderMode::render(vk_RenderFrameInfo renderFrameInfo) {
 
     VkResult result = vkQueueSubmit(presentQueue.queue, 1, &submitInfo, renderFrameInfo.waitFence->get());
     handleResult(result, "Queue submission has failed!");
-
-    Logger::log("Submitted commandbuffer for image: " + std::to_string(renderFrameInfo.imageIndex));
-
-
 }
 
 void ForwardRenderMode::createRenderMode(vk_RendermodeSwapchainInfo swapchainInfo) {

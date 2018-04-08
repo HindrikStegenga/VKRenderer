@@ -327,13 +327,25 @@ VkSemaphore Swapchain::getRenderingFinishedSemaphore() const {
 
 vk_PresentImageInfo Swapchain::acquireNextImage() {
 
+    uint32_t nextFrame = (nextQueuedFrame++) % static_cast<uint32_t >(images.size() - 1);
+
+    if(!fences[nextFrame].second)
+    {
+        fences[nextFrame].second = true;
+    }
+    else
+    {
+        fences[nextFrame].first.wait();
+        fences[nextFrame].first.reset();
+    }
+
     uint32_t imageIndex = 0;
 
     VkResult result = vkAcquireNextImageKHR(device, swapchain.get(), std::numeric_limits<uint64_t >::max(), imageAvailableSemaphore.get(), VK_NULL_HANDLE, &imageIndex);
 
     vk_PresentImageInfo info = {};
 
-    Fence& fence = fences[imageIndex].first;
+    Fence& fence = fences[nextFrame].first;
 
     switch(result) {
         case VK_SUCCESS:
