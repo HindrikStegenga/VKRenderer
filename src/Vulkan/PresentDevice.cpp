@@ -67,6 +67,7 @@ void PresentDevice::createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice,
     vector<VkDeviceQueueCreateInfo> queues = {};
 
     float priority = 1.0;
+    vector<float> transferQueuePriorities = {};
 
     VkDeviceQueueCreateInfo presentQueueCreateInfo  = {};
     presentQueueCreateInfo.sType                    = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -83,13 +84,19 @@ void PresentDevice::createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice,
 
     if(transferFamily.first) {
 
+        transferQueuePriorities.resize(transferFamily.second.queueFamilyProperties.queueCount);
+        for(size_t i = 0; i < transferQueuePriorities.size(); ++i)
+        {
+            transferQueuePriorities[i] = 1.0f;
+        }
+
         VkDeviceQueueCreateInfo transferQueue  = {};
         transferQueue.sType                    = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
         transferQueue.pNext                    = nullptr;
         transferQueue.queueCount               = transferFamily.second.queueFamilyProperties.queueCount;
         transferQueue.queueFamilyIndex         = transferFamily.second.queueFamilyIndex;
         transferQueue.flags                    = {};
-        transferQueue.pQueuePriorities         = &priority;
+        transferQueue.pQueuePriorities         = transferQueuePriorities.data();
 
         queues.push_back(transferQueue);
 
@@ -112,7 +119,6 @@ void PresentDevice::createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice,
     VkResult result = vkCreateDevice(deviceAndQueueFamily.first.physicalDevice, &deviceCreateInfo, nullptr, device.reset(vkDestroyDevice));
     handleResult(result, "Device creation has failed!");
 
-    //TODO: FIX THE PRIORITIES!
 
     physicalDevice.set(deviceAndQueueFamily.first);
     vk_Queue present = {};
