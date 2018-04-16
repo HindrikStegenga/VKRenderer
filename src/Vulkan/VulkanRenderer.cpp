@@ -6,6 +6,7 @@
 #include "../Utilities/ConfigFileReader.h"
 #include "RenderModes/ForwardRenderMode.h"
 #include "Utilities/Parsable/VertexLayout.h"
+#include "../Utilities/ObjLoader.h"
 
 
 VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEnabled) : debugEnabled(debugEnabled ? VK_TRUE : VK_FALSE)
@@ -95,6 +96,7 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
 
     VertexLayout layout("PositionTexCoordNormals");
     VertexLayout layout2("PositionColor");
+    ObjLoader loader("cube.obj");
 
 
     if (renderMode == string("Forward")) {

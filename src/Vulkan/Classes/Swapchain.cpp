@@ -327,45 +327,29 @@ VkSemaphore Swapchain::getRenderingFinishedSemaphore() const {
 
 vk_PresentImageInfo Swapchain::acquireNextImage() {
 
-    uint32_t nextFrame = (queuedFrameCount++) % static_cast<uint32_t >(images.size() - 1);
-
-    if(!fences[nextFrame].second)
-    {
-        fences[nextFrame].second = true;
-    }
-    else
-    {
-        VkResult status = fences[nextFrame].first.status();
-
-        if(status == VK_NOT_READY)
-        {
-#ifdef VSYNC_TIMING
-            using std::chrono::high_resolution_clock;
-            using std::chrono::duration_cast;
-
-            high_resolution_clock::time_point t1 = high_resolution_clock::now();
-#endif
-
-            fences[nextFrame].first.wait();
-
-#ifdef VSYNC_TIMING
-            high_resolution_clock::time_point t2 = high_resolution_clock::now();
-
-            auto duration = duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
-            Logger::log("Waited on " + std::to_string(nextFrame) + " for " + std::to_string(duration) + "ms");
-#endif
-        }
-
-        fences[nextFrame].first.reset();
-    }
-
     uint32_t imageIndex = 0;
 
     VkResult result = vkAcquireNextImageKHR(device, swapchain.get(), std::numeric_limits<uint64_t >::max(), imageAvailableSemaphore.get(), VK_NULL_HANDLE, &imageIndex);
 
     vk_PresentImageInfo info = {};
 
-    Fence& fence = fences[nextFrame].first;
+    Fence& fence = fences[imageIndex].first;
+
+
+    if(fences[imageIndex].second)
+    {
+        if (fence.status() == VK_NOT_READY)
+        {
+            fence.wait();
+        }
+        fence.reset();
+    }
+    else
+    {
+        fences[imageIndex].second = true;
+    }
+
+
 
     switch(result) {
         case VK_SUCCESS:

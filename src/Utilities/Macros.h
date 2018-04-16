@@ -16,5 +16,7 @@
 #define PATH_GRAPHICS_PIPELINE_LAYOUT_JSON "config/graphics_pipeline_layouts/"
 #define PATH_VERTEX_LAYOUT_JSON "config/vertex_layouts/"
 
+#define PATH_ASSETS "assets/"
+#define PATH_MODELS "assets/models/"
 
 #endif //VKRENDERER_MACROS_H
