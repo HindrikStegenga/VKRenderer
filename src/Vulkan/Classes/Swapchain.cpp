@@ -302,6 +302,17 @@ vk_RendermodeSwapchainInfo Swapchain::getRendermodeSwapchainInfo() const {
     return swapchainInfo;
 }
 
+void Swapchain::createFences() {
+
+    fences.clear();
+    fences.reserve(images.size());
+
+    for(uint32_t i = 0; i < images.size(); ++i)
+    {
+        fences.emplace_back(make_pair(device, false));
+    }
+}
+
 void Swapchain::createSemaphores() {
 
     VkSemaphoreCreateInfo createInfo    = {};
@@ -311,18 +322,11 @@ void Swapchain::createSemaphores() {
 
     VkResult result = vkCreateSemaphore(device, &createInfo, nullptr, imageAvailableSemaphore.reset(device, vkDestroySemaphore));
     handleResult(result, "Failed to create image available semaphore!");
+
     result = vkCreateSemaphore(device, &createInfo, nullptr, renderFinishedSemaphore.reset(device, vkDestroySemaphore));
     handleResult(result, "Failed to create render finished semaphore!");
 
     Logger::success("Succesfully created semaphores!");
-}
-
-VkSemaphore Swapchain::getImageAvailableSemaphore() const {
-    return imageAvailableSemaphore.get();
-}
-
-VkSemaphore Swapchain::getRenderingFinishedSemaphore() const {
-    return renderFinishedSemaphore.get();
 }
 
 vk_PresentImageInfo Swapchain::acquireNextImage() {
@@ -349,22 +353,24 @@ vk_PresentImageInfo Swapchain::acquireNextImage() {
         fences[imageIndex].second = true;
     }
 
-
-
     switch(result) {
         case VK_SUCCESS:
         case VK_SUBOPTIMAL_KHR:
 
-            info.imageIndex = imageIndex;
-            info.waitFence  = &fence;
-            info.mustRecreateSwapchain = false;
+            info.imageIndex                 = imageIndex;
+            info.submitDoneFence            = &fence;
+            info.mustRecreateSwapchain      = false;
+            info.renderFinishedSemaphore    = renderFinishedSemaphore.get();
+            info.imageAvailableSemaphore    = imageAvailableSemaphore.get();
 
             break;
         case VK_ERROR_OUT_OF_DATE_KHR:
 
             info.imageIndex = std::numeric_limits<uint32_t >::max();
-            info.waitFence  = nullptr;
-            info.mustRecreateSwapchain = true;
+            info.submitDoneFence            = nullptr;
+            info.mustRecreateSwapchain      = true;
+            info.renderFinishedSemaphore    =  VK_NULL_HANDLE;
+            info.imageAvailableSemaphore    =  VK_NULL_HANDLE;
 
             break;
         default:
@@ -401,16 +407,5 @@ void Swapchain::presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain) c
         default:
             Logger::failure("Failed getting the next swapchain image!");
             return;
-    }
-}
-
-void Swapchain::createFences() {
-
-    fences.clear();
-    fences.reserve(images.size());
-
-    for(uint32_t i = 0; i < images.size(); ++i)
-    {
-       fences.emplace_back(make_pair(device, false));
     }
 }

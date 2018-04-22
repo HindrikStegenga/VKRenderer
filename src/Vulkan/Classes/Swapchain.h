@@ -38,7 +38,6 @@ private:
     VkSurfaceKHR            surface                     = VK_NULL_HANDLE;
     vk_SwapchainSettings    settings                    = {};
 
-    uint32_t                queuedFrameCount             = 0;
 private:
     vk_SwapchainSettings    chooseSettings(uint32_t width, uint32_t height);
     void                    createSwapchain(vk_SwapchainSettings settings);
@@ -59,9 +58,6 @@ private:
 public:
     vk_RendermodeSwapchainInfo recreateSwapchain(uint32_t width, uint32_t height);
     vk_RendermodeSwapchainInfo getRendermodeSwapchainInfo() const;
-
-    VkSemaphore getImageAvailableSemaphore() const;
-    VkSemaphore getRenderingFinishedSemaphore() const;
 
     vk_PresentImageInfo     acquireNextImage();
     void                    presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain) const;

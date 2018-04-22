@@ -31,14 +31,14 @@ void ForwardRenderMode::render(vk_RenderFrameInfo renderFrameInfo) {
     submitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.pNext                = nullptr;
     submitInfo.pWaitDstStageMask    = &waitStage;
-    submitInfo.pWaitSemaphores      = &renderFrameInfo.imageAvailable;
+    submitInfo.pWaitSemaphores      = &renderFrameInfo.imageAvailableSemaphore;
     submitInfo.waitSemaphoreCount   = 1;
     submitInfo.commandBufferCount   = 1;
     submitInfo.pCommandBuffers      = &commandBuffers[renderFrameInfo.imageIndex];
-    submitInfo.pSignalSemaphores    = &renderFrameInfo.renderFinished;
+    submitInfo.pSignalSemaphores    = &renderFrameInfo.renderFinishedSemaphore;
     submitInfo.signalSemaphoreCount = 1;
 
-    VkResult result = vkQueueSubmit(presentQueue.queue, 1, &submitInfo, renderFrameInfo.waitFence->get());
+    VkResult result = vkQueueSubmit(presentQueue.queue, 1, &submitInfo, renderFrameInfo.submitDoneFence->get());
     handleResult(result, "Queue submission has failed!");
 }
 

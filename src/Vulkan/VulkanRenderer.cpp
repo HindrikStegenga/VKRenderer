@@ -198,11 +198,11 @@ void VulkanRenderer::render()
     if(presentImageInfo.imageIndex == std::numeric_limits<uint32_t>::max())
         return;
 
-    vk_RenderFrameInfo renderFrameInfo = {};
-    renderFrameInfo.waitFence       = presentImageInfo.waitFence;
-    renderFrameInfo.imageIndex      = presentImageInfo.imageIndex;
-    renderFrameInfo.imageAvailable  = swap.getImageAvailableSemaphore();
-    renderFrameInfo.renderFinished  = swap.getRenderingFinishedSemaphore();
+    vk_RenderFrameInfo renderFrameInfo          = {};
+    renderFrameInfo.submitDoneFence             = presentImageInfo.submitDoneFence;
+    renderFrameInfo.imageIndex                  = presentImageInfo.imageIndex;
+    renderFrameInfo.imageAvailableSemaphore     = presentImageInfo.imageAvailableSemaphore;
+    renderFrameInfo.renderFinishedSemaphore     = presentImageInfo.renderFinishedSemaphore;
 
     renderMode->render(renderFrameInfo);
 
