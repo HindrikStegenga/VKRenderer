@@ -38,11 +38,9 @@ struct vk_RendermodeSwapchainInfo {
 
 };
 
-class Fence;
-
 struct vk_PresentImageInfo {
 
-    Fence*      submitDoneFence         = nullptr;
+    VkFence     submitDoneFence         = nullptr;
     uint32_t    imageIndex              = 0;
     VkSemaphore imageAvailableSemaphore = VK_NULL_HANDLE;
     VkSemaphore renderFinishedSemaphore = VK_NULL_HANDLE;
@@ -50,13 +48,12 @@ struct vk_PresentImageInfo {
 
 };
 
-
 struct vk_RenderFrameInfo {
 
     uint32_t    imageIndex                  = 0;
     VkSemaphore imageAvailableSemaphore     = VK_NULL_HANDLE;
     VkSemaphore renderFinishedSemaphore     = VK_NULL_HANDLE;
-    Fence*      submitDoneFence             = nullptr;
+    VkFence     submitDoneFence             = nullptr;
 
 };
 

@@ -9,7 +9,6 @@ Swapchain::Swapchain(SwapchainCreateInfo createInfo) : device(createInfo.deviceI
 
     //Assume swapchain support was checked!
     recreateSwapchain(createInfo.width, createInfo.height);
-    createSemaphores();
 }
 
 vk_RendermodeSwapchainInfo Swapchain::recreateSwapchain(uint32_t width, uint32_t height) {
@@ -125,7 +124,7 @@ void Swapchain::createSwapchain(vk_SwapchainSettings settings) {
     createInfo.pQueueFamilyIndices          = nullptr;
     createInfo.preTransform                 = settings.preTransform;
     createInfo.compositeAlpha               = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-    createInfo.presentMode                  = settings.presentMode;
+    createInfo.presentMode                  = VK_PRESENT_MODE_FIFO_KHR;
     createInfo.clipped                      = VK_TRUE;
     createInfo.oldSwapchain                 = oldSwapchain.get();
 
@@ -139,9 +138,10 @@ void Swapchain::createSwapchain(vk_SwapchainSettings settings) {
     this->settings = settings;
 
     retrieveImages();
-    createFences();
     createImageViews();
     createDepthStencil();
+    createFences();
+    createSemaphores();
 
     Logger::success("Succesfully created the swapchain!");
 }
@@ -304,6 +304,8 @@ vk_RendermodeSwapchainInfo Swapchain::getRendermodeSwapchainInfo() const {
 
 void Swapchain::createFences() {
 
+    frameIndex = 0;
+
     fences.clear();
     fences.reserve(images.size());
 
@@ -315,32 +317,39 @@ void Swapchain::createFences() {
 
 void Swapchain::createSemaphores() {
 
+    imageAvailableSemaphores.clear();
+    renderFinishedSemaphores.clear();
+
+    imageAvailableSemaphores.resize(images.size());
+    renderFinishedSemaphores.resize(images.size());
+
     VkSemaphoreCreateInfo createInfo    = {};
     createInfo.sType                    = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
     createInfo.pNext                    = nullptr;
     createInfo.flags                    = {};
 
-    VkResult result = vkCreateSemaphore(device, &createInfo, nullptr, imageAvailableSemaphore.reset(device, vkDestroySemaphore));
-    handleResult(result, "Failed to create image available semaphore!");
+    for(uint32_t i = 0; i < static_cast<uint32_t >(images.size()); ++i)
+    {
+        VkResult result = vkCreateSemaphore(device, &createInfo, nullptr, imageAvailableSemaphores[i].reset(device, vkDestroySemaphore));
+        handleResult(result, "Failed to create image available semaphore!");
 
-    result = vkCreateSemaphore(device, &createInfo, nullptr, renderFinishedSemaphore.reset(device, vkDestroySemaphore));
-    handleResult(result, "Failed to create render finished semaphore!");
+        result = vkCreateSemaphore(device, &createInfo, nullptr, renderFinishedSemaphores[i].reset(device, vkDestroySemaphore));
+        handleResult(result, "Failed to create render finished semaphore!");
+    }
 
     Logger::success("Succesfully created semaphores!");
 }
 
 vk_PresentImageInfo Swapchain::acquireNextImage() {
 
-    uint32_t imageIndex = 0;
+    //Determine semaphore to use and fence to wait on.
+    frameIndex = (frameIndex + 1) % static_cast<uint32_t >(images.size());
 
-    VkResult result = vkAcquireNextImageKHR(device, swapchain.get(), std::numeric_limits<uint64_t >::max(), imageAvailableSemaphore.get(), VK_NULL_HANDLE, &imageIndex);
+    //Get fence
+    Fence& fence = fences[frameIndex].first;
 
-    vk_PresentImageInfo info = {};
-
-    Fence& fence = fences[imageIndex].first;
-
-
-    if(fences[imageIndex].second)
+    //Wait on it if necessary...
+    if(fences[frameIndex].second)
     {
         if (fence.status() == VK_NOT_READY)
         {
@@ -350,27 +359,32 @@ vk_PresentImageInfo Swapchain::acquireNextImage() {
     }
     else
     {
-        fences[imageIndex].second = true;
+        fences[frameIndex].second = true;
     }
+
+    uint32_t imageIndex = 0;
+    VkResult result = vkAcquireNextImageKHR(device, swapchain.get(), std::numeric_limits<uint64_t >::max(), imageAvailableSemaphores[frameIndex].get(), VK_NULL_HANDLE, &imageIndex);
+
+    vk_PresentImageInfo info = {};
 
     switch(result) {
         case VK_SUCCESS:
         case VK_SUBOPTIMAL_KHR:
 
             info.imageIndex                 = imageIndex;
-            info.submitDoneFence            = &fence;
+            info.submitDoneFence            = fence.get();
             info.mustRecreateSwapchain      = false;
-            info.renderFinishedSemaphore    = renderFinishedSemaphore.get();
-            info.imageAvailableSemaphore    = imageAvailableSemaphore.get();
+            info.renderFinishedSemaphore    = renderFinishedSemaphores[frameIndex].get();
+            info.imageAvailableSemaphore    = imageAvailableSemaphores[frameIndex].get();
 
             break;
         case VK_ERROR_OUT_OF_DATE_KHR:
 
             info.imageIndex = std::numeric_limits<uint32_t >::max();
-            info.submitDoneFence            = nullptr;
+            info.submitDoneFence            = VK_NULL_HANDLE;
             info.mustRecreateSwapchain      = true;
-            info.renderFinishedSemaphore    =  VK_NULL_HANDLE;
-            info.imageAvailableSemaphore    =  VK_NULL_HANDLE;
+            info.renderFinishedSemaphore    = VK_NULL_HANDLE;
+            info.imageAvailableSemaphore    = VK_NULL_HANDLE;
 
             break;
         default:
@@ -381,7 +395,7 @@ vk_PresentImageInfo Swapchain::acquireNextImage() {
 
 void Swapchain::presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain) const {
 
-    VkSemaphore renderFinished = renderFinishedSemaphore.get();
+    VkSemaphore renderFinished = renderFinishedSemaphores[frameIndex].get();
     VkSwapchainKHR cSwapchain = swapchain.get();
 
     VkPresentInfoKHR presentInfo    = {};

@@ -38,7 +38,7 @@ void ForwardRenderMode::render(vk_RenderFrameInfo renderFrameInfo) {
     submitInfo.pSignalSemaphores    = &renderFrameInfo.renderFinishedSemaphore;
     submitInfo.signalSemaphoreCount = 1;
 
-    VkResult result = vkQueueSubmit(presentQueue.queue, 1, &submitInfo, renderFrameInfo.submitDoneFence->get());
+    VkResult result = vkQueueSubmit(presentQueue.queue, 1, &submitInfo, renderFrameInfo.submitDoneFence);
     handleResult(result, "Queue submission has failed!");
 }
 

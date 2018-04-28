@@ -94,9 +94,9 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
     
     const string renderMode = configReader.map().at("renderMode");
 
-    VertexLayout layout("PositionTexCoordNormals");
-    VertexLayout layout2("PositionColor");
-    ObjLoader loader("cube.obj");
+    //VertexLayout layout("PositionTexCoordNormals");
+    //VertexLayout layout2("PositionColor");
+    //ObjLoader loader("cube.obj");
 
 
     if (renderMode == string("Forward")) {
