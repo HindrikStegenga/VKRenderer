@@ -82,9 +82,9 @@ VkPresentModeKHR Swapchain::choosePresentMode(const vector<VkPresentModeKHR>& av
 
         if(mode == VK_PRESENT_MODE_MAILBOX_KHR) {
             return mode;
-        } else if(mode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
+        } /* else if(mode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
             bestMode = mode;
-        }
+        } */
     }
 
     return bestMode;
@@ -124,7 +124,7 @@ void Swapchain::createSwapchain(vk_SwapchainSettings settings) {
     createInfo.pQueueFamilyIndices          = nullptr;
     createInfo.preTransform                 = settings.preTransform;
     createInfo.compositeAlpha               = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-    createInfo.presentMode                  = VK_PRESENT_MODE_FIFO_KHR;
+    createInfo.presentMode                  = settings.presentMode;
     createInfo.clipped                      = VK_TRUE;
     createInfo.oldSwapchain                 = oldSwapchain.get();
 
@@ -334,13 +334,16 @@ void Swapchain::createSemaphores() {
 vk_PresentImageInfo Swapchain::acquireNextImage() {
 
     //Determine semaphore to use and fence to wait on.
-    frameIndex = (frameIndex + 1) % static_cast<uint32_t >(images.size());
+    //frameIndex = (frameIndex + 1) % static_cast<uint32_t >(images.size());
+
+    uint32_t imageIndex = 0;
+    VkResult result = vkAcquireNextImageKHR(device, swapchain.get(), std::numeric_limits<uint64_t >::max(), imageAvailableSemaphore.get(), VK_NULL_HANDLE, &imageIndex);
 
     //Get fence
-    Fence& fence = fences[frameIndex].first;
+    Fence& fence = fences[imageIndex].first;
 
     //Wait on it if necessary...
-    if(fences[frameIndex].second)
+    if(fences[imageIndex].second)
     {
         if (fence.status() == VK_NOT_READY)
         {
@@ -350,11 +353,9 @@ vk_PresentImageInfo Swapchain::acquireNextImage() {
     }
     else
     {
-        fences[frameIndex].second = true;
+        fences[imageIndex].second = true;
     }
 
-    uint32_t imageIndex = 0;
-    VkResult result = vkAcquireNextImageKHR(device, swapchain.get(), std::numeric_limits<uint64_t >::max(), imageAvailableSemaphore.get(), VK_NULL_HANDLE, &imageIndex);
 
     vk_PresentImageInfo info = {};
 

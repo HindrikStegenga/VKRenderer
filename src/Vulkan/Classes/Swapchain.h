@@ -37,7 +37,7 @@ private:
     VkPhysicalDevice        physicalDevice              = VK_NULL_HANDLE;
     VkSurfaceKHR            surface                     = VK_NULL_HANDLE;
     vk_SwapchainSettings    settings                    = {};
-    uint32_t                frameIndex                  = 0;
+    //uint32_t                frameIndex                  = 0;
 
 private:
     vk_SwapchainSettings    chooseSettings(uint32_t width, uint32_t height);
