@@ -304,7 +304,7 @@ vk_RendermodeSwapchainInfo Swapchain::getRendermodeSwapchainInfo() const {
 
 void Swapchain::createFences() {
 
-    frameIndex = 0;
+    //frameIndex = 0;
 
     fences.clear();
     fences.reserve(images.size());
