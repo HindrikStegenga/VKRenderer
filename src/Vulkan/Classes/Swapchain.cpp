@@ -317,25 +317,16 @@ void Swapchain::createFences() {
 
 void Swapchain::createSemaphores() {
 
-    imageAvailableSemaphores.clear();
-    renderFinishedSemaphores.clear();
-
-    imageAvailableSemaphores.resize(images.size());
-    renderFinishedSemaphores.resize(images.size());
-
     VkSemaphoreCreateInfo createInfo    = {};
     createInfo.sType                    = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
     createInfo.pNext                    = nullptr;
     createInfo.flags                    = {};
 
-    for(uint32_t i = 0; i < static_cast<uint32_t >(images.size()); ++i)
-    {
-        VkResult result = vkCreateSemaphore(device, &createInfo, nullptr, imageAvailableSemaphores[i].reset(device, vkDestroySemaphore));
-        handleResult(result, "Failed to create image available semaphore!");
+    VkResult result = vkCreateSemaphore(device, &createInfo, nullptr, imageAvailableSemaphore.reset(device, vkDestroySemaphore));
+    handleResult(result, "Failed to create image available semaphore!");
 
-        result = vkCreateSemaphore(device, &createInfo, nullptr, renderFinishedSemaphores[i].reset(device, vkDestroySemaphore));
-        handleResult(result, "Failed to create render finished semaphore!");
-    }
+    result = vkCreateSemaphore(device, &createInfo, nullptr, renderFinishedSemaphore.reset(device, vkDestroySemaphore));
+    handleResult(result, "Failed to create render finished semaphore!");
 
     Logger::success("Succesfully created semaphores!");
 }
@@ -363,7 +354,7 @@ vk_PresentImageInfo Swapchain::acquireNextImage() {
     }
 
     uint32_t imageIndex = 0;
-    VkResult result = vkAcquireNextImageKHR(device, swapchain.get(), std::numeric_limits<uint64_t >::max(), imageAvailableSemaphores[frameIndex].get(), VK_NULL_HANDLE, &imageIndex);
+    VkResult result = vkAcquireNextImageKHR(device, swapchain.get(), std::numeric_limits<uint64_t >::max(), imageAvailableSemaphore.get(), VK_NULL_HANDLE, &imageIndex);
 
     vk_PresentImageInfo info = {};
 
@@ -374,8 +365,8 @@ vk_PresentImageInfo Swapchain::acquireNextImage() {
             info.imageIndex                 = imageIndex;
             info.submitDoneFence            = fence.get();
             info.mustRecreateSwapchain      = false;
-            info.renderFinishedSemaphore    = renderFinishedSemaphores[frameIndex].get();
-            info.imageAvailableSemaphore    = imageAvailableSemaphores[frameIndex].get();
+            info.renderFinishedSemaphore    = renderFinishedSemaphore.get();
+            info.imageAvailableSemaphore    = imageAvailableSemaphore.get();
 
             break;
         case VK_ERROR_OUT_OF_DATE_KHR:
@@ -395,8 +386,8 @@ vk_PresentImageInfo Swapchain::acquireNextImage() {
 
 void Swapchain::presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain) const {
 
-    VkSemaphore renderFinished = renderFinishedSemaphores[frameIndex].get();
-    VkSwapchainKHR cSwapchain = swapchain.get();
+    VkSemaphore renderFinished  = renderFinishedSemaphore.get();
+    VkSwapchainKHR cSwapchain   = swapchain.get();
 
     VkPresentInfoKHR presentInfo    = {};
     presentInfo.sType               = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;

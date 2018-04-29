@@ -25,8 +25,8 @@ private:
     vector<VkImage>             images;
     vector<VKUH<VkImageView>>   imageViews;
 
-    vector<VKUH<VkSemaphore>>   imageAvailableSemaphores = {};
-    vector<VKUH<VkSemaphore>>   renderFinishedSemaphores = {};
+    VKUH<VkSemaphore>           imageAvailableSemaphore = {};
+    VKUH<VkSemaphore>           renderFinishedSemaphore = {};
 
     VKUH<VkDeviceMemory>        depthStencilMemory      = {};
     VKUH<VkImage>               depthStencilImage       = {};
