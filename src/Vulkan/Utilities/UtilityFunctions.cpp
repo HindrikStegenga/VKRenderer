@@ -4,9 +4,9 @@
 
 #include "UtilityFunctions.h"
 
-auto operator<<(ostream& o, VkPhysicalDeviceType& t) -> ostream&
+auto operator<<(ostream& o, VkPhysicalDeviceType& p) -> ostream&
 {
-    switch(t)
+    switch(p)
     {
         case VK_PHYSICAL_DEVICE_TYPE_OTHER:
             o << "Other";
@@ -24,7 +24,7 @@ auto operator<<(ostream& o, VkPhysicalDeviceType& t) -> ostream&
             o << "CPU";
             break;
         default:
-            o << t;
+            o << p;
             break;
     }
     return o;
@@ -49,7 +49,7 @@ auto operator<<(ostream& o, VkPhysicalDeviceProperties& p) -> ostream&
     return o;
 }
 
-auto operator<<(ostream &o, VkQueueFamilyProperties p) -> ostream&
+auto operator<<(ostream &o, VkQueueFamilyProperties& p) -> ostream&
 {
 
     o << "------------QUEUE_FAMILY------------" << std::endl;
@@ -67,13 +67,39 @@ auto operator<<(ostream &o, VkQueueFamilyProperties p) -> ostream&
     return o;
 }
 
-auto operator<<(ostream &o, VkExtensionProperties p) -> ostream&
+auto operator<<(ostream &o, VkExtensionProperties& p) -> ostream&
 {
 
     o << "------------------------------EXTENSION PROPERTIES------------------------------" << std::endl;
     o << "Extension name: "         << p.extensionName  << std::endl;
     o << "Extension spec version: " << p.specVersion    << std::endl;
-    o << "------------------------------------------------------------------------------" << std::endl;
+    o << "--------------------------------------------------------------------------------" << std::endl;
+
+    return o;
+}
+
+auto operator<<(ostream &o, vk_MemoryHeap &p) -> ostream & {
+
+    o << "------------------------------HEAP PROPERTIES------------------------------" << std::endl;
+
+    o << "Heap size: "      << p.memoryHeap.size << " bytes"                                                            << std::endl;
+    o << "Device local: "   << (static_cast<bool>(p.memoryHeap.flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) ? "Yes" : "No") << std::endl;
+
+    o << std::endl;
+
+    for(uint32_t i = 0; i < p.memoryTypeCount; ++i)
+    {
+        o << "Memory type index: " + std::to_string(p.memoryTypeIndices[i])                                                                         << std::endl;
+        o << "Device local: "       << (static_cast<bool>(p.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) ? "Yes" : "No")     << std::endl;
+        o << "Host visible: "       << (static_cast<bool>(p.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) ? "Yes" : "No")     << std::endl;
+        o << "Host coherent: "      << (static_cast<bool>(p.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) ? "Yes" : "No")    << std::endl;
+        o << "Host cached: "        << (static_cast<bool>(p.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_HOST_CACHED_BIT) ? "Yes" : "No")      << std::endl;
+        o << "Lazily allocated: "   << (static_cast<bool>(p.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT) ? "Yes" : "No") << std::endl;
+        o << "Protected: "          << (static_cast<bool>(p.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_PROTECTED_BIT) ? "Yes" : "No")        << std::endl;
+        o << std::endl;
+    }
+
+    o << "---------------------------------------------------------------------------" << std::endl;
 
     return o;
 }
@@ -254,3 +280,5 @@ VkPipelineVertexInputStateCreateInfo getVertexInputState(const vector<VkVertexIn
 
     return vertexInputStateCreateInfo;
 }
+
+

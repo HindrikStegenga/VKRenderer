@@ -3,6 +3,7 @@
 //
 
 #include "DeviceMemoryManager.h"
+#include "../Utilities/UtilityFunctions.h"
 
 DeviceMemoryManager::DeviceMemoryManager(DeviceInfo& deviceInfo) : device(deviceInfo.logical), physicalDevice(deviceInfo.physical) {
 
@@ -22,17 +23,20 @@ void DeviceMemoryManager::setupDeviceMemoryHeaps() {
 
         vk_MemoryHeap memoryHeap = getMemoryHeapMemoryTypes(idx, properties);
 
+        std::stringstream ss;
+        ss << std::endl << memoryHeap;
+
+        Logger::log(ss.str());
+
         if(isHeapDeviceLocal(properties.memoryHeaps[idx])) {
-            Logger::log("Found device local memory heap of " + std::to_string(memoryHeap.memoryHeap.size) + " bytes");
             deviceLocalHeaps.push(memoryHeap);
         } else {
-            Logger::log("Found device host local memory heap of " + std::to_string(memoryHeap.memoryHeap.size) + " bytes");
             hostLocalHeaps.push(memoryHeap);
         }
     }
 
     //Okay, we gathered heaps and types. Now we must classify them.
-    
+
 
 
 

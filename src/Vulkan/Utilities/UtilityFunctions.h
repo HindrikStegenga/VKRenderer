@@ -12,13 +12,17 @@
 
 using std::ostream;
 
-auto operator<<(ostream& o, VkPhysicalDeviceType& t) -> ostream&;
+auto operator<<(ostream& o, VkPhysicalDeviceType& p) -> ostream&;
 
 auto operator<<(ostream& o, VkPhysicalDeviceProperties& p) -> ostream&;
 
-auto operator<<(ostream& o, VkQueueFamilyProperties p) -> ostream&;
+auto operator<<(ostream& o, VkQueueFamilyProperties& p) -> ostream&;
 
-auto operator<<(ostream& o, VkExtensionProperties p) -> ostream&;
+auto operator<<(ostream& o, VkExtensionProperties& p) -> ostream&;
+
+auto operator<<(ostream& o, vk_MemoryHeap& p) -> ostream&;
+
+
 
 uint32_t deviceTypePriority(VkPhysicalDeviceType deviceType);
 
