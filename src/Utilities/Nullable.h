@@ -9,6 +9,13 @@ template<typename T>
 class Nullable final {
 public:
     Nullable();
+
+    explicit Nullable(const T& item);
+    explicit Nullable(T&& item);
+    template<typename ...Args>
+    explicit Nullable(Args&&... args);
+
+
     ~Nullable();
 
     Nullable(const Nullable& rhs);
@@ -20,14 +27,20 @@ public:
     inline const T& get() const;
     inline T& get();
 
+    inline T* getPointer();
+    inline T const * const getPointer() const;
+
     bool isSet() const;
 
     void set();
     void set(T &&object);
     void set(const T &object);
 
+    template<typename ...Args>
+    void set(Args&&... args);
+
+
     explicit operator bool() const;
-    const T* operator &() const;
     explicit operator T() const;
 
 private:
@@ -56,6 +69,22 @@ Nullable<T>::Nullable() : data() {
 }
 
 template<typename T>
+Nullable<T>::Nullable(const T &item) : data() {
+    set(item);
+}
+
+template<typename T>
+Nullable<T>::Nullable(T &&item) : data(){
+    set(item);
+}
+
+template<typename T>
+template<typename... Args>
+Nullable<T>::Nullable(Args&&... args) {
+    set(std::forward<Args>(args)...);
+}
+
+template<typename T>
 void Nullable<T>::set(const T &object) {
     cleanUp();
     auto t = (T*)(&data);
@@ -77,6 +106,15 @@ void Nullable<T>::set() {
 }
 
 template<typename T>
+template<typename... Args>
+void Nullable<T>::set(Args&&... args) {
+    cleanUp();
+    auto t = (T*)(&data);
+    *t = T(std::forward<Args>(args)...);
+    isNull = false;
+}
+
+template<typename T>
 Nullable<T>::operator bool() const {
     return !isNull;
 }
@@ -84,11 +122,6 @@ Nullable<T>::operator bool() const {
 template<typename T>
 Nullable<T>::operator T() const {
     return data;
-}
-
-template<typename T>
-const T* Nullable<T>::operator&() const {
-    return &data;
 }
 
 template<typename T>
@@ -157,5 +190,16 @@ inline T& Nullable<T>::get()
 {
     return *(T*)(&data);
 }
+
+template<typename T>
+T* Nullable<T>::getPointer() {
+    return &data;
+}
+
+template<typename T>
+T const *const Nullable<T>::getPointer() const {
+    return &data;
+}
+
 
 #endif //VKRENDERER_NULLABLE_H

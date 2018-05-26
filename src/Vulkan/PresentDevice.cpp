@@ -27,6 +27,9 @@ PresentDevice::PresentDevice(VkInstance instance, const map<string, string>& par
 
     createLogicalDeviceAndPresentationQueue(physicalDevice, usedExtensions, createInfo.requiredFeatures);
     this->surface.reset(createInfo.surfaceHandle, instance, vkDestroySurfaceKHR);
+
+    auto deviceInfo = getDeviceInfo();
+    memory = Nullable<DeviceMemoryManager>(deviceInfo);
 }
 
 pair<PhysicalDevice, vk_QueueFamily> PresentDevice::selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures)
@@ -169,4 +172,8 @@ PresentDevice::~PresentDevice() {
     {
         vkDeviceWaitIdle(device.get());
     }
+}
+
+DeviceInfo PresentDevice::getDeviceInfo() const {
+    return { device.get(), physicalDevice.get().physicalDevice };
 }

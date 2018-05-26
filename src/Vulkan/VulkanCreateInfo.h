@@ -33,6 +33,14 @@ struct PresentDeviceInfo final {
     vk_Queue            presentQueue    = {};
 };
 
+
+struct DeviceInfo final {
+
+    VkDevice            logical     = VK_NULL_HANDLE;
+    VkPhysicalDevice    physical    = VK_NULL_HANDLE;
+
+};
+
 struct VulkanRenderModeCreateInfo final {
 
     string              name            = "";

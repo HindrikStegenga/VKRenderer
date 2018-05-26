@@ -27,7 +27,7 @@ struct vk_SwapchainSettings final {
 
 };
 
-struct vk_RendermodeSwapchainInfo {
+struct vk_RendermodeSwapchainInfo final {
 
     uint32_t            width               = 0;
     uint32_t            height              = 0;
@@ -38,7 +38,7 @@ struct vk_RendermodeSwapchainInfo {
 
 };
 
-struct vk_PresentImageInfo {
+struct vk_PresentImageInfo final {
 
     VkFence     submitDoneFence         = nullptr;
     uint32_t    imageIndex              = 0;
@@ -48,7 +48,7 @@ struct vk_PresentImageInfo {
 
 };
 
-struct vk_RenderFrameInfo {
+struct vk_RenderFrameInfo final {
 
     uint32_t    imageIndex                  = 0;
     VkSemaphore imageAvailableSemaphore     = VK_NULL_HANDLE;
@@ -57,8 +57,30 @@ struct vk_RenderFrameInfo {
 
 };
 
+struct vk_MemoryHeap final {
 
+    VkMemoryHeap    memoryHeap                              = {};
+    uint32_t        memoryTypeCount                         = 0;
+    VkMemoryType    memoryTypes      [VK_MAX_MEMORY_TYPES]  = {};
+    uint32_t        memoryTypeIndices[VK_MAX_MEMORY_TYPES]  = {};
 
+};
+
+struct vk_MemoryAllocation final {
+
+    VkDeviceMemory  allocation;
+    VkDeviceSize    size;
+    uint32_t        memoryTypeIndex;
+
+};
+
+struct vk_Allocation final {
+
+    VkDeviceSize offset;
+    VkDeviceSize size;
+    VkBuffer     buffer;
+
+};
 
 
 
