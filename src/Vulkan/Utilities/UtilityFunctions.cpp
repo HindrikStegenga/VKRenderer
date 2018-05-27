@@ -115,7 +115,6 @@ auto operator<<(ostream &o, const vk_MemoryType &p) -> ostream & {
     o << "Lazily allocated: "   << (static_cast<bool>(p.memoryType.propertyFlags & VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT) ? "Yes" : "No") << std::endl;
     o << "Protected: "          << (static_cast<bool>(p.memoryType.propertyFlags & VK_MEMORY_PROPERTY_PROTECTED_BIT) ? "Yes" : "No")        << std::endl;
     o << "----------------------------------------------------------------------------------" << std::endl;
-    o << std::endl;
 
     return o;
 }

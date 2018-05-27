@@ -96,10 +96,10 @@ vk_MemoryHeap DeviceMemoryManager::getMemoryHeapMemoryTypes(uint32_t heapIndex, 
 void DeviceMemoryManager::checkAndAssignMemProps(const DeviceMemoryManager::MemHeapSet &heapSet, DeviceMemoryManager::MemTypeSet &targetSet, vector<DeviceMemoryManager::HasMemoryPropertyFunc> funcs) {
 
     for(auto& heap : heapSet)
-    {                                                                   
-        bool isValid = true;                                            
+    {
         for(uint32_t idx = 0; idx < heap.memoryTypeCount; ++idx)        
-        {                                                               
+        {
+            bool isValid = true;
             VkMemoryType type = heap.memoryTypes[idx];                  
             for(auto& func : funcs)
             {                                                           
@@ -109,10 +109,12 @@ void DeviceMemoryManager::checkAndAssignMemProps(const DeviceMemoryManager::MemH
                     break;                                              
                 }                                                       
                                                                         
-            }                                                           
-            if(!isValid)                                                
-                continue;                                               
-            else {                                                      
+            }
+            if(!isValid) {
+                continue;
+            }
+            else {
+                //Check if it already exists in the target set
                 vk_MemoryType t = { heap.memoryTypeIndices[idx], type };
 
                 bool hasFoundIdentical = false;
@@ -129,27 +131,30 @@ void DeviceMemoryManager::checkAndAssignMemProps(const DeviceMemoryManager::MemH
                     continue;
 
                 targetSet.push(t);
-                break;                                                  
             }                                                           
-        }                                                               
-        if(isValid) break;
+        }
     }
-    
 }
 
 
 void DeviceMemoryManager::pickGenericBufferMemoryTypes(const DeviceMemoryManager::MemHeapSet &deviceLocalHeaps, const DeviceMemoryManager::MemHeapSet &hostLocalHeaps)
 {
 
-    checkAndAssignMemProps(deviceLocalHeaps, genericBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isNotHostCoherent });
-    checkAndAssignMemProps(deviceLocalHeaps, genericBufferMemoryTypes, { isDeviceLocal, isNotHostCached });
+    checkAndAssignMemProps(deviceLocalHeaps, genericBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isNotHostCoherent, isNotHostVisible });
+    checkAndAssignMemProps(deviceLocalHeaps, genericBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isNotHostCoherent, isHostVisible    });
 
+    /*
+    checkAndAssignMemProps(deviceLocalHeaps, genericBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isHostCoherent,    isNotHostVisible });
+    checkAndAssignMemProps(deviceLocalHeaps, genericBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isHostCoherent,    isHostVisible    });
+    */
 
     assert(!genericBufferMemoryTypes.empty());
     std::stringstream stream;
     stream << "Assigned the following memory types to be used as generic buffer memory: " << std::endl;
-    for(auto& type : genericBufferMemoryTypes)
+    for(size_t i = 0; i < genericBufferMemoryTypes.size(); ++i)
     {
+        auto type = genericBufferMemoryTypes[i];
+        stream << "Priority: " + std::to_string(i) << std::endl;
         stream << type;
     }
     Logger::log(stream.str());
@@ -158,19 +163,69 @@ void DeviceMemoryManager::pickGenericBufferMemoryTypes(const DeviceMemoryManager
 void DeviceMemoryManager::pickStagingBufferMemoryTypes(const DeviceMemoryManager::MemHeapSet &deviceLocalHeaps,
                                                        const DeviceMemoryManager::MemHeapSet &hostLocalHeaps)
 {
+    checkAndAssignMemProps(deviceLocalHeaps, stagingBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isNotHostCoherent, isHostVisible });
+    checkAndAssignMemProps(deviceLocalHeaps, stagingBufferMemoryTypes, { isDeviceLocal, isHostCached,    isNotHostCoherent, isHostVisible });
+    checkAndAssignMemProps(deviceLocalHeaps, stagingBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isHostCoherent,    isHostVisible });
+    checkAndAssignMemProps(deviceLocalHeaps, stagingBufferMemoryTypes, { isDeviceLocal, isHostCached,    isHostCoherent,    isHostVisible });
+
+    checkAndAssignMemProps(hostLocalHeaps, stagingBufferMemoryTypes, { isHostCached,    isNotHostCoherent, isHostVisible });
+    checkAndAssignMemProps(hostLocalHeaps, stagingBufferMemoryTypes, { isHostCached,    isHostCoherent,    isHostVisible });
+    checkAndAssignMemProps(hostLocalHeaps, stagingBufferMemoryTypes, { isNotHostCached, isHostCoherent,    isHostVisible });
+
+    assert(!stagingBufferMemoryTypes.empty());
+    std::stringstream stream;
+    stream << "Assigned the following memory types to be used as staging buffer memory: " << std::endl;
+    for(size_t i = 0; i < stagingBufferMemoryTypes.size(); ++i)
+    {
+        auto type = stagingBufferMemoryTypes[i];
+        stream << "Priority: " + std::to_string(i) << std::endl;
+        stream << type;
+    }
+    Logger::log(stream.str());
 
 }
 
 void DeviceMemoryManager::pickLowFrequencyUBOBufferMemoryTypes(const DeviceMemoryManager::MemHeapSet &deviceLocalHeaps,
                                                                const DeviceMemoryManager::MemHeapSet &hostLocalHeaps)
 {
+    checkAndAssignMemProps(deviceLocalHeaps, lowFrequencyUBOBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isNotHostCoherent, isNotHostVisible });
+    checkAndAssignMemProps(deviceLocalHeaps, lowFrequencyUBOBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isNotHostCoherent, isHostVisible    });
 
+    assert(!lowFrequencyUBOBufferMemoryTypes.empty());
+    std::stringstream stream;
+    stream << "Assigned the following memory types to be used as low frequency UBO buffer memory: " << std::endl;
+
+    for(size_t i = 0; i < lowFrequencyUBOBufferMemoryTypes.size(); ++i)
+    {
+        auto type = lowFrequencyUBOBufferMemoryTypes[i];
+        stream << "Priority: " + std::to_string(i) << std::endl;
+        stream << type;
+    }
+    Logger::log(stream.str());
 }
 
 void DeviceMemoryManager::pickHighFrequencyUBOBufferMemoryTypes(const DeviceMemoryManager::MemHeapSet &deviceLocalHeaps,
                                                                 const DeviceMemoryManager::MemHeapSet &hostLocalHeaps)
 {
+    checkAndAssignMemProps(hostLocalHeaps, highFrequencyUBOBufferMemoryTypes, { isHostCached,    isNotHostCoherent, isHostVisible });
+    checkAndAssignMemProps(hostLocalHeaps, highFrequencyUBOBufferMemoryTypes, { isHostCached,    isHostCoherent,    isHostVisible });
+    checkAndAssignMemProps(hostLocalHeaps, highFrequencyUBOBufferMemoryTypes, { isNotHostCached, isHostCoherent,    isHostVisible });
 
+    checkAndAssignMemProps(deviceLocalHeaps, highFrequencyUBOBufferMemoryTypes, { isDeviceLocal, isHostCached,    isNotHostCoherent, isHostVisible });
+    checkAndAssignMemProps(deviceLocalHeaps, highFrequencyUBOBufferMemoryTypes, { isDeviceLocal, isHostCached,    isHostCoherent,    isHostVisible });
+    checkAndAssignMemProps(deviceLocalHeaps, highFrequencyUBOBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isHostCoherent,    isHostVisible });
+
+    assert(!highFrequencyUBOBufferMemoryTypes.empty());
+    std::stringstream stream;
+    stream << "Assigned the following memory types to be used as high frequency UBO buffer memory: " << std::endl;
+
+    for(size_t i = 0; i < highFrequencyUBOBufferMemoryTypes.size(); ++i)
+    {
+        auto type = highFrequencyUBOBufferMemoryTypes[i];
+        stream << "Priority: " + std::to_string(i) << std::endl;
+        stream << type;
+    }
+    Logger::log(stream.str());
 }
 
 void DeviceMemoryManager::pickFeedbackBufferMemoryTypes(const DeviceMemoryManager::MemHeapSet &deviceLocalHeaps,

@@ -17,9 +17,11 @@ private:
 
     VkDeviceSize        totalDynamicReserved    = 0;
     VkDeviceSize        totalStaticReserved     = 0;
+    VkDeviceSize        totalDedicatedReserved  = 0;
 
     VkDeviceSize        totalDynamicUsed        = 0;
     VkDeviceSize        totalStaticUsed         = 0;
+    VkDeviceSize        totalDedicatedReserverd = 0;
 
     StaticStack<vk_MemoryHeapUsageTracker, VK_MAX_MEMORY_HEAPS> memoryHeapUsageTrackers = {};
 
