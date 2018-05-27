@@ -83,17 +83,17 @@ struct vk_MemoryType final {
 
 struct vk_MemoryAllocation final {
 
-    VkDeviceMemory  allocation;
-    VkDeviceSize    size;
-    uint32_t        memoryTypeIndex;
+    VkDeviceMemory  allocation          = VK_NULL_HANDLE;
+    VkDeviceSize    size                = 0;
+    uint32_t        memoryTypeIndex     = VK_NULL_HANDLE;
 
 };
 
 struct vk_Allocation final {
 
-    VkDeviceSize offset;
-    VkDeviceSize size;
-    VkBuffer     buffer;
+    VkDeviceSize offset     = 0;
+    VkDeviceSize size       = 0;
+    VkBuffer     buffer     = 0;
 
 };
 

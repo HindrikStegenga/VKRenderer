@@ -8,6 +8,7 @@
 #include "../../CommonInclude.h"
 #include "../Platform/VulkanPlatform.h"
 #include "../../Utilities/StaticStack.h"
+#include "../Utilities/VkEnums.h"
 
 
 class DeviceMemoryManager final {
@@ -19,10 +20,6 @@ private:
     VkDeviceSize        totalStaticReserved     = 0;
     VkDeviceSize        totalDedicatedReserved  = 0;
 
-    VkDeviceSize        totalDynamicUsed        = 0;
-    VkDeviceSize        totalStaticUsed         = 0;
-    VkDeviceSize        totalDedicatedReserverd = 0;
-
     StaticStack<vk_MemoryHeapUsageTracker, VK_MAX_MEMORY_HEAPS> memoryHeapUsageTrackers = {};
 
     typedef StaticStack<vk_MemoryHeap, VK_MAX_MEMORY_HEAPS> MemHeapSet;
@@ -33,9 +30,9 @@ private:
     MemTypeSet stagingBufferMemoryTypes             = {};
     MemTypeSet lowFrequencyUBOBufferMemoryTypes     = {};
     MemTypeSet highFrequencyUBOBufferMemoryTypes    = {};
-    MemTypeSet feedbackBufferMemoryTypes            = {};
 
 public:
+
     explicit DeviceMemoryManager(DeviceInfo& deviceInfo);
 
     DeviceMemoryManager(const DeviceMemoryManager&) = delete;
@@ -46,7 +43,10 @@ public:
 
 public:
     
-
+    vk_MemoryAllocation allocateGenericMemory           (VkDeviceSize size, BufferMemoryAllocationUsage usage);
+    vk_MemoryAllocation allocateStagingMemory           (VkDeviceSize size, BufferMemoryAllocationUsage usage);
+    vk_MemoryAllocation allocateLowFrequencyUBOMemory   (VkDeviceSize size, BufferMemoryAllocationUsage usage);
+    vk_MemoryAllocation allocateHighFrequencyUBOMemory  (VkDeviceSize size, BufferMemoryAllocationUsage usage);
 
 private:
     void setupDeviceMemoryHeaps();
@@ -58,17 +58,11 @@ private:
     void pickStagingBufferMemoryTypes           (const MemHeapSet& deviceLocalHeaps, const MemHeapSet& hostLocalHeaps);
     void pickLowFrequencyUBOBufferMemoryTypes   (const MemHeapSet& deviceLocalHeaps, const MemHeapSet& hostLocalHeaps);
     void pickHighFrequencyUBOBufferMemoryTypes  (const MemHeapSet& deviceLocalHeaps, const MemHeapSet& hostLocalHeaps);
-    void pickFeedbackBufferMemoryTypes          (const MemHeapSet& deviceLocalHeaps, const MemHeapSet& hostLocalHeaps);
 
 
 private:
     static bool isHeapDeviceLocal(VkMemoryHeap memoryHeap);
-    static vk_MemoryHeap getMemoryHeapMemoryTypes(uint32_t heapIndex,
-                                                  const VkPhysicalDeviceMemoryProperties &memoryProperties);
-
-
-
-
+    static vk_MemoryHeap getMemoryHeapMemoryTypes(uint32_t heapIndex, const VkPhysicalDeviceMemoryProperties &memoryProperties);
 };
 
 

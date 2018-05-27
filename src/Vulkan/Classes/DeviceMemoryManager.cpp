@@ -51,7 +51,6 @@ void DeviceMemoryManager::setupDeviceMemoryHeaps() {
     pickStagingBufferMemoryTypes          (deviceLocalHeaps, hostLocalHeaps);
     pickLowFrequencyUBOBufferMemoryTypes  (deviceLocalHeaps, hostLocalHeaps);
     pickHighFrequencyUBOBufferMemoryTypes (deviceLocalHeaps, hostLocalHeaps);
-    pickFeedbackBufferMemoryTypes         (deviceLocalHeaps, hostLocalHeaps);
 
 }
 
@@ -228,10 +227,22 @@ void DeviceMemoryManager::pickHighFrequencyUBOBufferMemoryTypes(const DeviceMemo
     Logger::log(stream.str());
 }
 
-void DeviceMemoryManager::pickFeedbackBufferMemoryTypes(const DeviceMemoryManager::MemHeapSet &deviceLocalHeaps,
-                                                        const DeviceMemoryManager::MemHeapSet &hostLocalHeaps)
-{
+vk_MemoryAllocation DeviceMemoryManager::allocateGenericMemory(VkDeviceSize size, BufferMemoryAllocationUsage usage) {
+    return vk_MemoryAllocation();
+}
 
+vk_MemoryAllocation DeviceMemoryManager::allocateStagingMemory(VkDeviceSize size, BufferMemoryAllocationUsage usage) {
+    return vk_MemoryAllocation();
+}
+
+vk_MemoryAllocation
+DeviceMemoryManager::allocateLowFrequencyUBOMemory(VkDeviceSize size, BufferMemoryAllocationUsage usage) {
+    return vk_MemoryAllocation();
+}
+
+vk_MemoryAllocation
+DeviceMemoryManager::allocateHighFrequencyUBOMemory(VkDeviceSize size, BufferMemoryAllocationUsage usage) {
+    return vk_MemoryAllocation();
 }
 
 

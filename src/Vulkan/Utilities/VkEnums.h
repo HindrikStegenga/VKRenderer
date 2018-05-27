@@ -14,5 +14,13 @@ enum class PrimaryCommandBufferUsage : VkCommandBufferUsageFlags {
     Simultaneous    = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT
 };
 
+enum class BufferMemoryAllocationUsage : uint8_t {
+
+    Static      = 0,
+    Dynamic     = 1,
+    Dedicated   = 2
+
+};
+
 
 #endif //VKRENDERER_VKENUMS_H
