@@ -33,15 +33,25 @@ void DeviceMemoryManager::setupDeviceMemoryHeaps() {
         } else {
             hostLocalHeaps.push(memoryHeap);
         }
+
+        vk_MemoryHeapUsageTracker tracker = {};
+
+        tracker.memoryHeap      = memoryHeap.memoryHeap;
+        tracker.heapIndex       = idx;
+        tracker.usedHeapSize    = 0;
+
+        memoryHeapUsageTrackers.push(tracker);
     }
+
+    assert(!(deviceLocalHeaps.empty() && hostLocalHeaps.empty()));
 
     //Okay, we gathered heaps and types. Now we must classify them.
 
-
-
-
-
-
+    pickGenericBufferMemoryTypes          (deviceLocalHeaps, hostLocalHeaps);
+    pickStagingBufferMemoryTypes          (deviceLocalHeaps, hostLocalHeaps);
+    pickLowFrequencyUBOBufferMemoryTypes  (deviceLocalHeaps, hostLocalHeaps);
+    pickHighFrequencyUBOBufferMemoryTypes (deviceLocalHeaps, hostLocalHeaps);
+    pickFeedbackBufferMemoryTypes         (deviceLocalHeaps, hostLocalHeaps);
 
 }
 
@@ -82,3 +92,91 @@ vk_MemoryHeap DeviceMemoryManager::getMemoryHeapMemoryTypes(uint32_t heapIndex, 
 
     return memoryHeap;
 }
+
+void DeviceMemoryManager::checkAndAssignMemProps(const DeviceMemoryManager::MemHeapSet &heapSet, DeviceMemoryManager::MemTypeSet &targetSet, vector<DeviceMemoryManager::HasMemoryPropertyFunc> funcs) {
+
+    for(auto& heap : heapSet)
+    {                                                                   
+        bool isValid = true;                                            
+        for(uint32_t idx = 0; idx < heap.memoryTypeCount; ++idx)        
+        {                                                               
+            VkMemoryType type = heap.memoryTypes[idx];                  
+            for(auto& func : funcs)
+            {                                                           
+                if(!func(type))                                         
+                {                                                       
+                    isValid = false;                                    
+                    break;                                              
+                }                                                       
+                                                                        
+            }                                                           
+            if(!isValid)                                                
+                continue;                                               
+            else {                                                      
+                vk_MemoryType t = { heap.memoryTypeIndices[idx], type };
+
+                bool hasFoundIdentical = false;
+                for(auto& item : targetSet)
+                {
+                    if(item.memoryTypeIndex == t.memoryTypeIndex)
+                    {
+                        hasFoundIdentical = true;
+                        break;
+                    }
+                }
+
+                if(hasFoundIdentical)
+                    continue;
+
+                targetSet.push(t);
+                break;                                                  
+            }                                                           
+        }                                                               
+        if(isValid) break;
+    }
+    
+}
+
+
+void DeviceMemoryManager::pickGenericBufferMemoryTypes(const DeviceMemoryManager::MemHeapSet &deviceLocalHeaps, const DeviceMemoryManager::MemHeapSet &hostLocalHeaps)
+{
+
+    checkAndAssignMemProps(deviceLocalHeaps, genericBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isNotHostCoherent });
+    checkAndAssignMemProps(deviceLocalHeaps, genericBufferMemoryTypes, { isDeviceLocal, isNotHostCached });
+
+
+    assert(!genericBufferMemoryTypes.empty());
+    std::stringstream stream;
+    stream << "Assigned the following memory types to be used as generic buffer memory: " << std::endl;
+    for(auto& type : genericBufferMemoryTypes)
+    {
+        stream << type;
+    }
+    Logger::log(stream.str());
+}
+
+void DeviceMemoryManager::pickStagingBufferMemoryTypes(const DeviceMemoryManager::MemHeapSet &deviceLocalHeaps,
+                                                       const DeviceMemoryManager::MemHeapSet &hostLocalHeaps)
+{
+
+}
+
+void DeviceMemoryManager::pickLowFrequencyUBOBufferMemoryTypes(const DeviceMemoryManager::MemHeapSet &deviceLocalHeaps,
+                                                               const DeviceMemoryManager::MemHeapSet &hostLocalHeaps)
+{
+
+}
+
+void DeviceMemoryManager::pickHighFrequencyUBOBufferMemoryTypes(const DeviceMemoryManager::MemHeapSet &deviceLocalHeaps,
+                                                                const DeviceMemoryManager::MemHeapSet &hostLocalHeaps)
+{
+
+}
+
+void DeviceMemoryManager::pickFeedbackBufferMemoryTypes(const DeviceMemoryManager::MemHeapSet &deviceLocalHeaps,
+                                                        const DeviceMemoryManager::MemHeapSet &hostLocalHeaps)
+{
+
+}
+
+

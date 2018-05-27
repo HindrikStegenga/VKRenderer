@@ -4,7 +4,7 @@
 
 #include "UtilityFunctions.h"
 
-auto operator<<(ostream& o, VkPhysicalDeviceType& p) -> ostream&
+auto operator<<(ostream& o, const VkPhysicalDeviceType& p) -> ostream&
 {
     switch(p)
     {
@@ -30,7 +30,7 @@ auto operator<<(ostream& o, VkPhysicalDeviceType& p) -> ostream&
     return o;
 }
 
-auto operator<<(ostream& o, VkPhysicalDeviceProperties& p) -> ostream&
+auto operator<<(ostream& o, const VkPhysicalDeviceProperties& p) -> ostream&
 {
 
     string vendorName = std::to_string(p.vendorID);
@@ -49,7 +49,7 @@ auto operator<<(ostream& o, VkPhysicalDeviceProperties& p) -> ostream&
     return o;
 }
 
-auto operator<<(ostream &o, VkQueueFamilyProperties& p) -> ostream&
+auto operator<<(ostream &o, const VkQueueFamilyProperties& p) -> ostream&
 {
 
     o << "------------QUEUE_FAMILY------------" << std::endl;
@@ -67,7 +67,7 @@ auto operator<<(ostream &o, VkQueueFamilyProperties& p) -> ostream&
     return o;
 }
 
-auto operator<<(ostream &o, VkExtensionProperties& p) -> ostream&
+auto operator<<(ostream &o, const VkExtensionProperties& p) -> ostream&
 {
 
     o << "------------------------------EXTENSION PROPERTIES------------------------------" << std::endl;
@@ -78,7 +78,7 @@ auto operator<<(ostream &o, VkExtensionProperties& p) -> ostream&
     return o;
 }
 
-auto operator<<(ostream &o, vk_MemoryHeap &p) -> ostream & {
+auto operator<<(ostream &o, const vk_MemoryHeap &p) -> ostream & {
 
     o << "------------------------------HEAP PROPERTIES------------------------------" << std::endl;
 
@@ -104,6 +104,73 @@ auto operator<<(ostream &o, vk_MemoryHeap &p) -> ostream & {
     return o;
 }
 
+auto operator<<(ostream &o, const vk_MemoryType &p) -> ostream & {
+
+    o << "------------------------------MEMORY TYPE PROPERTIES------------------------------" << std::endl;
+    o << "Memory type index: " + std::to_string(p.memoryTypeIndex)                                                                          << std::endl;
+    o << "Device local: "       << (static_cast<bool>(p.memoryType.propertyFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) ? "Yes" : "No")     << std::endl;
+    o << "Host visible: "       << (static_cast<bool>(p.memoryType.propertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) ? "Yes" : "No")     << std::endl;
+    o << "Host coherent: "      << (static_cast<bool>(p.memoryType.propertyFlags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) ? "Yes" : "No")    << std::endl;
+    o << "Host cached: "        << (static_cast<bool>(p.memoryType.propertyFlags & VK_MEMORY_PROPERTY_HOST_CACHED_BIT) ? "Yes" : "No")      << std::endl;
+    o << "Lazily allocated: "   << (static_cast<bool>(p.memoryType.propertyFlags & VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT) ? "Yes" : "No") << std::endl;
+    o << "Protected: "          << (static_cast<bool>(p.memoryType.propertyFlags & VK_MEMORY_PROPERTY_PROTECTED_BIT) ? "Yes" : "No")        << std::endl;
+    o << "----------------------------------------------------------------------------------" << std::endl;
+    o << std::endl;
+
+    return o;
+}
+
+
+bool isDeviceLocal(VkMemoryType memoryType) {
+    return static_cast<bool>(memoryType.propertyFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+}
+
+bool isHostVisible(VkMemoryType memoryType) {
+    return static_cast<bool>(memoryType.propertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+}
+
+bool isHostCoherent(VkMemoryType memoryType) {
+    return static_cast<bool>(memoryType.propertyFlags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+}
+
+bool isHostCached(VkMemoryType memoryType) {
+    return static_cast<bool>(memoryType.propertyFlags & VK_MEMORY_PROPERTY_HOST_CACHED_BIT);
+}
+
+bool isLazilyAllocated(VkMemoryType memoryType) {
+    return static_cast<bool>(memoryType.propertyFlags & VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT);
+}
+
+bool isProtected(VkMemoryType memoryType) {
+    return static_cast<bool>(memoryType.propertyFlags & VK_MEMORY_PROPERTY_PROTECTED_BIT);
+}
+
+
+bool isNotDeviceLocal(VkMemoryType memoryType) {
+    return !isDeviceLocal(memoryType);
+}
+
+bool isNotHostVisible(VkMemoryType memoryType) {
+    return !isHostVisible(memoryType);
+}
+
+bool isNotHostCoherent(VkMemoryType memoryType) {
+    return !isHostCoherent(memoryType);
+}
+
+bool isNotHostCached(VkMemoryType memoryType) {
+    return !isHostCached(memoryType);
+}
+
+bool isNotLazilyAllocated(VkMemoryType memoryType) {
+    return !isLazilyAllocated(memoryType);
+}
+
+bool isNotProtected(VkMemoryType memoryType) {
+    return !isProtected(memoryType);
+}
+
+
 uint32_t deviceTypePriority(VkPhysicalDeviceType deviceType)
 {
     switch (deviceType) {
@@ -122,6 +189,7 @@ uint32_t deviceTypePriority(VkPhysicalDeviceType deviceType)
         case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
             return 6;
     }
+    return std::numeric_limits<uint32_t>::max();
 }
 
 VkComponentMapping defaultComponentMapping() {
@@ -280,5 +348,9 @@ VkPipelineVertexInputStateCreateInfo getVertexInputState(const vector<VkVertexIn
 
     return vertexInputStateCreateInfo;
 }
+
+
+
+
 
 

@@ -106,12 +106,12 @@ bool StaticStack<T, container_size>::empty() const {
 
 template<typename T, size_t container_size>
 T& StaticStack<T, container_size>::top() {
-    return data[usedCount];
+    return data[usedCount-1];
 }
 
 template<typename T, size_t container_size>
 const T &StaticStack<T, container_size>::top() const {
-    return data[usedCount];
+    return data[usedCount-1];
 }
 
 template<typename T, size_t container_size>
@@ -129,13 +129,13 @@ T* StaticStack<T, container_size>::begin() {
 template<typename T, size_t container_size>
 T const *const StaticStack<T, container_size>::end() const {
 
-    return usedCount > 0 ? &data[usedCount-1] : nullptr;
+    return usedCount > 0 ? &data[usedCount] : nullptr;
 }
 
 template<typename T, size_t container_size>
 T* StaticStack<T, container_size>::end() {
 
-    return usedCount > 0 ? &data[usedCount-1] : nullptr;
+    return usedCount > 0 ? &data[usedCount] : nullptr;
 }
 
 #endif //VKRENDERER_RESERVEDARRAY_H

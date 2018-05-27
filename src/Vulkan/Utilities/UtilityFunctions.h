@@ -12,16 +12,32 @@
 
 using std::ostream;
 
-auto operator<<(ostream& o, VkPhysicalDeviceType& p) -> ostream&;
+auto operator<<(ostream& o, const VkPhysicalDeviceType& p) -> ostream&;
 
-auto operator<<(ostream& o, VkPhysicalDeviceProperties& p) -> ostream&;
+auto operator<<(ostream& o, const VkPhysicalDeviceProperties& p) -> ostream&;
 
-auto operator<<(ostream& o, VkQueueFamilyProperties& p) -> ostream&;
+auto operator<<(ostream& o, const VkQueueFamilyProperties& p) -> ostream&;
 
-auto operator<<(ostream& o, VkExtensionProperties& p) -> ostream&;
+auto operator<<(ostream& o, const VkExtensionProperties& p) -> ostream&;
 
-auto operator<<(ostream& o, vk_MemoryHeap& p) -> ostream&;
+auto operator<<(ostream& o, const vk_MemoryHeap& p) -> ostream&;
 
+auto operator<<(ostream& o, const vk_MemoryType& p) -> ostream&;
+
+
+bool isDeviceLocal(VkMemoryType memoryType);
+bool isHostVisible(VkMemoryType memoryType);
+bool isHostCoherent(VkMemoryType memoryType);
+bool isHostCached(VkMemoryType memoryType);
+bool isLazilyAllocated(VkMemoryType memoryType);
+bool isProtected(VkMemoryType memoryType);
+
+bool isNotDeviceLocal(VkMemoryType memoryType);
+bool isNotHostVisible(VkMemoryType memoryType);
+bool isNotHostCoherent(VkMemoryType memoryType);
+bool isNotHostCached(VkMemoryType memoryType);
+bool isNotLazilyAllocated(VkMemoryType memoryType);
+bool isNotProtected(VkMemoryType memoryType);
 
 
 uint32_t deviceTypePriority(VkPhysicalDeviceType deviceType);

@@ -66,6 +66,21 @@ struct vk_MemoryHeap final {
 
 };
 
+struct vk_MemoryHeapUsageTracker final {
+
+    uint32_t        heapIndex       = 0;
+    VkDeviceSize    usedHeapSize    = 0;
+    VkMemoryHeap    memoryHeap      = {};
+
+};
+
+struct vk_MemoryType final {
+
+    uint32_t        memoryTypeIndex = 0;
+    VkMemoryType    memoryType      = {};
+
+};
+
 struct vk_MemoryAllocation final {
 
     VkDeviceMemory  allocation;
