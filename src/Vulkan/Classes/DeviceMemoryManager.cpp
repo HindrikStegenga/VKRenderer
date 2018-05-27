@@ -227,22 +227,72 @@ void DeviceMemoryManager::pickHighFrequencyUBOBufferMemoryTypes(const DeviceMemo
     Logger::log(stream.str());
 }
 
-vk_MemoryAllocation DeviceMemoryManager::allocateGenericMemory(VkDeviceSize size, BufferMemoryAllocationUsage usage) {
-    return vk_MemoryAllocation();
+vk_MemoryAllocation DeviceMemoryManager::allocateFromMemTypeSet(VkDeviceSize size, const DeviceMemoryManager::MemTypeSet &set) {
+
+    VkMemoryAllocateInfo allocateInfo   = {};
+    allocateInfo.sType                  = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocateInfo.pNext                  = nullptr;
+    allocateInfo.allocationSize         = size;
+
+    for (auto memType : set) {
+        vk_MemoryHeapUsageTracker& tracker = memoryHeapUsageTrackers[memType.memoryType.heapIndex];
+
+        if(size >= tracker.memoryHeap.size)
+            continue;
+
+        if(size >= tracker.memoryHeap.size - tracker.usedHeapSize)
+            continue;
+
+        allocateInfo.memoryTypeIndex = memType.memoryTypeIndex;
+
+        VkDeviceMemory memory = VK_NULL_HANDLE;
+        VkResult result = vkAllocateMemory(device, &allocateInfo, nullptr, &memory);
+        handleResult(result, "Could not allocate buffer!");
+
+        Logger::success("Allocated memory buffer on heap " + std::to_string(memType.memoryType.heapIndex) + " with type " + std::to_string(memType.memoryTypeIndex) + " of " + std::to_string(size) + " bytes.");
+
+        vk_MemoryAllocation allocation = {};
+        allocation.memoryType       = memType;
+        allocation.allocation       = memory;
+        allocation.size             = size;
+
+        tracker.usedHeapSize += size;
+
+        return allocation;
+    }
+
+    return vk_MemoryAllocation{};
 }
 
-vk_MemoryAllocation DeviceMemoryManager::allocateStagingMemory(VkDeviceSize size, BufferMemoryAllocationUsage usage) {
-    return vk_MemoryAllocation();
+void DeviceMemoryManager::freeMemoryAllocation(vk_MemoryAllocation allocation) {
+
+    for(auto& tracker : memoryHeapUsageTrackers)
+    {
+        if(allocation.memoryType.memoryType.heapIndex == tracker.heapIndex)
+        {
+            vkFreeMemory(device, allocation.allocation, nullptr);
+            tracker.usedHeapSize -= allocation.size;
+
+            Logger::log("Freed memory from heap " + std::to_string(tracker.heapIndex) + " with type " + std::to_string(allocation.memoryType.memoryTypeIndex) + " of " + std::to_string(allocation.size) + " bytes.");
+            return;
+        }
+    }
+
+    Logger::failure("Failure location memory heap. This should never happen!");
 }
 
-vk_MemoryAllocation
-DeviceMemoryManager::allocateLowFrequencyUBOMemory(VkDeviceSize size, BufferMemoryAllocationUsage usage) {
-    return vk_MemoryAllocation();
+vk_MemoryAllocation DeviceMemoryManager::allocateGenericMemory(VkDeviceSize size) {
+    return allocateFromMemTypeSet(size, genericBufferMemoryTypes);
 }
 
-vk_MemoryAllocation
-DeviceMemoryManager::allocateHighFrequencyUBOMemory(VkDeviceSize size, BufferMemoryAllocationUsage usage) {
-    return vk_MemoryAllocation();
+vk_MemoryAllocation DeviceMemoryManager::allocateStagingMemory(VkDeviceSize size) {
+    return allocateFromMemTypeSet(size, stagingBufferMemoryTypes);
 }
 
+vk_MemoryAllocation DeviceMemoryManager::allocateLowFrequencyUBOMemory(VkDeviceSize size) {
+    return allocateFromMemTypeSet(size, lowFrequencyUBOBufferMemoryTypes);
+}
 
+vk_MemoryAllocation DeviceMemoryManager::allocateHighFrequencyUBOMemory(VkDeviceSize size) {
+    return allocateFromMemTypeSet(size, highFrequencyUBOBufferMemoryTypes);
+}

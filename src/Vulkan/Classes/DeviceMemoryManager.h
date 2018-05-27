@@ -2,8 +2,8 @@
 // Created by Hindrik  Stegenga on 21/05/2018.
 //
 
-#ifndef VKRENDERER_DEVICEMEMORYSUBSYSTEM_H
-#define VKRENDERER_DEVICEMEMORYSUBSYSTEM_H
+#ifndef VKRENDERER_DEVICEMEMORY_MANAGER_H
+#define VKRENDERER_DEVICEMEMORY_MANAGER_H
 
 #include "../../CommonInclude.h"
 #include "../Platform/VulkanPlatform.h"
@@ -13,24 +13,19 @@
 
 class DeviceMemoryManager final {
 private:
+    typedef StaticStack<vk_MemoryHeap, VK_MAX_MEMORY_HEAPS> MemHeapSet;
+    typedef StaticStack<vk_MemoryType, VK_MAX_MEMORY_TYPES> MemTypeSet;
+    typedef bool (*HasMemoryPropertyFunc)(VkMemoryType);
+private:
     VkDevice            device          = VK_NULL_HANDLE;
     VkPhysicalDevice    physicalDevice  = VK_NULL_HANDLE;
 
-    VkDeviceSize        totalDynamicReserved    = 0;
-    VkDeviceSize        totalStaticReserved     = 0;
-    VkDeviceSize        totalDedicatedReserved  = 0;
-
     StaticStack<vk_MemoryHeapUsageTracker, VK_MAX_MEMORY_HEAPS> memoryHeapUsageTrackers = {};
-
-    typedef StaticStack<vk_MemoryHeap, VK_MAX_MEMORY_HEAPS> MemHeapSet;
-    typedef StaticStack<vk_MemoryType, VK_MAX_MEMORY_TYPES> MemTypeSet;
-
 
     MemTypeSet genericBufferMemoryTypes             = {};
     MemTypeSet stagingBufferMemoryTypes             = {};
     MemTypeSet lowFrequencyUBOBufferMemoryTypes     = {};
     MemTypeSet highFrequencyUBOBufferMemoryTypes    = {};
-
 public:
 
     explicit DeviceMemoryManager(DeviceInfo& deviceInfo);
@@ -43,15 +38,15 @@ public:
 
 public:
     
-    vk_MemoryAllocation allocateGenericMemory           (VkDeviceSize size, BufferMemoryAllocationUsage usage);
-    vk_MemoryAllocation allocateStagingMemory           (VkDeviceSize size, BufferMemoryAllocationUsage usage);
-    vk_MemoryAllocation allocateLowFrequencyUBOMemory   (VkDeviceSize size, BufferMemoryAllocationUsage usage);
-    vk_MemoryAllocation allocateHighFrequencyUBOMemory  (VkDeviceSize size, BufferMemoryAllocationUsage usage);
+    vk_MemoryAllocation allocateGenericMemory           (VkDeviceSize size);
+    vk_MemoryAllocation allocateStagingMemory           (VkDeviceSize size);
+    vk_MemoryAllocation allocateLowFrequencyUBOMemory   (VkDeviceSize size);
+    vk_MemoryAllocation allocateHighFrequencyUBOMemory  (VkDeviceSize size);
+
+    void freeMemoryAllocation(vk_MemoryAllocation allocation);
 
 private:
     void setupDeviceMemoryHeaps();
-
-    typedef bool (*HasMemoryPropertyFunc)(VkMemoryType);
     void checkAndAssignMemProps(const MemHeapSet& heapSet, MemTypeSet& targetSet, vector<HasMemoryPropertyFunc> funcs);
 
     void pickGenericBufferMemoryTypes           (const MemHeapSet& deviceLocalHeaps, const MemHeapSet& hostLocalHeaps);
@@ -59,6 +54,7 @@ private:
     void pickLowFrequencyUBOBufferMemoryTypes   (const MemHeapSet& deviceLocalHeaps, const MemHeapSet& hostLocalHeaps);
     void pickHighFrequencyUBOBufferMemoryTypes  (const MemHeapSet& deviceLocalHeaps, const MemHeapSet& hostLocalHeaps);
 
+    vk_MemoryAllocation allocateFromMemTypeSet(VkDeviceSize size, const MemTypeSet& set);
 
 private:
     static bool isHeapDeviceLocal(VkMemoryHeap memoryHeap);
@@ -66,4 +62,4 @@ private:
 };
 
 
-#endif //VKRENDERER_DEVICEMEMORYSUBSYSTEM_H
+#endif //VKRENDERER_DEVICEMEMORY_MANAGER_H

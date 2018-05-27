@@ -85,7 +85,7 @@ struct vk_MemoryAllocation final {
 
     VkDeviceMemory  allocation          = VK_NULL_HANDLE;
     VkDeviceSize    size                = 0;
-    uint32_t        memoryTypeIndex     = VK_NULL_HANDLE;
+    vk_MemoryType   memoryType          = {};
 
 };
 
