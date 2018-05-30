@@ -8,7 +8,7 @@
 #include "Platform/VulkanPlatform.h"
 #include "Utilities/PhysicalDevice.h"
 #include "../Utilities/Nullable.h"
-#include "Classes/DeviceMemoryManager.h"
+#include "Classes/DeviceMemorySubsystem.h"
 
 class PresentDevice final {
 public:
@@ -27,7 +27,7 @@ private:
     vk_Queue                        presentationQueue;
     vector<vk_Queue>                transferQueues;
     VkInstance                      instance;
-    Nullable<DeviceMemoryManager>   memory;
+    Nullable<DeviceMemorySubsystem> memory;
 private:
     pair<PhysicalDevice, vk_QueueFamily>
     selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures);

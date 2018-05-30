@@ -16,8 +16,8 @@ public:
     Handle() : value(defaultValue) {}
     ~Handle() = default;
 
-    Handle& Handle(const Handle&)       = default;
-    Handle& Handle(Handle&&) noexcept   = delete;
+    Handle(const Handle&)       = default;
+    Handle(Handle&&) noexcept   = delete;
 
     Handle& operator=(const Handle&)        = default;
     Handle& operator=(Handle&&) noexcept    = delete;
@@ -26,6 +26,8 @@ public:
     explicit Handle(HandleType value) : value(value){}
 
     static Handle invalid() { return Handle(); };
+
+    explicit operator bool() const { return value != defaultValue; }
 
     explicit operator HandleType() const { return value; }
 

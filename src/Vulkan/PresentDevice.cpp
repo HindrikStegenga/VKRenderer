@@ -29,10 +29,7 @@ PresentDevice::PresentDevice(VkInstance instance, const map<string, string>& par
     this->surface.reset(createInfo.surfaceHandle, instance, vkDestroySurfaceKHR);
 
     auto deviceInfo = getDeviceInfo();
-    memory = Nullable<DeviceMemoryManager>(deviceInfo);
-
-    vk_MemoryAllocation allocation = memory.get().allocateStagingMemory(1024 * 1024 * 1024);
-    memory.get().freeMemoryAllocation(allocation);
+    memory = Nullable<DeviceMemorySubsystem>(deviceInfo);
 }
 
 pair<PhysicalDevice, vk_QueueFamily> PresentDevice::selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures)
