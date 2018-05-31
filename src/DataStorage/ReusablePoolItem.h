@@ -8,17 +8,17 @@
 #include <cstdint>
 #include "../Utilities/Handle.h"
 
-template<typename T, typename HandleType = Handle<T, uint16_t, std::numeric_limits<uint16_t>::max()>>
+template<typename T, typename HandleType = Handle<T, uint16_t>>
 class ReusablePoolItem final {
 public:
     ReusablePoolItem()  = default;
     ~ReusablePoolItem() = default;
 
     ReusablePoolItem(const ReusablePoolItem&)       = delete;
-    ReusablePoolItem(ReusablePoolItem&&) noexcept   = default;
+    ReusablePoolItem(ReusablePoolItem&&) noexcept;
 
     ReusablePoolItem& operator=(const ReusablePoolItem&)        = delete;
-    ReusablePoolItem& operator=(ReusablePoolItem&&) noexcept    = default;
+    ReusablePoolItem& operator=(ReusablePoolItem&&) noexcept;
 
 public:
 
@@ -36,14 +36,27 @@ private:
         Data& operator=(Data&&) = delete;
 
         T object;
-
-        typename HandleType::HandleType nextIndex;
+        typename HandleType::HandleSize nextIndex;
 
     };
+
+    alignas(T) Data data;
+
 
 
 
 };
+
+template<typename T, typename HandleType>
+ReusablePoolItem<T, HandleType>& ReusablePoolItem<T, HandleType>::operator=(ReusablePoolItem&&) noexcept {
+
+    return *this;
+}
+
+template<typename T, typename HandleType>
+ReusablePoolItem<T, HandleType>::ReusablePoolItem(ReusablePoolItem &&) noexcept {
+
+}
 
 
 #endif //VKRENDERER_REUSABLEPOOLITEM_H

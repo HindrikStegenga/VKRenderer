@@ -13,12 +13,10 @@ using std::array;
 #include "../Utilities/Handle.h"
 #include "ReusablePoolItem.h"
 
-template<typename T, typename HandleType = Handle<T, uint16_t, std::numeric_limits<uint16_t>::max()> >
+template<typename T, typename HandleType = Handle<T, uint16_t>, typename HandleType::HandleSize poolSize = HandleType::invalidMaxValue>
 class StaticReusablePool final {
 private:
-
-    //array<ReusablePoolItem<T, HandleType>, std::numeric_limits<MaxSize>::max()> data = {};
-
+    array< ReusablePoolItem<T, HandleType>, poolSize> data = {};
 
 public:
 

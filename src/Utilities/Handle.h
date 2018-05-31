@@ -7,13 +7,15 @@
 
 #include <limits>
 
-template<typename T, typename HandleType, HandleType defaultValue>
+template<typename T, typename HandleSizeType>
 class Handle final {
 private:
-    HandleType value;
-
+    HandleSizeType value;
 public:
-    Handle() : value(defaultValue) {}
+    using HandleSize = HandleSizeType;
+    constexpr static int invalidMaxValue = std::numeric_limits<HandleSizeType>::max();
+public:
+    Handle() : value(invalidMaxValue) {}
     ~Handle() = default;
 
     Handle(const Handle&)       = default;
@@ -23,22 +25,22 @@ public:
     Handle& operator=(Handle&&) noexcept    = delete;
 public:
 
-    explicit Handle(HandleType value) : value(value){}
+    explicit Handle(HandleSizeType value) : value(value){}
 
     static Handle invalid() { return Handle(); };
 
-    explicit operator bool() const { return value != defaultValue; }
+    explicit operator bool() const { return value != invalidMaxValue; }
 
-    explicit operator HandleType() const { return value; }
+    explicit operator HandleSizeType() const { return value; }
 
     friend bool operator==(Handle lhs, Handle rhs) { return lhs.value == rhs.value; }
     friend bool operator!=(Handle lhs, Handle rhs) { return lhs.value != rhs.value; }
 };
 
 
-#define DECLARE_HANDLE64(Type) typedef Handle<Type,uint64_t, std::numeric_limits<uint64_t>::max()> Type##Handle64;
-#define DECLARE_HANDLE32(Type) typedef Handle<Type,uint32_t, std::numeric_limits<uint32_t>::max()> Type##Handle32;
-#define DECLARE_HANDLE16(Type) typedef Handle<Type,uint16_t, std::numeric_limits<uint16_t>::max()> Type##Handle16;
-#define DECLARE_HANDLE8(Type) typedef Handle<Type,uint8_t, std::numeric_limits<uint8_t>::max()> Type##Handle8;
+#define DECLARE_HANDLE64(Type) typedef Handle<Type,uint64_t> Type##Handle64;
+#define DECLARE_HANDLE32(Type) typedef Handle<Type,uint32_t> Type##Handle32;
+#define DECLARE_HANDLE16(Type) typedef Handle<Type,uint16_t> Type##Handle16;
+#define DECLARE_HANDLE8(Type) typedef Handle<Type, uint8_t > Type##Handle8;
 
 #endif //VKRENDERER_HANDLE_H
