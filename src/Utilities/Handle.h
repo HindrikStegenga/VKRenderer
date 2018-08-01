@@ -38,9 +38,9 @@ public:
 };
 
 
-#define DECLARE_HANDLE64(Type) typedef Handle<Type,uint64_t> Type##Handle64;
-#define DECLARE_HANDLE32(Type) typedef Handle<Type,uint32_t> Type##Handle32;
-#define DECLARE_HANDLE16(Type) typedef Handle<Type,uint16_t> Type##Handle16;
-#define DECLARE_HANDLE8(Type) typedef Handle<Type, uint8_t > Type##Handle8;
+#define DECLARE_HANDLE_64(Type) typedef Handle<Type,uint64_t> Type##Handle64;
+#define DECLARE_HANDLE_32(Type) typedef Handle<Type,uint32_t> Type##Handle32;
+#define DECLARE_HANDLE_16(Type) typedef Handle<Type,uint16_t> Type##Handle16;
+#define DECLARE_HANDLE_8(Type) typedef Handle<Type, uint8_t > Type##Handle8;
 
 #endif //VKRENDERER_HANDLE_H

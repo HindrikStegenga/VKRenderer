@@ -9,6 +9,8 @@
 #include "../Utilities/UtilityStructures.h"
 #include "Fence.h"
 
+#define MAX_FRAMES_IN_FLIGHT 3
+
 class Swapchain final {
 public:
     explicit Swapchain(SwapchainCreateInfo createInfo);
@@ -22,11 +24,10 @@ public:
 private:
     VKUH<VkSwapchainKHR>        swapchain               = {};
     vector<pair<Fence, bool>>   fences                  = {};
+    vector<VKUH<VkSemaphore>>   imageAvailableSemaphores= {};
+    vector<VKUH<VkSemaphore>>   renderFinishedSemaphores= {};
     vector<VkImage>             images;
     vector<VKUH<VkImageView>>   imageViews;
-
-    VKUH<VkSemaphore>           imageAvailableSemaphore = {};
-    VKUH<VkSemaphore>           renderFinishedSemaphore = {};
 
     VKUH<VkDeviceMemory>        depthStencilMemory      = {};
     VKUH<VkImage>               depthStencilImage       = {};
@@ -37,7 +38,7 @@ private:
     VkPhysicalDevice        physicalDevice              = VK_NULL_HANDLE;
     VkSurfaceKHR            surface                     = VK_NULL_HANDLE;
     vk_SwapchainSettings    settings                    = {};
-    //uint32_t                frameIndex                  = 0;
+    uint32_t                frameIndex                  = 0;
 
 private:
     vk_SwapchainSettings    chooseSettings(uint32_t width, uint32_t height);
@@ -61,7 +62,7 @@ public:
     vk_RendermodeSwapchainInfo getRendermodeSwapchainInfo() const;
 
     vk_PresentImageInfo     acquireNextImage();
-    void                    presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain) const;
+    void                    presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain);
 };
 
 
