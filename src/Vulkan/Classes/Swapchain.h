@@ -9,8 +9,6 @@
 #include "../Utilities/UtilityStructures.h"
 #include "Fence.h"
 
-#define MAX_FRAMES_IN_FLIGHT 3
-
 class Swapchain final {
 public:
     explicit Swapchain(SwapchainCreateInfo createInfo);

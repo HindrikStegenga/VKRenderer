@@ -307,9 +307,9 @@ void Swapchain::createFences() {
     frameIndex = 0;
 
     fences.clear();
-    fences.reserve(MAX_FRAMES_IN_FLIGHT);
+    fences.reserve(images.size());
 
-    for(uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+    for(uint32_t i = 0; i < images.size(); ++i)
     {
         fences.emplace_back(make_pair(device, false));
     }
@@ -319,8 +319,8 @@ void Swapchain::createSemaphores() {
 
     imageAvailableSemaphores.clear();
     renderFinishedSemaphores.clear();
-    imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-    renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+    imageAvailableSemaphores.resize(images.size());
+    renderFinishedSemaphores.resize(images.size());
 
     VkSemaphoreCreateInfo createInfo    = {};
     createInfo.sType                    = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -328,7 +328,7 @@ void Swapchain::createSemaphores() {
     createInfo.flags                    = {};
 
 
-    for(uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i) {
+    for(uint32_t i = 0; i < images.size(); ++i) {
         VkResult result = vkCreateSemaphore(device, &createInfo, nullptr, imageAvailableSemaphores[i].reset(device, vkDestroySemaphore));
         handleResult(result, "Failed to create image available semaphore!");
 
@@ -423,7 +423,7 @@ void Swapchain::presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain) {
     presentInfo.pSwapchains         = &cSwapchain;
 
     //Determine semaphore to use and fence to wait on for next frame.
-    frameIndex = (frameIndex + 1) % static_cast<uint32_t >(MAX_FRAMES_IN_FLIGHT);
+    frameIndex = (frameIndex + 1) % static_cast<uint32_t >(images.size());
 
     VkResult result = vkQueuePresentKHR(presentQueue.queue, &presentInfo);
 
