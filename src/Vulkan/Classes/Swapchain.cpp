@@ -75,6 +75,8 @@ VkSurfaceFormatKHR Swapchain::chooseSurfaceFormat(const vector<VkSurfaceFormatKH
 
 VkPresentModeKHR Swapchain::choosePresentMode(const vector<VkPresentModeKHR>& availableModes) {
 
+    return VK_PRESENT_MODE_FIFO_KHR;
+
     //Guaranteed to be available
     VkPresentModeKHR bestMode = VK_PRESENT_MODE_FIFO_KHR;
 
