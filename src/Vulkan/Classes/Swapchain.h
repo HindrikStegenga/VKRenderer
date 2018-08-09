@@ -21,9 +21,10 @@ public:
     Swapchain& operator=(const Swapchain&)      = delete;
 private:
     VKUH<VkSwapchainKHR>        swapchain               = {};
-    vector<pair<Fence, bool>>   fences                  = {};
+    vector<Fence>               imageFences             = {};
     vector<VKUH<VkSemaphore>>   imageAvailableSemaphores= {};
     vector<VKUH<VkSemaphore>>   renderFinishedSemaphores= {};
+
     vector<VkImage>             images;
     vector<VKUH<VkImageView>>   imageViews;
 
@@ -36,7 +37,7 @@ private:
     VkPhysicalDevice        physicalDevice              = VK_NULL_HANDLE;
     VkSurfaceKHR            surface                     = VK_NULL_HANDLE;
     vk_SwapchainSettings    settings                    = {};
-    uint32_t                frameIndex                  = 0;
+    uint32_t                currentFrameIndex                  = 0;
 
 private:
     vk_SwapchainSettings    chooseSettings(uint32_t width, uint32_t height);

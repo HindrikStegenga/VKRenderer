@@ -27,7 +27,7 @@ public:
     ForwardRenderMode& operator=(const ForwardRenderMode&) = delete;
     ForwardRenderMode& operator=(ForwardRenderMode&&) = default;
 public:
-    void render(vk_RenderFrameInfo renderFrameInfo) override;
+    void render(vk_PresentImageInfo presentImageInfo) override;
 
     void windowHasResized(vk_RendermodeSwapchainInfo swapchainInfo) override;
 private:

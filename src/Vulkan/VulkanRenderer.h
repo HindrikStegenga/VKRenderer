@@ -13,6 +13,9 @@
 #include "PresentDevice.h"
 #include "Classes/VulkanRenderMode.h"
 
+typedef std::chrono::time_point<std::chrono::steady_clock> time_point;
+using std::chrono::nanoseconds;
+
 class VulkanRenderer final {
 public:
     explicit VulkanRenderer(string appName, string engineName, bool debugEnabled = false);
@@ -31,6 +34,9 @@ private:
     Nullable<PresentDevice>         device;
     Nullable<Swapchain>             swapchain;
     unique_ptr<VulkanRenderMode>    renderMode = nullptr;
+private:
+    nanoseconds                     accumulatedTime;
+    uint64_t                        accumulatedFrames;
 public:
     bool processEvents(std::chrono::nanoseconds deltaTime);
     void render();

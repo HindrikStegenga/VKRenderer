@@ -82,9 +82,9 @@ VkPresentModeKHR Swapchain::choosePresentMode(const vector<VkPresentModeKHR>& av
 
         if(mode == VK_PRESENT_MODE_MAILBOX_KHR) {
             return mode;
-        } /* else if(mode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
+        } else if(mode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
             bestMode = mode;
-        } */
+        }
     }
 
     return bestMode;
@@ -304,14 +304,14 @@ vk_RendermodeSwapchainInfo Swapchain::getRendermodeSwapchainInfo() const {
 
 void Swapchain::createFences() {
 
-    frameIndex = 0;
+    currentFrameIndex = 0;
 
-    fences.clear();
-    fences.reserve(images.size());
+    imageFences.clear();
+    imageFences.reserve(images.size());
 
     for(uint32_t i = 0; i < images.size(); ++i)
     {
-        fences.emplace_back(make_pair(device, false));
+        imageFences.emplace_back(device, true);
     }
 }
 
@@ -341,43 +341,13 @@ void Swapchain::createSemaphores() {
 
 vk_PresentImageInfo Swapchain::acquireNextImage() {
 
-    Fence& fence = fences[frameIndex].first;
+    Fence& fence = imageFences[currentFrameIndex];
 
-    if(fences[frameIndex].second)
-    {
-        if (fence.status() == VK_NOT_READY)
-        {
-            fence.wait();
-        }
-        fence.reset();
-    }
-    else
-    {
-        fences[frameIndex].second = true;
-    }
-
+    fence.wait();
+    fence.reset();
 
     uint32_t imageIndex = 0;
-    VkResult result = vkAcquireNextImageKHR(device, swapchain.get(), std::numeric_limits<uint64_t >::max(), imageAvailableSemaphores[frameIndex].get(), VK_NULL_HANDLE, &imageIndex);
-
-    /*
-    //Get fence
-    Fence& fence = fences[imageIndex].first;
-
-    //Wait on it if necessary...
-    if(fences[imageIndex].second)
-    {
-        if (fence.status() == VK_NOT_READY)
-        {
-            fence.wait();
-        }
-        fence.reset();
-    }
-    else
-    {
-        fences[imageIndex].second = true;
-    } */
-
+    VkResult result = vkAcquireNextImageKHR(device, swapchain.get(), std::numeric_limits<uint64_t >::max(), imageAvailableSemaphores[currentFrameIndex].get(), VK_NULL_HANDLE, &imageIndex);
 
     vk_PresentImageInfo info = {};
 
@@ -388,8 +358,8 @@ vk_PresentImageInfo Swapchain::acquireNextImage() {
             info.imageIndex                 = imageIndex;
             info.submitDoneFence            = fence.get();
             info.mustRecreateSwapchain      = false;
-            info.renderFinishedSemaphore    = renderFinishedSemaphores[frameIndex].get();
-            info.imageAvailableSemaphore    = imageAvailableSemaphores[frameIndex].get();
+            info.renderFinishedSemaphore    = renderFinishedSemaphores[currentFrameIndex].get();
+            info.imageAvailableSemaphore    = imageAvailableSemaphores[currentFrameIndex].get();
 
             break;
         case VK_ERROR_OUT_OF_DATE_KHR:
@@ -409,7 +379,7 @@ vk_PresentImageInfo Swapchain::acquireNextImage() {
 
 void Swapchain::presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain) {
 
-    VkSemaphore renderFinished  = renderFinishedSemaphores[frameIndex].get();
+    VkSemaphore renderFinished  = renderFinishedSemaphores[currentFrameIndex].get();
     VkSwapchainKHR cSwapchain   = swapchain.get();
 
     VkPresentInfoKHR presentInfo    = {};
@@ -423,7 +393,7 @@ void Swapchain::presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain) {
     presentInfo.pSwapchains         = &cSwapchain;
 
     //Determine semaphore to use and fence to wait on for next frame.
-    frameIndex = (frameIndex + 1) % static_cast<uint32_t >(images.size());
+    currentFrameIndex = (currentFrameIndex + 1) % static_cast<uint32_t >(images.size());
 
     VkResult result = vkQueuePresentKHR(presentQueue.queue, &presentInfo);
 

@@ -23,7 +23,7 @@ void ForwardRenderMode::windowHasResized(vk_RendermodeSwapchainInfo swapchainInf
     createCommandBuffers(swapchainInfo);
 }
 
-void ForwardRenderMode::render(vk_RenderFrameInfo renderFrameInfo) {
+void ForwardRenderMode::render(vk_PresentImageInfo presentImageInfo) {
 
     VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
@@ -31,14 +31,14 @@ void ForwardRenderMode::render(vk_RenderFrameInfo renderFrameInfo) {
     submitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.pNext                = nullptr;
     submitInfo.pWaitDstStageMask    = &waitStage;
-    submitInfo.pWaitSemaphores      = &renderFrameInfo.imageAvailableSemaphore;
+    submitInfo.pWaitSemaphores      = &presentImageInfo.imageAvailableSemaphore;
     submitInfo.waitSemaphoreCount   = 1;
     submitInfo.commandBufferCount   = 1;
-    submitInfo.pCommandBuffers      = &commandBuffers[renderFrameInfo.imageIndex];
-    submitInfo.pSignalSemaphores    = &renderFrameInfo.renderFinishedSemaphore;
+    submitInfo.pCommandBuffers      = &commandBuffers[presentImageInfo.imageIndex];
+    submitInfo.pSignalSemaphores    = &presentImageInfo.renderFinishedSemaphore;
     submitInfo.signalSemaphoreCount = 1;
 
-    VkResult result = vkQueueSubmit(presentQueue.queue, 1, &submitInfo, renderFrameInfo.submitDoneFence);
+    VkResult result = vkQueueSubmit(presentQueue.queue, 1, &submitInfo, presentImageInfo.submitDoneFence);
     handleResult(result, "Queue submission has failed!");
 }
 

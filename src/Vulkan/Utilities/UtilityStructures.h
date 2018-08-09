@@ -40,20 +40,12 @@ struct vk_RendermodeSwapchainInfo final {
 
 struct vk_PresentImageInfo final {
 
-    VkFence     submitDoneFence         = nullptr;
+    VkFence     submitDoneFence         = VK_NULL_HANDLE;
+
     uint32_t    imageIndex              = 0;
     VkSemaphore imageAvailableSemaphore = VK_NULL_HANDLE;
     VkSemaphore renderFinishedSemaphore = VK_NULL_HANDLE;
     bool        mustRecreateSwapchain   = false;
-
-};
-
-struct vk_RenderFrameInfo final {
-
-    uint32_t    imageIndex                  = 0;
-    VkSemaphore imageAvailableSemaphore     = VK_NULL_HANDLE;
-    VkSemaphore renderFinishedSemaphore     = VK_NULL_HANDLE;
-    VkFence     submitDoneFence             = nullptr;
 
 };
 

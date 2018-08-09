@@ -28,6 +28,7 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
     height = static_cast<uint32_t>(std::stoi(map.at("height")));
 
     renderWindow.set(RenderWindow(width, height, true));
+    renderWindow.get().setRendererPointer(this);
 
     vector<const char*> extensions;
 	vector<const char*> layers;
@@ -94,11 +95,6 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
     
     const string renderMode = configReader.map().at("renderMode");
 
-    //VertexLayout layout("PositionTexCoordNormals");
-    //VertexLayout layout2("PositionColor");
-    //ObjLoader loader("cube.obj");
-
-
     if (renderMode == string("Forward")) {
 
         ForwardRenderModeCreateInfo createInfo = {};
@@ -119,9 +115,24 @@ bool VulkanRenderer::processEvents(std::chrono::nanoseconds deltaTime)
 {
     renderWindow.get().setRendererPointer(this);
 
-    std::chrono::milliseconds milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(deltaTime);
+    accumulatedTime += deltaTime;
+    accumulatedFrames += 1;
 
-    renderWindow.get().setWindowTitle(std::to_string(milliseconds.count()) + "ms");
+    if (accumulatedTime > std::chrono::milliseconds(500)) {
+
+        nanoseconds averagePerFrame = accumulatedTime / accumulatedFrames;
+
+        nanoseconds second = std::chrono::duration_cast<nanoseconds>(std::chrono::seconds(1));
+
+        if (averagePerFrame.count() > 0) {
+            auto fps = second.count() / averagePerFrame.count();
+
+            renderWindow.get().setWindowTitle("VKRenderer " + std::to_string(fps) + " FPS");
+
+            accumulatedFrames = 0;
+            accumulatedTime = nanoseconds(0);
+        }
+    }
 
     return renderWindow.get().pollWindowEvents();
 }
@@ -188,7 +199,6 @@ VulkanRenderer::~VulkanRenderer()
 
 void VulkanRenderer::render()
 {
-
     Swapchain& swap = swapchain.get();
 
     vk_PresentImageInfo presentImageInfo = swap.acquireNextImage();
@@ -198,13 +208,7 @@ void VulkanRenderer::render()
     if(presentImageInfo.imageIndex == std::numeric_limits<uint32_t>::max())
         return;
 
-    vk_RenderFrameInfo renderFrameInfo          = {};
-    renderFrameInfo.submitDoneFence             = presentImageInfo.submitDoneFence;
-    renderFrameInfo.imageIndex                  = presentImageInfo.imageIndex;
-    renderFrameInfo.imageAvailableSemaphore     = presentImageInfo.imageAvailableSemaphore;
-    renderFrameInfo.renderFinishedSemaphore     = presentImageInfo.renderFinishedSemaphore;
-
-    renderMode->render(renderFrameInfo);
+    renderMode->render(presentImageInfo);
 
     bool mustResize = false;
     swap.presentImage(presentImageInfo.imageIndex, mustResize);
