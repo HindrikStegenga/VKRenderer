@@ -21,7 +21,7 @@ public:
     Swapchain& operator=(const Swapchain&)      = delete;
 private:
     VKUH<VkSwapchainKHR>        swapchain               = {};
-    vector<pair<Fence, bool>>   fences                  = {};
+    vector<Fence>               fences                  = {};
     vector<VKUH<VkSemaphore>>   imageAvailableSemaphores= {};
     vector<VKUH<VkSemaphore>>   renderFinishedSemaphores= {};
     vector<VkImage>             images;

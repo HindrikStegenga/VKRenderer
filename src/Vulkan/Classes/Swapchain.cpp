@@ -311,7 +311,7 @@ void Swapchain::createFences() {
 
     for(uint32_t i = 0; i < images.size(); ++i)
     {
-        fences.emplace_back(make_pair(device, false));
+        fences.emplace_back(device, true);
     }
 }
 
@@ -341,42 +341,13 @@ void Swapchain::createSemaphores() {
 
 vk_PresentImageInfo Swapchain::acquireNextImage() {
 
-    Fence& fence = fences[frameIndex].first;
+    Fence& fence = fences[frameIndex];
 
-    if(fences[frameIndex].second)
-    {
-        if (fence.status() == VK_NOT_READY)
-        {
-            fence.wait();
-        }
-        fence.reset();
-    }
-    else
-    {
-        fences[frameIndex].second = true;
-    }
-
+    fence.wait();
+    fence.reset();
 
     uint32_t imageIndex = 0;
     VkResult result = vkAcquireNextImageKHR(device, swapchain.get(), std::numeric_limits<uint64_t >::max(), imageAvailableSemaphores[frameIndex].get(), VK_NULL_HANDLE, &imageIndex);
-
-    /*
-    //Get fence
-    Fence& fence = fences[imageIndex].first;
-
-    //Wait on it if necessary...
-    if(fences[imageIndex].second)
-    {
-        if (fence.status() == VK_NOT_READY)
-        {
-            fence.wait();
-        }
-        fence.reset();
-    }
-    else
-    {
-        fences[imageIndex].second = true;
-    } */
 
 
     vk_PresentImageInfo info = {};
