@@ -6,6 +6,6 @@
 
 DeviceMemorySubsystem::DeviceMemorySubsystem(DeviceInfo deviceInfo) : deviceInfo(deviceInfo), memoryManager(deviceInfo)
 {
-    vk_MemoryAllocation allocation = memoryManager.allocateStagingMemory(1024 * 1024 * 1024);
-    memoryManager.freeMemoryAllocation(allocation);
+    //vk_MemoryAllocation allocation = memoryManager.allocateStagingMemory(1024 * 1024 * 1024);
+    //memoryManager.freeMemoryAllocation(allocation);
 }
