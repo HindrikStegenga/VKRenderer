@@ -13,7 +13,6 @@
 #include "PresentDevice.h"
 #include "Classes/VulkanRenderMode.h"
 
-typedef std::chrono::time_point<std::chrono::steady_clock> time_point;
 using std::chrono::nanoseconds;
 
 class VulkanRenderer final {
