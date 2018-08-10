@@ -19,11 +19,12 @@ struct vk_Queue final {
 
 struct vk_SwapchainSettings final {
 
-    VkExtent2D                      extent          = {};
-    VkSurfaceFormatKHR              surfaceFormat   = {};
-    VkPresentModeKHR                presentMode     = {};
-    uint32_t                        imageCount      = 0;
-    VkSurfaceTransformFlagBitsKHR   preTransform    = {};
+    uint32_t                        preferredFramesInFlight = 0;
+    VkExtent2D                      extent                  = {};
+    VkSurfaceFormatKHR              surfaceFormat           = {};
+    VkPresentModeKHR                presentMode             = {};
+    uint32_t                        imageCount              = 0;
+    VkSurfaceTransformFlagBitsKHR   preTransform            = {};
 
 };
 

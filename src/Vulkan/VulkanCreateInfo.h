@@ -50,10 +50,11 @@ struct VulkanRenderModeCreateInfo final {
 
 struct SwapchainCreateInfo final {
 
-    uint32_t            width       = 0;
-    uint32_t            height      = 0;
-    PresentDeviceInfo   deviceInfo  = {};
-    VkSurfaceKHR        surface     = VK_NULL_HANDLE;
+    uint32_t            width                   = 0;
+    uint32_t            height                  = 0;
+    uint32_t            preferredFramesInFlight = 0;
+    PresentDeviceInfo   deviceInfo              = {};
+    VkSurfaceKHR        surface                 = VK_NULL_HANDLE;
 
 };
 

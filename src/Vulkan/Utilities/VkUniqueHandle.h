@@ -8,6 +8,7 @@
 #include <functional>
 #include <vulkan/vulkan.h>
 #include "VkTypeTraits.h"
+#include "../../Utilities/Logger.h"
 
 using std::function;
 
@@ -45,7 +46,6 @@ public:
     auto reset(function<void(T, VkAllocationCallbacks*)> deleteFunc)                                  -> T*;
     auto reset(VkInstance instance, function<void(VkInstance, T, VkAllocationCallbacks*)> deleteFunc) -> T*;
     auto reset(VkDevice device, function<void(VkDevice, T, VkAllocationCallbacks*)> deleteFunc)       -> T*;
-
 
     auto swap(VkUniqueHandle& rhs)      -> void;
 

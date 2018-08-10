@@ -8,18 +8,18 @@
 Swapchain::Swapchain(SwapchainCreateInfo createInfo) : device(createInfo.deviceInfo.logical), physicalDevice(createInfo.deviceInfo.physical), surface(createInfo.surface), presentQueue(createInfo.deviceInfo.presentQueue) {
 
     //Assume swapchain support was checked!
-    recreateSwapchain(createInfo.width, createInfo.height);
+    recreateSwapchain(createInfo.width, createInfo.height, createInfo.preferredFramesInFlight);
 }
 
-vk_RendermodeSwapchainInfo Swapchain::recreateSwapchain(uint32_t width, uint32_t height) {
+vk_RendermodeSwapchainInfo Swapchain::recreateSwapchain(uint32_t width, uint32_t height, uint32_t preferredFramesInFlight) {
 
-    vk_SwapchainSettings swapchainSettings = chooseSettings(width, height);
+    vk_SwapchainSettings swapchainSettings = chooseSettings(width, height, preferredFramesInFlight);
     createSwapchain(swapchainSettings);
 
     return getRendermodeSwapchainInfo();
 }
 
-vk_SwapchainSettings Swapchain::chooseSettings(uint32_t width, uint32_t height) {
+vk_SwapchainSettings Swapchain::chooseSettings(uint32_t width, uint32_t height, uint32_t preferredFramesInFlight) {
 
     VkSurfaceCapabilitiesKHR caps = {};
 
@@ -46,12 +46,13 @@ vk_SwapchainSettings Swapchain::chooseSettings(uint32_t width, uint32_t height) 
         imageCount = caps.maxImageCount;
     }
 
-    vk_SwapchainSettings settings = {};
-    settings.extent = extent;
-    settings.presentMode = presentMode;
-    settings.surfaceFormat = surfaceFormat;
-    settings.imageCount = imageCount;
-    settings.preTransform = caps.currentTransform;
+    vk_SwapchainSettings settings       = {};
+    settings.extent                     = extent;
+    settings.presentMode                = presentMode;
+    settings.surfaceFormat              = surfaceFormat;
+    settings.imageCount                 = imageCount;
+    settings.preTransform               = caps.currentTransform;
+    settings.preferredFramesInFlight    = preferredFramesInFlight;
 
     return settings;
 }
@@ -133,11 +134,12 @@ void Swapchain::createSwapchain(vk_SwapchainSettings settings) {
 
     if(oldSwapchain.get() != VK_NULL_HANDLE) {
         vkDeviceWaitIdle(device);
+        oldSwapchain.reset();
     }
 
     this->settings = settings;
 
-    retrieveImages();
+    retrieveImages(settings.preferredFramesInFlight);
     createImageViews();
     createDepthStencil();
     createFences();
@@ -146,12 +148,29 @@ void Swapchain::createSwapchain(vk_SwapchainSettings settings) {
     Logger::success("Succesfully created the swapchain!");
 }
 
-void Swapchain::retrieveImages() {
+void Swapchain::retrieveImages(uint32_t preferredFramesInFlight) {
 
     images.clear();
 
     uint32_t imageCount = 0;
     vkGetSwapchainImagesKHR(device, swapchain.get(), &imageCount, nullptr);
+
+    if (imageCount == 0) {
+        Logger::failure("There cannot be 0 swapchain images!");
+    }
+
+    if (preferredFramesInFlight == 0) {
+        framesInFlight = 1;
+    } else {
+        if (preferredFramesInFlight > 0 && preferredFramesInFlight <= imageCount) {
+            framesInFlight = preferredFramesInFlight;
+        } else {
+            framesInFlight = imageCount;
+        }
+    }
+
+    Logger::log("Frames that will be simultaneously in flight: " + std::to_string(framesInFlight));
+
 
     images.resize(imageCount);
     vkGetSwapchainImagesKHR(device, swapchain.get(), &imageCount, images.data());
@@ -307,9 +326,9 @@ void Swapchain::createFences() {
     currentFrameIndex = 0;
 
     imageFences.clear();
-    imageFences.reserve(images.size());
+    imageFences.reserve(framesInFlight);
 
-    for(uint32_t i = 0; i < images.size(); ++i)
+    for(uint32_t i = 0; i < framesInFlight; ++i)
     {
         imageFences.emplace_back(device, true);
     }
@@ -319,8 +338,8 @@ void Swapchain::createSemaphores() {
 
     imageAvailableSemaphores.clear();
     renderFinishedSemaphores.clear();
-    imageAvailableSemaphores.resize(images.size());
-    renderFinishedSemaphores.resize(images.size());
+    imageAvailableSemaphores.resize(framesInFlight);
+    renderFinishedSemaphores.resize(framesInFlight);
 
     VkSemaphoreCreateInfo createInfo    = {};
     createInfo.sType                    = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -328,7 +347,7 @@ void Swapchain::createSemaphores() {
     createInfo.flags                    = {};
 
 
-    for(uint32_t i = 0; i < images.size(); ++i) {
+    for(uint32_t i = 0; i < framesInFlight; ++i) {
         VkResult result = vkCreateSemaphore(device, &createInfo, nullptr, imageAvailableSemaphores[i].reset(device, vkDestroySemaphore));
         handleResult(result, "Failed to create image available semaphore!");
 
@@ -393,7 +412,7 @@ void Swapchain::presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain) {
     presentInfo.pSwapchains         = &cSwapchain;
 
     //Determine semaphore to use and fence to wait on for next frame.
-    currentFrameIndex = (currentFrameIndex + 1) % static_cast<uint32_t >(images.size());
+    currentFrameIndex = (currentFrameIndex + 1) % static_cast<uint32_t >(framesInFlight);
 
     VkResult result = vkQueuePresentKHR(presentQueue.queue, &presentInfo);
 
@@ -409,4 +428,8 @@ void Swapchain::presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain) {
             Logger::failure("Failed getting the next swapchain image!");
             return;
     }
+}
+
+uint32_t Swapchain::preferredFramesInFlight() {
+    return settings.preferredFramesInFlight;
 }

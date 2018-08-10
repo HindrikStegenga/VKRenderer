@@ -5,6 +5,8 @@
 #ifndef VKRENDERER_NULLABLE_H
 #define VKRENDERER_NULLABLE_H
 
+#include <utility>
+
 template<typename T>
 class Nullable final {
 public:
@@ -23,6 +25,8 @@ public:
 
     Nullable& operator=(const Nullable& rhs);
     Nullable& operator=(Nullable&& rhs) noexcept;
+
+    T*operator->();
 
     inline const T& get() const;
     inline T& get();
@@ -199,6 +203,11 @@ T* Nullable<T>::getPointer() {
 template<typename T>
 T const *const Nullable<T>::getPointer() const {
     return &data;
+}
+
+template<typename T>
+T *Nullable<T>::operator->() {
+    return (T*)&data;
 }
 
 

@@ -91,6 +91,12 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
     swapchainCreateInfo.width       = width;
     swapchainCreateInfo.height      = height;
 
+    if (map.find("preferredFramesInFlight") != map.end()) {
+        swapchainCreateInfo.preferredFramesInFlight = (uint32_t)std::stoi(map.at("preferredFramesInFlight"));
+    } else {
+        swapchainCreateInfo.preferredFramesInFlight = 2;
+    }
+
     swapchain.set(Swapchain(swapchainCreateInfo));
     
     const string renderMode = configReader.map().at("renderMode");
@@ -152,7 +158,7 @@ void VulkanRenderer::resizeWindow(uint32_t width, uint32_t height) {
 
     Logger::log("Window will be resized: " + std::to_string(width) + " - " + std::to_string(height));
 
-    vk_RendermodeSwapchainInfo swapchainInfo = swapchain.get().recreateSwapchain(width, height);
+    vk_RendermodeSwapchainInfo swapchainInfo = swapchain->recreateSwapchain(width, height, swapchain->preferredFramesInFlight());
 
     renderMode->windowHasResized(swapchainInfo);
 }

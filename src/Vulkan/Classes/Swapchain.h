@@ -25,6 +25,7 @@ private:
     vector<VKUH<VkSemaphore>>   imageAvailableSemaphores= {};
     vector<VKUH<VkSemaphore>>   renderFinishedSemaphores= {};
 
+    uint32_t                    framesInFlight       = 0;
     vector<VkImage>             images;
     vector<VKUH<VkImageView>>   imageViews;
 
@@ -40,9 +41,9 @@ private:
     uint32_t                currentFrameIndex                  = 0;
 
 private:
-    vk_SwapchainSettings    chooseSettings(uint32_t width, uint32_t height);
+    vk_SwapchainSettings    chooseSettings(uint32_t width, uint32_t height, uint32_t preferredFramesInFlight);
     void                    createSwapchain(vk_SwapchainSettings settings);
-    void                    retrieveImages();
+    void                    retrieveImages(uint32_t preferredFramesInFlight);
     void                    createFences();
     void                    createImageViews();
     void                    createDepthStencil();
@@ -57,7 +58,8 @@ private:
 
     VkFormat chooseDepthStencilFormat(bool requiresStencil = false) const;
 public:
-    vk_RendermodeSwapchainInfo recreateSwapchain(uint32_t width, uint32_t height);
+    vk_RendermodeSwapchainInfo recreateSwapchain(uint32_t width, uint32_t height, uint32_t preferredFramesInFlight);
+    uint32_t preferredFramesInFlight();
     vk_RendermodeSwapchainInfo getRendermodeSwapchainInfo() const;
 
     vk_PresentImageInfo     acquireNextImage();
