@@ -8,22 +8,25 @@
 #include "../Platform/VulkanPlatform.h"
 #include "UtilityStructures.h"
 
-struct PhysicalDevice final
-{
+struct PhysicalDevice final {
 public:
+    VkPhysicalDevice                    physicalDevice      = VK_NULL_HANDLE;
+    VkPhysicalDeviceProperties          properties          = {};
+    VkPhysicalDeviceFeatures            features            = {};
+    vector<VkExtensionProperties>       extensionProperties = {};
+    VkPhysicalDeviceMemoryProperties    memoryProperties    = {};
+    vector<vk_QueueFamily>              queueFamilies       = {};
+public:
+    PhysicalDevice() = default;
     explicit PhysicalDevice(VkPhysicalDevice physicalDevice);
     ~PhysicalDevice() = default;
 
     PhysicalDevice(const PhysicalDevice&)               = default;
     PhysicalDevice& operator=(const PhysicalDevice&)    = default;
 
-public:
-    VkPhysicalDevice                    physicalDevice;
-    VkPhysicalDeviceProperties          properties;
-    VkPhysicalDeviceFeatures            features;
-    vector<VkExtensionProperties>       extensionProperties;
-    VkPhysicalDeviceMemoryProperties    memoryProperties;
-    vector<vk_QueueFamily>              queueFamilies;
+    PhysicalDevice(PhysicalDevice&&) noexcept = default;
+    PhysicalDevice& operator=(PhysicalDevice&&) noexcept = default;
+
 public:
     pair<bool, vk_QueueFamily> isSuitableAndReturnPresentQueue(const vector<const char *> &extensionNames,
                                                               const VkPhysicalDeviceFeatures &requiredFeatures,

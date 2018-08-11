@@ -12,19 +12,16 @@
 
 class DeviceMemorySubsystem final {
 private:
-    DeviceInfo deviceInfo = {};
-
-    DeviceMemoryManager memoryManager;
-
-
-    StaticReusablePool<uint32_t> pool = {};
-
+    DeviceInfo                      deviceInfo      = {};
+    DeviceMemoryManager             memoryManager   = DeviceMemoryManager();
+    StaticReusablePool<uint32_t>    pool            = {};
 public:
+    DeviceMemorySubsystem() = default;
     explicit DeviceMemorySubsystem(DeviceInfo deviceInfo);
     ~DeviceMemorySubsystem() = default;
 
-    DeviceMemorySubsystem(const DeviceMemorySubsystem&) = delete;
-    DeviceMemorySubsystem(DeviceMemorySubsystem&&)      = default;
+    DeviceMemorySubsystem(const DeviceMemorySubsystem&)     = delete;
+    DeviceMemorySubsystem(DeviceMemorySubsystem&&) noexcept = default;
 
     DeviceMemorySubsystem& operator=(const DeviceMemorySubsystem&)     = delete;
     DeviceMemorySubsystem& operator=(DeviceMemorySubsystem&&) noexcept = default;

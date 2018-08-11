@@ -27,14 +27,14 @@ private:
     MemTypeSet lowFrequencyUBOBufferMemoryTypes     = {};
     MemTypeSet highFrequencyUBOBufferMemoryTypes    = {};
 public:
-
+    DeviceMemoryManager() = default;
     explicit DeviceMemoryManager(DeviceInfo& deviceInfo);
 
-    DeviceMemoryManager(const DeviceMemoryManager&) = delete;
-    DeviceMemoryManager(DeviceMemoryManager&&)      = default;
+    DeviceMemoryManager(const DeviceMemoryManager&)     = delete;
+    DeviceMemoryManager(DeviceMemoryManager&&) noexcept = default;
 
-    DeviceMemoryManager& operator=(const DeviceMemoryManager&)  = delete;
-    DeviceMemoryManager& operator=(DeviceMemoryManager&&)       = default;
+    DeviceMemoryManager& operator=(const DeviceMemoryManager&)      = delete;
+    DeviceMemoryManager& operator=(DeviceMemoryManager&&) noexcept  = default;
 
 public:
     

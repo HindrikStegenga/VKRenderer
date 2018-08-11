@@ -11,7 +11,16 @@
 #include "Classes/DeviceMemorySubsystem.h"
 
 class PresentDevice final {
+private:
+    VKUH<VkDevice>          device              = {};
+    VKUH<VkSurfaceKHR>      surface             = {};
+    PhysicalDevice          physicalDevice      = PhysicalDevice();
+    vk_Queue                presentationQueue   = vk_Queue();
+    vector<vk_Queue>        transferQueues      = {};
+    VkInstance              instance            = VK_NULL_HANDLE;
+    DeviceMemorySubsystem   memory              = DeviceMemorySubsystem();
 public:
+    PresentDevice() = default;
     PresentDevice(VkInstance instance, const map<string, string>& params, const PresentDeviceCreateInfo& createInfo);
     ~PresentDevice();
 
@@ -21,19 +30,11 @@ public:
     PresentDevice& operator=(const PresentDevice&)      = delete;
     PresentDevice& operator=(PresentDevice&&) noexcept  = default;
 private:
-    VKUH<VkDevice>                  device = {};
-    VKUH<VkSurfaceKHR>              surface = {};
-    Nullable<PhysicalDevice>        physicalDevice;
-    vk_Queue                        presentationQueue;
-    vector<vk_Queue>                transferQueues;
-    VkInstance                      instance;
-    Nullable<DeviceMemorySubsystem> memory;
-private:
     pair<PhysicalDevice, vk_QueueFamily>
     selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures);
     void createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice, vk_QueueFamily> deviceAndQueueFamily, const vector<const char*>& extensions, VkPhysicalDeviceFeatures features);
 public:
-    PhysicalDevice& getPhysicalDevice();
+    const PhysicalDevice& getPhysicalDevice() const;
     VkSurfaceKHR getSurface();
     PresentDeviceInfo getPresentDeviceInfo() const;
     DeviceInfo getDeviceInfo() const;

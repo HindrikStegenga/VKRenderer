@@ -8,7 +8,10 @@
 #include "Platform/VulkanPlatform.h"
 
 class Instance final {
+private:
+    VKUH<VkInstance> instance = {};
 public:
+    Instance() = default;
     Instance(const map<string, string>& params, const VulkanInstanceCreateInfo& createInfo);
     ~Instance() = default;
 
@@ -17,8 +20,6 @@ public:
 
     Instance& operator=(const Instance&)        = delete;
     Instance& operator=(Instance&&) noexcept    = default;
-private:
-    VKUH<VkInstance> instance = {};
 private:
     static void checkLayersAndExtensionsSupport(const vector<const char*>& validationLayers, const vector<const char*>& extensions);
     static pair<bool, string> checkValidationLayerSupport(const vector<const char*>& layers);

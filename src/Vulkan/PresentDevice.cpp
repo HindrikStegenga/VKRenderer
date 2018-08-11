@@ -29,7 +29,7 @@ PresentDevice::PresentDevice(VkInstance instance, const map<string, string>& par
     this->surface.reset(createInfo.surfaceHandle, instance, vkDestroySurfaceKHR);
 
     auto deviceInfo = getDeviceInfo();
-    memory = Nullable<DeviceMemorySubsystem>(deviceInfo);
+    memory = DeviceMemorySubsystem(deviceInfo);
 }
 
 pair<PhysicalDevice, vk_QueueFamily> PresentDevice::selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures)
@@ -123,7 +123,7 @@ void PresentDevice::createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice,
     handleResult(result, "Device creation has failed!");
 
 
-    physicalDevice.set(deviceAndQueueFamily.first);
+    physicalDevice = deviceAndQueueFamily.first;
     vk_Queue present = {};
     present.queueFamily = deviceAndQueueFamily.second;
 
@@ -152,9 +152,9 @@ void PresentDevice::createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice,
     }
 }
 
-PhysicalDevice& PresentDevice::getPhysicalDevice()
+const PhysicalDevice& PresentDevice::getPhysicalDevice() const
 {
-    return physicalDevice.get();
+    return physicalDevice;
 }
 
 VkSurfaceKHR PresentDevice::getSurface()
@@ -163,7 +163,7 @@ VkSurfaceKHR PresentDevice::getSurface()
 }
 
 PresentDeviceInfo PresentDevice::getPresentDeviceInfo() const {
-    return { device.get(), physicalDevice.get().physicalDevice, presentationQueue };
+    return { device.get(), physicalDevice.physicalDevice, presentationQueue };
 }
 
 PresentDevice::~PresentDevice() {
@@ -175,5 +175,5 @@ PresentDevice::~PresentDevice() {
 }
 
 DeviceInfo PresentDevice::getDeviceInfo() const {
-    return { device.get(), physicalDevice.get().physicalDevice };
+    return { device.get(), physicalDevice.physicalDevice };
 }

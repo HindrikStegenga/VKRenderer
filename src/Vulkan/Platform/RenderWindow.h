@@ -15,7 +15,14 @@
 class VulkanRenderer;
 
 class RenderWindow final {
+private:
+    static int  windowCounter;
+    static bool isGLFWinitialized;
+private:
+    GLFWwindow*     window      = nullptr;
+    VulkanRenderer* renderer    = nullptr;
 public:
+    RenderWindow() = default;
     RenderWindow(uint32_t width, uint32_t height, bool resizable = false);
     ~RenderWindow();
 
@@ -25,12 +32,7 @@ public:
     RenderWindow(RenderWindow&& rhs) noexcept;
     RenderWindow& operator=(RenderWindow&& rhs) noexcept;
 private:
-    static int  windowCounter;
     static void initGLFW();
-    static bool isGLFWinitialized;
-private:
-    GLFWwindow* window  = nullptr;
-    VulkanRenderer* renderer = nullptr;
 private:
     friend class VulkanRenderer;
     void setRendererPointer(VulkanRenderer* renderer);

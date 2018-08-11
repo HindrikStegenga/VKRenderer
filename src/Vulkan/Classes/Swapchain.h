@@ -11,6 +11,7 @@
 
 class Swapchain final {
 public:
+    Swapchain() = default;
     explicit Swapchain(SwapchainCreateInfo createInfo);
     ~Swapchain() = default;
 
@@ -25,9 +26,9 @@ private:
     vector<VKUH<VkSemaphore>>   imageAvailableSemaphores= {};
     vector<VKUH<VkSemaphore>>   renderFinishedSemaphores= {};
 
-    uint32_t                    framesInFlight       = 0;
-    vector<VkImage>             images;
-    vector<VKUH<VkImageView>>   imageViews;
+    uint32_t                    framesInFlight          = 0;
+    vector<VkImage>             images                  = {};
+    vector<VKUH<VkImageView>>   imageViews              = {};
 
     VKUH<VkDeviceMemory>        depthStencilMemory      = {};
     VKUH<VkImage>               depthStencilImage       = {};
@@ -38,7 +39,7 @@ private:
     VkPhysicalDevice        physicalDevice              = VK_NULL_HANDLE;
     VkSurfaceKHR            surface                     = VK_NULL_HANDLE;
     vk_SwapchainSettings    settings                    = {};
-    uint32_t                currentFrameIndex                  = 0;
+    uint32_t                currentFrameIndex           = 0;
 
 private:
     vk_SwapchainSettings    chooseSettings(uint32_t width, uint32_t height, uint32_t preferredFramesInFlight);
