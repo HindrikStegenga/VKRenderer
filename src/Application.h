@@ -11,6 +11,11 @@
 #include "Utilities/Clock.h"
 
 class Application final {
+private:
+    VulkanRenderer  renderer;
+    Clock           internalClock;
+    string          applicationName;
+    bool            mustStop = false;
 public:
     Application();
     ~Application() = default;
@@ -23,15 +28,6 @@ public:
 public:
     void run();
     void stop();
-private:
-    Nullable<VulkanRenderer> renderer;
-    Clock internalClock;
-    string applicationName;
-    bool   mustStop = false;
-public:
-
-
-
 };
 
 

@@ -20,7 +20,7 @@ Application::Application() {
     Logger::log(applicationName);
     Logger::log(engineName);
 
-    renderer.set(VulkanRenderer(applicationName, engineName, isDebug));
+    renderer = VulkanRenderer(applicationName, engineName, isDebug);
 }
 
 void Application::run() {
@@ -29,11 +29,11 @@ void Application::run() {
 
         std::chrono::nanoseconds deltaTime = internalClock.getDeltaTime();
 
-        bool eventsSucceeded = renderer.get().processEvents(deltaTime);
+        bool eventsSucceeded = renderer.processEvents(deltaTime);
         if (!eventsSucceeded) {
             mustStop = true;
         }
-        renderer.get().render();
+        renderer.render();
     }
 }
 

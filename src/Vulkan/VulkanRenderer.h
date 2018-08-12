@@ -17,12 +17,12 @@ using std::chrono::nanoseconds;
 
 class VulkanRenderer final {
 private:
-    Instance                        instance;
-    PresentDevice                   device;
-    RenderWindow                    renderWindow;
-    Swapchain                       swapchain;
+    Instance                        instance        = Instance();
+    PresentDevice                   device          = PresentDevice();
+    RenderWindow                    renderWindow    = RenderWindow();
+    Swapchain                       swapchain       = Swapchain();
 
-    unique_ptr<VulkanRenderMode>    renderMode = nullptr;
+    unique_ptr<VulkanRenderMode>    renderMode      = nullptr;
 
     nanoseconds                 accumulatedTime     = nanoseconds(0);
     uint64_t                    accumulatedFrames   = 0;
@@ -30,6 +30,7 @@ private:
     VkDebugReportCallbackEXT    debugCallbackHandle = VK_NULL_HANDLE;
     VkBool32                    debugEnabled        = VK_FALSE;
 public:
+    VulkanRenderer() = default;
     explicit VulkanRenderer(string appName, string engineName, bool debugEnabled = false);
     ~VulkanRenderer();
 
