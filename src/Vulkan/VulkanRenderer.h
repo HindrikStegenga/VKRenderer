@@ -7,22 +7,19 @@
 
 #include "Platform/VulkanPlatform.h"
 #include "VulkanRequirements.h"
-#include "Platform/RenderWindow.h"
-#include "../Utilities/Nullable.h"
 #include "Instance.h"
 #include "PresentDevice.h"
-#include "Classes/VulkanRenderMode.h"
+#include "Classes/WindowRenderTarget.h"
 
 using std::chrono::nanoseconds;
+
+typedef vector<const char*> (*ExtensionProcessingFunc)(const vector<const char*>& instanceExtensions);
 
 class VulkanRenderer final {
 private:
     Instance                        instance        = Instance();
     PresentDevice                   device          = PresentDevice();
-    RenderWindow                    renderWindow    = RenderWindow();
-    Swapchain                       swapchain       = Swapchain();
-
-    unique_ptr<VulkanRenderMode>    renderMode      = nullptr;
+    vector<WindowRenderTarget>      renderTargets   = {};
 
     nanoseconds                 accumulatedTime     = nanoseconds(0);
     uint64_t                    accumulatedFrames   = 0;
@@ -31,7 +28,7 @@ private:
     VkBool32                    debugEnabled        = VK_FALSE;
 public:
     VulkanRenderer() = default;
-    explicit VulkanRenderer(string appName, string engineName, bool debugEnabled = false);
+    explicit VulkanRenderer(string appName, string engineName, vector<RenderWindow>& renderWindows, ExtensionProcessingFunc extensionProcessingFunc, bool debugEnabled = false);
     ~VulkanRenderer();
 
     VulkanRenderer(const VulkanRenderer&)       = delete;
@@ -42,10 +39,11 @@ public:
 public:
     bool processEvents(std::chrono::nanoseconds deltaTime);
     void render();
-    void resizeWindow(uint32_t width, uint32_t height);
+    void resizeWindow(uint32_t width, uint32_t height, WindowRenderTarget* renderTarget);
+    void resizeWindow(uint32_t width, uint32_t height, RenderWindow* renderWindow);
 private:
     VkDevice getDevice();
-    void resizeWindow(bool mustResize);
+    void resizeWindow(bool mustResize, WindowRenderTarget* renderTarget);
     void setupDebugCallback();
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags,
                                                         VkDebugReportObjectTypeEXT objType,

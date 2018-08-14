@@ -22,8 +22,8 @@ struct PresentDeviceCreateInfo final {
 
     const vector<const char*>&          extensions;
     const vector<const char*>&          debugExtensions;
+    const vector<VkSurfaceKHR>          surfaces = {};
     const VkPhysicalDeviceFeatures&     requiredFeatures;
-    VkSurfaceKHR                        surfaceHandle       = VK_NULL_HANDLE;
 };
 
 struct PresentDeviceInfo final {

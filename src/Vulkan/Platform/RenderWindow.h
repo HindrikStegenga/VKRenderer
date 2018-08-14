@@ -12,15 +12,15 @@
 #define WINDOW_MAX_WIDTH 16384
 #define WINDOW_MAX_HEIGHT 16384
 
-class VulkanRenderer;
+class Application;
 
 class RenderWindow final {
 private:
     static int  windowCounter;
     static bool isGLFWinitialized;
 private:
-    GLFWwindow*     window      = nullptr;
-    VulkanRenderer* renderer    = nullptr;
+    GLFWwindow*     window          = nullptr;
+    Application*    application     = nullptr;
 public:
     RenderWindow() = default;
     RenderWindow(uint32_t width, uint32_t height, bool resizable = false);
@@ -34,8 +34,8 @@ public:
 private:
     static void initGLFW();
 private:
-    friend class VulkanRenderer;
-    void setRendererPointer(VulkanRenderer* renderer);
+    friend class Application;
+    void setApplicationPointer(Application* application);
 private:
     static void onWindowResize(GLFWwindow* window, int width, int height);
 public:
@@ -43,7 +43,8 @@ public:
     void setWindowTitle(string title) const;
     void getCurrentSize(uint32_t &width, uint32_t &height) const;
     VkSurfaceKHR getWindowSurface(VkInstance instance);
-    vector<const char*> processExtensions(const vector<const char *> & instanceExtensions) const;
+
+    static vector<const char*> processExtensions(const vector<const char *> & instanceExtensions);
 };
 
 

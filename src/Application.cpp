@@ -20,7 +20,11 @@ Application::Application() {
     Logger::log(applicationName);
     Logger::log(engineName);
 
-    renderer = VulkanRenderer(applicationName, engineName, isDebug);
+    renderWindows.push_back(RenderWindow(800,480, true));
+    RenderWindow& window = renderWindows.back();
+    window.setApplicationPointer(this);
+
+    renderer = VulkanRenderer(applicationName, engineName, renderWindows, &RenderWindow::processExtensions, isDebug);
 }
 
 void Application::run() {
@@ -39,4 +43,8 @@ void Application::run() {
 
 void Application::stop() {
     mustStop = true;
+}
+
+void Application::resizeWindow(uint32_t width, uint32_t height, RenderWindow* window) {
+    renderer.resizeWindow(width, height, window);
 }

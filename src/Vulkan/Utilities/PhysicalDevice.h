@@ -30,16 +30,15 @@ public:
 public:
     pair<bool, vk_QueueFamily> isSuitableAndReturnPresentQueue(const vector<const char *> &extensionNames,
                                                               const VkPhysicalDeviceFeatures &requiredFeatures,
-                                                              VkSurfaceKHR surface);
-
+                                                               vector<VkSurfaceKHR> surfaces);
     pair<bool, vk_QueueFamily> hasTransferQueueFamily() const;
 private:
-    static bool meetsRequiredPhysicalDeviceFeatures(const VkPhysicalDeviceFeatures& features, const VkPhysicalDeviceFeatures& requirements);
-    static pair<bool, string> meetsRequiredExtensions(const vector<VkExtensionProperties> &extensions, const vector<const char *>& requirements);
-    static vector<vk_QueueFamily> getQueueFamilies(VkPhysicalDevice physicalDevice);
-    static pair<bool, vk_QueueFamily> meetsRequiredSurfaceSupport(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, const vector<vk_QueueFamily>& queueFamilies);
-    static bool meetsRequiredQueueTypes(const vector<vk_QueueFamily>& queueFamilies);
-    static pair<bool, vk_QueueFamily> findFirstGraphicsComputeQueueFamily(const vector<vk_QueueFamily> &queueFamilies);
+    static bool                         meetsRequiredPhysicalDeviceFeatures(const VkPhysicalDeviceFeatures& features, const VkPhysicalDeviceFeatures& requirements);
+    static pair<bool, string>           meetsRequiredExtensions(const vector<VkExtensionProperties> &extensions, const vector<const char *>& requirements);
+    static vector<vk_QueueFamily>       getQueueFamilies(VkPhysicalDevice physicalDevice);
+    static pair<bool, vk_QueueFamily>   meetsRequiredSurfaceSupport(VkPhysicalDevice physicalDevice, vector<VkSurfaceKHR> surfaces, const vector<vk_QueueFamily>& queueFamilies);
+    static bool                         meetsRequiredQueueTypes(const vector<vk_QueueFamily>& queueFamilies);
+    static pair<bool, vk_QueueFamily>   findFirstGraphicsComputeQueueFamily(const vector<vk_QueueFamily> &queueFamilies);
 };
 
 

@@ -94,7 +94,7 @@ pair<bool, string> PhysicalDevice::meetsRequiredExtensions(const vector<VkExtens
 
 pair<bool, vk_QueueFamily> PhysicalDevice::isSuitableAndReturnPresentQueue(const vector<const char *> &extensionNames,
                                                                           const VkPhysicalDeviceFeatures &requiredFeatures,
-                                                                          VkSurfaceKHR surface)
+                                                                           vector<VkSurfaceKHR> surfaces)
 {
     auto pair = meetsRequiredExtensions(extensionProperties, extensionNames);
     if (!pair.first) {
@@ -105,7 +105,7 @@ pair<bool, vk_QueueFamily> PhysicalDevice::isSuitableAndReturnPresentQueue(const
     if (!support) { return make_pair(false, vk_QueueFamily{}); }
     support = meetsRequiredQueueTypes(queueFamilies);
     if (!support) { return make_pair(false, vk_QueueFamily{}); }
-    auto presentQueue = meetsRequiredSurfaceSupport(physicalDevice, surface, queueFamilies);
+    auto presentQueue = meetsRequiredSurfaceSupport(physicalDevice, surfaces, queueFamilies);
     return presentQueue;
 }
 
@@ -141,18 +141,19 @@ pair<bool, vk_QueueFamily> PhysicalDevice::findFirstGraphicsComputeQueueFamily(c
     return make_pair(false, vk_QueueFamily {});
 }
 
-pair<bool, vk_QueueFamily> PhysicalDevice::meetsRequiredSurfaceSupport(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface,
+pair<bool, vk_QueueFamily> PhysicalDevice::meetsRequiredSurfaceSupport(VkPhysicalDevice physicalDevice, vector<VkSurfaceKHR> surfaces,
                                             const vector<vk_QueueFamily> &queueFamilies)
 {
-
     for (const auto& qf : queueFamilies) {
         if (qf.queueFamilyProperties.queueCount > 0 &&
             static_cast<bool>(qf.queueFamilyProperties.queueFlags & VK_QUEUE_GRAPHICS_BIT) &&
             static_cast<bool>(qf.queueFamilyProperties.queueFlags & VK_QUEUE_COMPUTE_BIT))
         {
             VkBool32 presentSupport = VK_FALSE;
-            vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, qf.queueFamilyIndex, surface, &presentSupport);
-            if (presentSupport == VK_TRUE) {
+            for (const auto& surface : surfaces) {
+                vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, qf.queueFamilyIndex, surface, &presentSupport);
+                if (presentSupport == VK_FALSE)
+                    break;
 
                 VkSurfaceCapabilitiesKHR caps = {};
                 vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &caps);
@@ -164,8 +165,10 @@ pair<bool, vk_QueueFamily> PhysicalDevice::meetsRequiredSurfaceSupport(VkPhysica
                 vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, nullptr);
 
                 if(surfaceCount == 0 && presentModeCount == 0)
-                    continue; //This one was not the right one unfortunately.
+                    presentSupport = VK_FALSE; //This one was not the right one unfortunately.
+            }
 
+            if (presentSupport == VK_TRUE) {
                 return make_pair(true, qf);
             }
         }

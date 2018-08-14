@@ -3,6 +3,7 @@
 //
 
 #include "RenderWindow.h"
+#include "../../Application.h"
 #include "../VulkanRenderer.h"
 
 #ifdef WIN32
@@ -96,7 +97,7 @@ RenderWindow &RenderWindow::operator=(RenderWindow && rhs) noexcept {
     return *this;
 }
 
-vector<const char*> RenderWindow::processExtensions(const vector<const char *>& instanceExtensions) const {
+vector<const char*> RenderWindow::processExtensions(const vector<const char *>& instanceExtensions) {
 
     vector<const char*> additionalExtensions(instanceExtensions);
 
@@ -148,15 +149,11 @@ void RenderWindow::onWindowResize(GLFWwindow *window, int width, int height) {
     if(renderWindow == nullptr)
         return;
 
-    if(renderWindow->renderer != nullptr) {
-        renderWindow->renderer->resizeWindow(static_cast<uint32_t>(width), static_cast<uint32_t>(height));
+    if(renderWindow->application != nullptr) {
+        renderWindow->application->resizeWindow(static_cast<uint32_t>(width), static_cast<uint32_t>(height), renderWindow);
     } else {
-        Logger::failure("Renderer pointer was not set!");
+        Logger::failure("Application pointer was not set!");
     }
-}
-
-void RenderWindow::setRendererPointer(VulkanRenderer* renderer) {
-    this->renderer = renderer;
 }
 
 void RenderWindow::getCurrentSize(uint32_t &width, uint32_t &height) const {
@@ -170,4 +167,8 @@ void RenderWindow::getCurrentSize(uint32_t &width, uint32_t &height) const {
 
 void RenderWindow::setWindowTitle(string title) const {
     glfwSetWindowTitle(window, title.c_str());
+}
+
+void RenderWindow::setApplicationPointer(Application* application) {
+    this->application = application;
 }

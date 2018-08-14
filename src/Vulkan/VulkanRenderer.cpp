@@ -9,7 +9,7 @@
 #include "../Utilities/ObjLoader.h"
 
 
-VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEnabled) : debugEnabled(debugEnabled ? VK_TRUE : VK_FALSE)
+VulkanRenderer::VulkanRenderer(string appName, string engineName, vector<RenderWindow>& renderWindows, ExtensionProcessingFunc extensionProcessingFunc, bool debugEnabled) : debugEnabled(debugEnabled ? VK_TRUE : VK_FALSE)
 {
 
     auto configReader = ConfigFileReader();
@@ -26,9 +26,6 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
     uint32_t width, height;
     width = static_cast<uint32_t>(std::stoi(map.at("width")));
     height = static_cast<uint32_t>(std::stoi(map.at("height")));
-
-    renderWindow = RenderWindow(width, height, true);
-    renderWindow.setRendererPointer(this);
 
     vector<const char*> extensions;
 	vector<const char*> layers;
@@ -68,7 +65,7 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
     }
 #endif
 
-    auto processedExtensions = renderWindow.processExtensions(extensions);
+    auto processedExtensions = extensionProcessingFunc != nullptr ? extensionProcessingFunc(extensions) : extensions;
 
     VulkanInstanceCreateInfo supportDescription { layers, processedExtensions, debugLayers, debugExtensions };
 
@@ -78,51 +75,67 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName,  bool debugEna
         setupDebugCallback();
     }
 
-    VkSurfaceKHR surface = renderWindow.getWindowSurface(instance.getHandle());
+    vector<VkSurfaceKHR> surfaces(renderWindows.size());
+    for (size_t i = 0; i < renderWindows.size(); ++i) {
+        auto& window = renderWindows[i];
+        surfaces[i] = (window.getWindowSurface(instance.getHandle()));
+    }
 
-    PresentDeviceCreateInfo deviceSupportDescription { dExtensions, ddExtensions, requiredDeviceFeatures, surface };
+
+    PresentDeviceCreateInfo deviceSupportDescription { dExtensions, ddExtensions, surfaces, requiredDeviceFeatures };
 
     device = PresentDevice(instance.getHandle(), map, deviceSupportDescription);
 
-    SwapchainCreateInfo swapchainCreateInfo = {};
+    for (size_t i = 0; i < renderWindows.size(); ++i) {
 
-    swapchainCreateInfo.deviceInfo  = device.getPresentDeviceInfo();
-    swapchainCreateInfo.surface     = device.getSurface();
-    swapchainCreateInfo.width       = width;
-    swapchainCreateInfo.height      = height;
+        auto& renderWindow = renderWindows[i];
 
-    if (map.find("preferredFramesInFlight") != map.end()) {
-        swapchainCreateInfo.preferredFramesInFlight = (uint32_t)std::stoi(map.at("preferredFramesInFlight"));
-    } else {
-        swapchainCreateInfo.preferredFramesInFlight = 2;
-    }
+        WindowRenderTarget target = {};
+        target.renderWindow = &renderWindow;
+        target.surface = VKUH<VkSurfaceKHR>(surfaces[i], instance.getHandle(), vkDestroySurfaceKHR);
 
-    swapchain = Swapchain(swapchainCreateInfo);
-    
-    const string renderMode = configReader.map().at("renderMode");
+        SwapchainCreateInfo swapchainCreateInfo = {};
 
-    if (renderMode == string("Forward")) {
+        swapchainCreateInfo.deviceInfo  = device.getPresentDeviceInfo();
+        swapchainCreateInfo.surface     = target.surface;
+        swapchainCreateInfo.width       = width;
+        swapchainCreateInfo.height      = height;
 
-        ForwardRenderModeCreateInfo createInfo = {};
+        if (map.find("preferredFramesInFlight") != map.end()) {
+            swapchainCreateInfo.preferredFramesInFlight = (uint32_t)std::stoi(map.at("preferredFramesInFlight"));
+        } else {
+            swapchainCreateInfo.preferredFramesInFlight = 2;
+        }
 
-        createInfo.deviceInfo       = device.getPresentDeviceInfo();
-        createInfo.surface          = surface;
-        createInfo.swapchainInfo    = swapchain.getRendermodeSwapchainInfo();
+        target.swapchain = Swapchain(swapchainCreateInfo);
 
-        this->renderMode = std::make_unique<ForwardRenderMode>(createInfo);
-    }
-    else
-    {
-        Logger::error("Could not find appropriate renderMode!");
+        const string renderMode = configReader.map().at("renderMode");
+
+        if (renderMode == string("Forward")) {
+
+            ForwardRenderModeCreateInfo createInfo = {};
+
+            createInfo.deviceInfo       = device.getPresentDeviceInfo();
+            createInfo.surface          = target.surface;
+            createInfo.swapchainInfo    = target.swapchain.getRendermodeSwapchainInfo();
+
+            target.renderMode = std::make_unique<ForwardRenderMode>(createInfo);
+        }
+        else
+        {
+            Logger::error("Could not find appropriate renderMode!");
+        }
+
+        renderTargets.emplace_back(std::move(target));
     }
 }
 
 bool VulkanRenderer::processEvents(std::chrono::nanoseconds deltaTime)
 {
-    renderWindow.setRendererPointer(this);
-
     accumulatedTime += deltaTime;
     accumulatedFrames += 1;
+    int64_t fps = 0;
+    bool mustSetFPS = false;
 
     if (accumulatedTime > std::chrono::milliseconds(500)) {
 
@@ -131,16 +144,24 @@ bool VulkanRenderer::processEvents(std::chrono::nanoseconds deltaTime)
         nanoseconds second = std::chrono::duration_cast<nanoseconds>(std::chrono::seconds(1));
 
         if (averagePerFrame.count() > 0) {
-            auto fps = second.count() / averagePerFrame.count();
+            fps = second.count() / averagePerFrame.count();
 
-            renderWindow.setWindowTitle("VKRenderer " + std::to_string(fps) + " FPS");
-
+            mustSetFPS = true;
             accumulatedFrames = 0;
             accumulatedTime = nanoseconds(0);
         }
     }
 
-    return renderWindow.pollWindowEvents();
+    for (auto& target : renderTargets) {
+
+        if (mustSetFPS) {
+            target.renderWindow->setWindowTitle("VKRenderer " + std::to_string(fps) + " FPS");
+        }
+
+        if (!target.renderWindow->pollWindowEvents())
+            return false;
+    }
+    return true;
 }
 
 VkBool32 VulkanRenderer::debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj,
@@ -151,24 +172,25 @@ VkBool32 VulkanRenderer::debugCallback(VkDebugReportFlagsEXT flags, VkDebugRepor
     return VK_FALSE;
 }
 
-void VulkanRenderer::resizeWindow(uint32_t width, uint32_t height) {
+void VulkanRenderer::resizeWindow(uint32_t width, uint32_t height, WindowRenderTarget* renderTarget) {
 
     if(width == 0 && height == 0)
         return;
 
     Logger::log("Window will be resized: " + std::to_string(width) + " - " + std::to_string(height));
 
-    vk_RendermodeSwapchainInfo swapchainInfo = swapchain.recreateSwapchain(width, height, swapchain.preferredFramesInFlight());
+    vk_RendermodeSwapchainInfo swapchainInfo = renderTarget->swapchain.recreateSwapchain(width, height, renderTarget->swapchain.preferredFramesInFlight());
 
-    renderMode->windowHasResized(swapchainInfo);
+    renderTarget->renderMode->windowHasResized(swapchainInfo);
 }
 
-void VulkanRenderer::resizeWindow(bool mustResize) {
+void VulkanRenderer::resizeWindow(bool mustResize, WindowRenderTarget* renderTarget) {
+
     if(mustResize)
     {
         uint32_t width, height;
-        renderWindow.getCurrentSize(width, height);
-        resizeWindow(width, height);
+        renderTarget->renderWindow->getCurrentSize(width, height);
+        resizeWindow(width, height, renderTarget);
     }
 }
 
@@ -205,21 +227,32 @@ VulkanRenderer::~VulkanRenderer()
 
 void VulkanRenderer::render()
 {
-    vk_PresentImageInfo presentImageInfo = swapchain.acquireNextImage();
+    for (auto& target : renderTargets) {
 
-    resizeWindow(presentImageInfo.mustRecreateSwapchain);
+        vk_PresentImageInfo presentImageInfo = target.swapchain.acquireNextImage();
 
-    if(presentImageInfo.imageIndex == std::numeric_limits<uint32_t>::max())
-        return;
+        resizeWindow(presentImageInfo.mustRecreateSwapchain, &target);
 
-    renderMode->render(presentImageInfo);
+        if(presentImageInfo.imageIndex == std::numeric_limits<uint32_t>::max())
+            return;
 
-    bool mustResize = false;
-    swapchain.presentImage(presentImageInfo.imageIndex, mustResize);
+        target.renderMode->render(presentImageInfo);
 
-    resizeWindow(mustResize);
+        bool mustResize = false;
+        target.swapchain.presentImage(presentImageInfo.imageIndex, mustResize);
+
+        resizeWindow(mustResize, &target);
+    }
 }
 
 VkDevice VulkanRenderer::getDevice() {
     return device.getPresentDeviceInfo().logical;
+}
+
+void VulkanRenderer::resizeWindow(uint32_t width, uint32_t height, RenderWindow* renderWindow) {
+    for (auto& target : renderTargets) {
+        if (target.renderWindow == renderWindow) {
+            resizeWindow(width, height, &target);
+        }
+    }
 }

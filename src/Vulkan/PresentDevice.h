@@ -13,7 +13,6 @@
 class PresentDevice final {
 private:
     VKUH<VkDevice>          device              = {};
-    VKUH<VkSurfaceKHR>      surface             = {};
     PhysicalDevice          physicalDevice      = PhysicalDevice();
     vk_Queue                presentationQueue   = vk_Queue();
     vector<vk_Queue>        transferQueues      = {};
@@ -31,11 +30,10 @@ public:
     PresentDevice& operator=(PresentDevice&&) noexcept  = default;
 private:
     pair<PhysicalDevice, vk_QueueFamily>
-    selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures);
+    selectPhysicalDevice(VkInstance instance, vector<VkSurfaceKHR> surfaces, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures);
     void createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice, vk_QueueFamily> deviceAndQueueFamily, const vector<const char*>& extensions, VkPhysicalDeviceFeatures features);
 public:
     const PhysicalDevice& getPhysicalDevice() const;
-    VkSurfaceKHR getSurface();
     PresentDeviceInfo getPresentDeviceInfo() const;
     DeviceInfo getDeviceInfo() const;
 

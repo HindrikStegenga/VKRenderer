@@ -60,7 +60,7 @@ public:
     auto getDeleter() const -> function<void(T)>;
 
     explicit operator bool() const;
-    explicit operator T() const;
+    operator T() const;
 
 };
 

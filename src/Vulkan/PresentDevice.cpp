@@ -19,20 +19,19 @@ PresentDevice::PresentDevice(VkInstance instance, const map<string, string>& par
         usedExtensions = createInfo.extensions;
     }
 
-    auto physicalDevice = selectPhysicalDevice(instance, createInfo.surfaceHandle, params, usedExtensions, createInfo.requiredFeatures);
+    auto physicalDevice = selectPhysicalDevice(instance, createInfo.surfaces, params, usedExtensions, createInfo.requiredFeatures);
 
     std::stringstream ss;
     ss << std::endl << physicalDevice.first.properties;
     Logger::log("Selected device: " + ss.str());
 
     createLogicalDeviceAndPresentationQueue(physicalDevice, usedExtensions, createInfo.requiredFeatures);
-    this->surface.reset(createInfo.surfaceHandle, instance, vkDestroySurfaceKHR);
 
     auto deviceInfo = getDeviceInfo();
     memory = DeviceMemorySubsystem(deviceInfo);
 }
 
-pair<PhysicalDevice, vk_QueueFamily> PresentDevice::selectPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures)
+pair<PhysicalDevice, vk_QueueFamily> PresentDevice::selectPhysicalDevice(VkInstance instance, vector<VkSurfaceKHR> surfaces, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures)
 {
     uint32_t physicalDeviceCount = 0;
     vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, nullptr);
@@ -49,7 +48,7 @@ pair<PhysicalDevice, vk_QueueFamily> PresentDevice::selectPhysicalDevice(VkInsta
     for (auto deviceHandle : devices) {
         PhysicalDevice device(deviceHandle);
 
-        auto presentQueueAndSupport = device.isSuitableAndReturnPresentQueue(extensions, requiredFeatures, surface);
+        auto presentQueueAndSupport = device.isSuitableAndReturnPresentQueue(extensions, requiredFeatures, surfaces);
         if (presentQueueAndSupport.first) {
             possibleDevices.emplace_back(device, presentQueueAndSupport.second);
         }
@@ -155,11 +154,6 @@ void PresentDevice::createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice,
 const PhysicalDevice& PresentDevice::getPhysicalDevice() const
 {
     return physicalDevice;
-}
-
-VkSurfaceKHR PresentDevice::getSurface()
-{
-    return surface.get();
 }
 
 PresentDeviceInfo PresentDevice::getPresentDeviceInfo() const {
