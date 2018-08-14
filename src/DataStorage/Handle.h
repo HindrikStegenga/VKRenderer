@@ -19,10 +19,10 @@ public:
     ~Handle() = default;
 
     Handle(const Handle&)       = default;
-    Handle(Handle&&) noexcept   = delete;
+    Handle(Handle&&) noexcept   = default;
 
     Handle& operator=(const Handle&)        = default;
-    Handle& operator=(Handle&&) noexcept    = delete;
+    Handle& operator=(Handle&&) noexcept    = default;
 public:
 
     explicit Handle(HandleSizeType value) : value(value){}

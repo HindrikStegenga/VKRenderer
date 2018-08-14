@@ -2,8 +2,8 @@
 // Created by Hindrik  Stegenga on 21/05/2018.
 //
 
-#ifndef VKRENDERER_RESERVEDARRAY_H
-#define VKRENDERER_RESERVEDARRAY_H
+#ifndef VKRENDERER_STATICK_STACK_H
+#define VKRENDERER_STATICK_STACK_H
 
 #include <cstddef>
 #include <cstdint>
@@ -15,7 +15,6 @@ class StaticStack final {
 private:
     T data[container_size]  = {};
     size_t usedCount        = 0;
-
 public:
     StaticStack()  = default;
     ~StaticStack() = default;
@@ -138,4 +137,4 @@ T* StaticStack<T, container_size>::end() {
     return usedCount > 0 ? &data[usedCount] : nullptr;
 }
 
-#endif //VKRENDERER_RESERVEDARRAY_H
+#endif //VKRENDERER_STATICK_STACK_H
