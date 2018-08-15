@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include <array>
+#include "Exceptions/NoMoreItemsException.h"
 
 using std::array;
 
@@ -79,7 +80,7 @@ template<typename... Args>
 HandleType StaticReusablePool<T, HandleType, poolSize>::getNewItem(Args&&... args) {
 
     if (getFirstFreeIndex() == HandleType::invalidMaxValue) {
-        throw "No free item left in the pool!";
+        throw NoMoreItemsException();
     }
 
     HandleSize tempIndex = getFirstFreeIndex();
