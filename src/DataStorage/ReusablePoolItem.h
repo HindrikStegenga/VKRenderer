@@ -27,22 +27,22 @@ public:
         T object;
         typename HandleType::HandleSize nextIndex;
     public:
-        Data()  = default;
-        ~Data() = default;
+        //Implement constructor/destructor as no-op, because they NEED to be defined in case of T having a non trivial constructor
+        Data() { (void)0; };
+        ~Data(){ (void)0; };
 
-        Data(const Data&) = delete;
-        Data(Data&&) = delete;
+        Data(const Data&)       = delete;
+        Data(Data&&) noexcept   = delete;
 
-        Data& operator=(const Data&) = delete;
-        Data& operator=(Data&&) = delete;
+        Data& operator=(const Data&)     = delete;
+        Data& operator=(Data&&) noexcept = delete;
     };
 
-    alignas(T) Data data;
     bool isUsed = false;
+    alignas(T) Data data;
 public:
     template<typename ... Args>
     void reset(Args&& ... args);
-private:
     void cleanUp();
 };
 

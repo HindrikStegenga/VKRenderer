@@ -9,21 +9,13 @@
 #include "../../CommonInclude.h"
 #include "../Platform/VulkanPlatform.h"
 #include "DeviceMemoryManager.h"
-#include "../../DataStorage/StaticReusablePool.h"
-
-DECLARE_HANDLE_16(uint32_t)
 
 class DeviceMemorySubsystem final {
 private:
     DeviceInfo                      deviceInfo      = {};
     DeviceMemoryManager             memoryManager   = DeviceMemoryManager();
-    StaticReusablePool<uint32_t>    pool = {};
 public:
-    DeviceMemorySubsystem(){
-
-        uint32_tHandle16 handle = pool.getNewItem();
-
-    };
+    DeviceMemorySubsystem() = default;
     explicit DeviceMemorySubsystem(DeviceInfo deviceInfo);
     ~DeviceMemorySubsystem() = default;
 
