@@ -7,7 +7,7 @@
 
 #include "../../../CommonInclude.h"
 #include "../../Platform/VulkanPlatform.h"
-#include "../../../../libraries/nlohmannJSON/json.hpp"
+#include <nlohmannJSON/json.hpp>
 
 using json = nlohmann::json;
 

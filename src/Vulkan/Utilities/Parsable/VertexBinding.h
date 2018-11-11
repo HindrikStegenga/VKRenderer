@@ -7,7 +7,7 @@
 
 #include "../../../CommonInclude.h"
 #include "../../Platform/VulkanPlatform.h"
-#include "../../../../libraries/nlohmannJSON/json.hpp"
+#include <nlohmannJSON/json.hpp>
 #include "VertexAttribute.h"
 
 using json = nlohmann::json;
