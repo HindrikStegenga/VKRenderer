@@ -44,8 +44,8 @@ void ForwardRenderMode::render(vk_PresentImageInfo presentImageInfo) {
 
 void ForwardRenderMode::createRenderMode(vk_RendermodeSwapchainInfo swapchainInfo) {
 
-    ShaderModule vertexModule = ShaderModule(device, "shaders/vert.spv", ShaderModuleType::Vertex);
-    ShaderModule fragmentModule = ShaderModule(device, "shaders/frag.spv", ShaderModuleType::Fragment);
+    ShaderModule vertexModule = ShaderModule(device, "resources/shaders/vert.spv", ShaderModuleType::Vertex);
+    ShaderModule fragmentModule = ShaderModule(device, "resources/shaders/frag.spv", ShaderModuleType::Fragment);
 
     std::array<VkPipelineShaderStageCreateInfo, 2> shaderModules = { vertexModule.retrieveShaderStageInfo(), fragmentModule.retrieveShaderStageInfo() };
 

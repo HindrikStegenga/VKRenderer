@@ -2,21 +2,18 @@
     "name": "PositionColor",
     "bindings": [
         {
-            "name": "InterleavedBuffer",
             "inputRate": "perVertex",
             "binding": 0,
             "attributes": [
                 {
                     "name": "position",
-                    "type": "vec2",
-                    "location": 0,
-                    "binding": 0
+                    "type": "float2",
+                    "location": 0
                 },
                 {
                     "name": "color",
-                    "type": "vec3",
-                    "location": 1,
-                    "binding": 0
+                    "type": "float2",
+                    "location": 1
                 }
             ]
         }

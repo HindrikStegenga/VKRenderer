@@ -7,11 +7,12 @@
 
 #define SERIALIZE_START(Type) namespace meta { \
     template <> \
-    inline auto registerMembers<Test>() \
+    inline auto registerMembers<Type>() \
     { \
         return members( \
 
 #define SERIALIZE_MEMBER(name, member_var) member(name, &member_var)
+#define SERIALIZE_GETSET(name, member_get, member_set) member(name, &member_get, &member_set)
 
 #define SERIALIZE_END ); \
     } \
