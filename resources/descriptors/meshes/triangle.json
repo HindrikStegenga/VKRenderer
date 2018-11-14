@@ -1,5 +1,11 @@
 {
   "name": "triangle",
-  "vertexBuffer": "triangle.bin",
-  "indexBuffer": ""
+  "buffers": [
+    {
+      "vertexBuffer": "triangle.bin",
+      "vertexFormat": "PositionTexCoordNormals",
+      "indexBuffer": "triangle.bin",
+      "indexBufferTypeSize": 16
+    }
+  ]
 }

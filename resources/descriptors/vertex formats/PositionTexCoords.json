@@ -1,0 +1,15 @@
+{
+  "name": "PositionTexCoords",
+  "formats": [
+    {
+      "name": "position",
+      "type": "float3",
+      "location": 0
+    },
+    {
+      "name": "texcoords",
+      "type": "float2",
+      "location": 1
+    }
+  ]
+}

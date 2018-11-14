@@ -1,5 +1,11 @@
 {
   "name": "cube",
-  "vertexBuffer": "cube.bin",
-  "indexBuffer": "index.bin"
+  "buffers": [
+    {
+      "vertexBuffer": "cube.bin",
+      "vertexFormat": "PositionTexCoordNormals",
+      "indexBuffer": "cube.bin",
+      "indexBufferTypeSize": 16
+    }
+  ]
 }

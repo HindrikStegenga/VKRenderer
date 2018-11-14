@@ -1,0 +1,15 @@
+{
+  "name": "PositionColor",
+  "formats": [
+    {
+      "name": "position",
+      "type": "float3",
+      "location": 0
+    },
+    {
+      "name": "color",
+      "type": "float3",
+      "location": 1
+    }
+  ]
+}

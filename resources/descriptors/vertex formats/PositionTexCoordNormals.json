@@ -1,0 +1,20 @@
+{
+  "name": "PositionTexCoordNormals",
+  "formats": [
+    {
+      "name": "position",
+      "type": "float3",
+      "location": 0
+    },
+    {
+      "name": "texcoords",
+      "type": "float2",
+      "location": 1
+    },
+    {
+      "name": "normal",
+      "type": "float3",
+      "location": 2
+    }
+  ]
+}
