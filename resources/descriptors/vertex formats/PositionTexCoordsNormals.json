@@ -1,5 +1,5 @@
 {
-  "name": "PositionTexCoordNormals",
+  "name": "PositionTexCoordsNormals",
   "formats": [
     {
       "name": "position",

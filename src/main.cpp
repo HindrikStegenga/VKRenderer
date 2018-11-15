@@ -6,7 +6,7 @@ int main() {
 
     VertexLayout layout;
 
-    std::ifstream file("config/vertex_layouts/PositionTexCoordNormals.json");
+    std::ifstream file("config/vertex_layouts/PositionTexCoordsNormals.json");
 
     if(!file.is_open())
         Logger::failure("File could not be opened:");

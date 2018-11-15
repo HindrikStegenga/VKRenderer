@@ -1,0 +1,10 @@
+{
+  "name": "Normals",
+  "formats": [
+    {
+      "name": "normals",
+      "type": "float3",
+      "location": 0
+    }
+  ]
+}

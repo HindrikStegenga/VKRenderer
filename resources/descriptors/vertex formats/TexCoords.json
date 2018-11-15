@@ -1,0 +1,10 @@
+{
+  "name": "TexCoords",
+  "formats": [
+    {
+      "name": "texcoords",
+      "type": "float2",
+      "location": 0
+    }
+  ]
+}

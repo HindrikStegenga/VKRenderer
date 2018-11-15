@@ -1,0 +1,10 @@
+{
+  "name": "Color",
+  "formats": [
+    {
+      "name": "color",
+      "type": "float3",
+      "location": 0
+    }
+  ]
+}
