@@ -15,40 +15,51 @@
 using std::string;
 using std::vector;
 
-
-struct VertexAttribute {
+struct VertexFormatDescriptor {
     string name;
     string type;
-    int location;
+    uint32_t location;
 };
 
-struct VertexBinding {
-    string inputRate;
-    int binding;
-    vector<VertexAttribute> attributes;
-};
-
-struct VertexLayout {
+struct VertexBufferFormatDescriptor {
     string name;
-    vector<VertexBinding> bindings;
+    vector<VertexFormatDescriptor> formats;
+};
+
+struct MeshBufferDescriptor {
+    string vertexBufferFileName;
+    string vertexFormat;
+    string indexBufferFileName;
+    uint32_t indexBufferTypeSize;
+};
+
+struct MeshDescriptor {
+    string name;
+    vector<MeshBufferDescriptor> buffers;
 };
 
 
-SERIALIZE_START(VertexAttribute)
-    SERIALIZE_MEMBER("name", VertexAttribute::name),
-    SERIALIZE_MEMBER("type", VertexAttribute::type),
-    SERIALIZE_MEMBER("location", VertexAttribute::location)
+SERIALIZE_START(VertexFormatDescriptor)
+    SERIALIZE_MEMBER("name", VertexFormatDescriptor::name),
+    SERIALIZE_MEMBER("type", VertexFormatDescriptor::type),
+    SERIALIZE_MEMBER("location", VertexFormatDescriptor::location)
 SERIALIZE_END
 
-SERIALIZE_START(VertexBinding)
-    SERIALIZE_MEMBER("inputRate", VertexBinding::inputRate),
-    SERIALIZE_MEMBER("binding", VertexBinding::binding),
-    SERIALIZE_MEMBER("attributes", VertexBinding::attributes)
+SERIALIZE_START(VertexBufferFormatDescriptor)
+    SERIALIZE_MEMBER("name", VertexBufferFormatDescriptor::name),
+    SERIALIZE_MEMBER("formats", VertexBufferFormatDescriptor::formats)
 SERIALIZE_END
 
-SERIALIZE_START(VertexLayout)
-    SERIALIZE_MEMBER("name", VertexLayout::name),
-    SERIALIZE_MEMBER("bindings", VertexLayout::bindings)
+SERIALIZE_START(MeshBufferDescriptor)
+    SERIALIZE_MEMBER("vertexBufferFileName", MeshBufferDescriptor::vertexBufferFileName),
+    SERIALIZE_MEMBER("vertexFormat", MeshBufferDescriptor::vertexFormat),
+    SERIALIZE_MEMBER("indexBufferFileName", MeshBufferDescriptor::indexBufferFileName),
+    SERIALIZE_MEMBER("indexBufferTypeSize", MeshBufferDescriptor::indexBufferTypeSize)
+SERIALIZE_END
+
+SERIALIZE_START(MeshDescriptor)
+    SERIALIZE_MEMBER("name", MeshDescriptor::name),
+    SERIALIZE_MEMBER("buffers", MeshDescriptor::buffers)
 SERIALIZE_END
 
 #endif //VKRENDERER_VULKANTYPES_H

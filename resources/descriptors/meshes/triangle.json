@@ -2,9 +2,9 @@
   "name": "triangle",
   "buffers": [
     {
-      "vertexBuffer": "triangle.bin",
+      "vertexBufferFileName": "triangle.bin",
       "vertexFormat": "PositionTexCoordNormals",
-      "indexBuffer": "triangle.bin",
+      "indexBufferFileName": "triangle.bin",
       "indexBufferTypeSize": 16
     }
   ]
