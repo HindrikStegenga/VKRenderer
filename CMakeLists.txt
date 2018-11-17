@@ -3,8 +3,10 @@ project(VKRenderer)
 
 set(CMAKE_CXX_STANDARD 14)
 
-include_directories($ENV{VULKAN_SDK}/include)
-link_directories($ENV{VULKAN_SDK}/lib)
+find_package(Vulkan REQUIRED)
+
+#include_directories($ENV{VULKAN_SDK}/include)
+#link_directories($ENV{VULKAN_SDK}/lib)
 
 include_directories(libraries)
 
