@@ -1,0 +1,7 @@
+{
+  "resolutionX": 800,
+  "resolutionY": 600,
+  "preferIGPU" : false,
+  "verticalSync": true,
+  "lowPower": false
+}

@@ -10,6 +10,7 @@
 #include "SerializeMacro.h"
 
 #include <string>
+#include <cstdint>
 #include <vector>
 
 using std::string;
