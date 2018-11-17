@@ -6,42 +6,17 @@
 #include "Utilities/ConfigFileReader.h"
 #include "Serializables/ConfigTypes.h"
 
-Application::Application() {
+Application::Application(ApplicationSettings applicationSettings, GraphicsSettings graphicsSettings) {
 
-    ApplicationSettings applicationSettings;
+    Logger::log(applicationSettings.applicationName);
+    Logger::log(applicationSettings.engineName);
 
-    std::ifstream file(PATH_CONFIG_FILES + "application.json");
-    if (!file.is_open()) {
-        Logger::log(PATH_CONFIG_FILES + "application.json");
-        Logger::failure("Could not read application settings file!");
-    }
+    renderWindows.emplace_back(graphicsSettings.resolutionX, graphicsSettings.resolutionY, true);
 
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-
-    auto json_rep = json::parse(buffer.str());
-
-    applicationSettings = json_rep.get<ApplicationSettings>();
-
-
-    auto cg = ConfigFileReader(true);
-    cg.parseFile("config/application.cfg");
-
-    applicationName = cg.map().at("name");
-    auto debug = cg.map().at("debug");
-
-    bool isDebug = debug == "true";
-
-    string engineName = cg.map().at("engineName");
-
-    Logger::log(applicationName);
-    Logger::log(engineName);
-
-    renderWindows.push_back(RenderWindow(800,480, true));
     RenderWindow& window = renderWindows.back();
     window.setApplicationPointer(this);
 
-    renderer = VulkanRenderer(applicationName, engineName, renderWindows, &RenderWindow::processExtensions, isDebug);
+    renderer = VulkanRenderer(applicationName, applicationSettings.applicationName, renderWindows, &RenderWindow::processExtensions, applicationSettings.debugMode);
 }
 
 void Application::run() {

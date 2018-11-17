@@ -10,6 +10,7 @@
 #include "Vulkan/VulkanRenderer.h"
 #include "Utilities/Nullable.h"
 #include "Utilities/Clock.h"
+#include "Serializables/ConfigTypes.h"
 
 class Application final {
 private:
@@ -19,7 +20,7 @@ private:
     string                  applicationName;
     bool                    mustStop = false;
 public:
-    Application();
+    Application(ApplicationSettings applicationSettings, GraphicsSettings graphicsSettings);
     ~Application() = default;
 
     Application(const Application&)     = delete;
