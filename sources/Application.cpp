@@ -4,8 +4,25 @@
 
 #include "Application.h"
 #include "Utilities/ConfigFileReader.h"
+#include "Serializables/ConfigTypes.h"
 
 Application::Application() {
+
+    ApplicationSettings applicationSettings;
+
+    std::ifstream file(PATH_CONFIG_FILES + "application.json");
+    if (!file.is_open()) {
+        Logger::log(PATH_CONFIG_FILES + "application.json");
+        Logger::failure("Could not read application settings file!");
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+
+    auto json_rep = json::parse(buffer.str());
+
+    applicationSettings = json_rep.get<ApplicationSettings>();
+
 
     auto cg = ConfigFileReader(true);
     cg.parseFile("config/application.cfg");

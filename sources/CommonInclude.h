@@ -8,6 +8,7 @@
 #include "Utilities/Logger.h"
 #include "Utilities/TypeTraits.h"
 #include "Utilities/Macros.h"
+#include "paths.h"
 #include <cstdint>
 #include <string>
 #include <functional>

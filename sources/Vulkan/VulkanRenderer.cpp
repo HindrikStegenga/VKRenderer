@@ -6,7 +6,6 @@
 #include "../Utilities/ConfigFileReader.h"
 #include "RenderModes/ForwardRenderMode.h"
 #include "Utilities/Parsable/VertexLayout.h"
-#include "../Utilities/ObjLoader.h"
 
 
 VulkanRenderer::VulkanRenderer(string appName, string engineName, vector<RenderWindow>& renderWindows, ExtensionProcessingFunc extensionProcessingFunc, bool debugEnabled) : debugEnabled(debugEnabled ? VK_TRUE : VK_FALSE)
