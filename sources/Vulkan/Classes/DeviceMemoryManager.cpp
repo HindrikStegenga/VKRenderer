@@ -7,6 +7,10 @@
 
 DeviceMemoryManager::DeviceMemoryManager(DeviceInfo& deviceInfo) : device(deviceInfo.logical), physicalDevice(deviceInfo.physical) {
 
+    VkPhysicalDeviceProperties properties;
+    vkGetPhysicalDeviceProperties(physicalDevice, &properties);
+    deviceType = properties.deviceType;
+
     setupDeviceMemoryHeaps();
 
 }
@@ -142,6 +146,11 @@ void DeviceMemoryManager::pickGenericBufferMemoryTypes(const DeviceMemoryManager
     checkAndAssignMemProps(deviceLocalHeaps, genericBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isNotHostCoherent, isNotHostVisible });
     checkAndAssignMemProps(deviceLocalHeaps, genericBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isNotHostCoherent, isHostVisible    });
 
+    //TODO: Implement proper device type memory selection
+    if (deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) {
+        checkAndAssignMemProps(deviceLocalHeaps, genericBufferMemoryTypes,
+                               {isDeviceLocal, isHostCached, isHostCoherent, isHostVisible});
+    }
     /*
     checkAndAssignMemProps(deviceLocalHeaps, genericBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isHostCoherent,    isNotHostVisible });
     checkAndAssignMemProps(deviceLocalHeaps, genericBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isHostCoherent,    isHostVisible    });
@@ -189,6 +198,12 @@ void DeviceMemoryManager::pickLowFrequencyUBOBufferMemoryTypes(const DeviceMemor
 {
     checkAndAssignMemProps(deviceLocalHeaps, lowFrequencyUBOBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isNotHostCoherent, isNotHostVisible });
     checkAndAssignMemProps(deviceLocalHeaps, lowFrequencyUBOBufferMemoryTypes, { isDeviceLocal, isNotHostCached, isNotHostCoherent, isHostVisible    });
+
+    //TODO: Implement proper device type memory selection
+    if (deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) {
+        checkAndAssignMemProps(deviceLocalHeaps, lowFrequencyUBOBufferMemoryTypes,
+                               {isDeviceLocal, isHostCached, isHostCoherent, isHostVisible});
+    }
 
     assert(!lowFrequencyUBOBufferMemoryTypes.empty());
     std::stringstream stream;

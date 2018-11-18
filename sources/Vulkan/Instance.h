@@ -12,7 +12,7 @@ private:
     VKUH<VkInstance> instance = {};
 public:
     Instance() = default;
-    Instance(const map<string, string>& params, const VulkanInstanceCreateInfo& createInfo);
+    Instance(vk_GeneralSettings settings, const VulkanInstanceCreateInfo& createInfo);
     ~Instance() = default;
 
     Instance(const Instance&)       = delete;

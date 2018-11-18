@@ -5,16 +5,12 @@
 #include <cstring>
 #include "Instance.h"
 
-Instance::Instance(const map<string, string>& params, const VulkanInstanceCreateInfo& createInfo){
-
-    string appName      = params.at("appName");
-    string engineName   = params.at("engineName");
-    bool debug          = params.at("debug") == "true";
+Instance::Instance(vk_GeneralSettings settings, const VulkanInstanceCreateInfo& createInfo){
 
     vector<const char*> usedValidationLayers;
     vector<const char*> usedExtensions;
 
-    if (debug)
+    if (settings.applicationSettings.debugMode)
     {
         auto dLayers(createInfo.validationLayers);
         auto dExtensions(createInfo.extensions);
@@ -37,10 +33,19 @@ Instance::Instance(const map<string, string>& params, const VulkanInstanceCreate
 
     applicationInfo.sType               = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     applicationInfo.pNext               = nullptr;
-    applicationInfo.pApplicationName    = appName.c_str();
-    applicationInfo.pEngineName         = appName.c_str();
-    applicationInfo.engineVersion       = VK_MAKE_VERSION(1,0,0);
-    applicationInfo.applicationVersion  = VK_MAKE_VERSION(1,0,0);
+    applicationInfo.pApplicationName    = settings.applicationSettings.applicationName.c_str();
+    applicationInfo.pEngineName         = settings.applicationSettings.engineName.c_str();
+
+    applicationInfo.engineVersion       = VK_MAKE_VERSION(
+            settings.applicationSettings.engineVersionMajor,
+            settings.applicationSettings.engineVersionMinor,
+            settings.applicationSettings.engineVersionPatch);
+
+    applicationInfo.applicationVersion  = VK_MAKE_VERSION(
+            settings.applicationSettings.applicationVersionMajor,
+            settings.applicationSettings.applicationVersionMinor,
+            settings.applicationSettings.applicationVersionPatch);
+
     applicationInfo.apiVersion          = VK_API_VERSION_1_0;
 
     VkInstanceCreateInfo instanceCreateInfo     = {};

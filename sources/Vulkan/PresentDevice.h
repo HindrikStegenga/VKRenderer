@@ -9,6 +9,7 @@
 #include "Utilities/PhysicalDevice.h"
 #include "../Utilities/Nullable.h"
 #include "Classes/DeviceMemorySubsystem.h"
+#include "../Serializables/ConfigTypes.h"
 
 class PresentDevice final {
 private:
@@ -20,7 +21,7 @@ private:
     DeviceMemorySubsystem   memory              = DeviceMemorySubsystem();
 public:
     PresentDevice() = default;
-    PresentDevice(VkInstance instance, const map<string, string>& params, const PresentDeviceCreateInfo& createInfo);
+    PresentDevice(VkInstance instance, vk_GeneralSettings settings, const PresentDeviceCreateInfo& createInfo);
     ~PresentDevice();
 
     PresentDevice(const PresentDevice&)     = delete;
@@ -30,7 +31,7 @@ public:
     PresentDevice& operator=(PresentDevice&&) noexcept  = default;
 private:
     pair<PhysicalDevice, vk_QueueFamily>
-    selectPhysicalDevice(VkInstance instance, vector<VkSurfaceKHR> surfaces, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures);
+    selectPhysicalDevice(VkInstance instance, vk_GeneralSettings settings, vector<VkSurfaceKHR> surfaces, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures);
     void createLogicalDeviceAndPresentationQueue(pair<PhysicalDevice, vk_QueueFamily> deviceAndQueueFamily, const vector<const char*>& extensions, VkPhysicalDeviceFeatures features);
 public:
     const PhysicalDevice& getPhysicalDevice() const;

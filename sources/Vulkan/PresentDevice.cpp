@@ -5,10 +5,10 @@
 #include "PresentDevice.h"
 #include "Utilities/UtilityFunctions.h"
 
-PresentDevice::PresentDevice(VkInstance instance, const map<string, string>& params, const PresentDeviceCreateInfo& createInfo) : instance(instance)
+PresentDevice::PresentDevice(VkInstance instance, vk_GeneralSettings settings, const PresentDeviceCreateInfo& createInfo) : instance(instance)
 {
     vector<const char*> usedExtensions;
-    bool debug = params.at("debug") == "true";
+    bool debug = settings.applicationSettings.debugMode;
 
     if (debug) {
         auto dExtensions(createInfo.extensions);
@@ -19,7 +19,7 @@ PresentDevice::PresentDevice(VkInstance instance, const map<string, string>& par
         usedExtensions = createInfo.extensions;
     }
 
-    auto physicalDevice = selectPhysicalDevice(instance, createInfo.surfaces, params, usedExtensions, createInfo.requiredFeatures);
+    auto physicalDevice = selectPhysicalDevice(instance, settings, createInfo.surfaces, usedExtensions, createInfo.requiredFeatures);
 
     std::stringstream ss;
     ss << std::endl << physicalDevice.first.properties;
@@ -31,7 +31,7 @@ PresentDevice::PresentDevice(VkInstance instance, const map<string, string>& par
     memory = DeviceMemorySubsystem(deviceInfo);
 }
 
-pair<PhysicalDevice, vk_QueueFamily> PresentDevice::selectPhysicalDevice(VkInstance instance, vector<VkSurfaceKHR> surfaces, const map<string, string>& params, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures)
+pair<PhysicalDevice, vk_QueueFamily> PresentDevice::selectPhysicalDevice(VkInstance instance, vk_GeneralSettings settings, vector<VkSurfaceKHR> surfaces, const vector<const char*>& extensions, const VkPhysicalDeviceFeatures& requiredFeatures)
 {
     uint32_t physicalDeviceCount = 0;
     vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, nullptr);
@@ -57,8 +57,9 @@ pair<PhysicalDevice, vk_QueueFamily> PresentDevice::selectPhysicalDevice(VkInsta
         Logger::failure("Vulkan devices were found, but none were capable enough!");
     }
 
-    std::sort(std::begin(possibleDevices), std::end(possibleDevices), [](const pair<PhysicalDevice, vk_QueueFamily>& a, const pair<PhysicalDevice, vk_QueueFamily>& b) -> bool {
-        return deviceTypePriority(a.first.properties.deviceType) > deviceTypePriority(b.first.properties.deviceType);
+    bool preferIGPU = settings.graphicsSettings.preferIGPU;
+    std::sort(std::begin(possibleDevices), std::end(possibleDevices), [=](const pair<PhysicalDevice, vk_QueueFamily>& a, const pair<PhysicalDevice, vk_QueueFamily>& b) -> bool {
+        return deviceTypePriority(a.first.properties.deviceType, preferIGPU) > deviceTypePriority(b.first.properties.deviceType, preferIGPU);
     });
 
     return possibleDevices.front();

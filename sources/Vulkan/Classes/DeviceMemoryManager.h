@@ -17,8 +17,9 @@ private:
     typedef StaticStack<vk_MemoryType, VK_MAX_MEMORY_TYPES> MemTypeSet;
     typedef bool (*HasMemoryPropertyFunc)(VkMemoryType);
 private:
-    VkDevice            device          = VK_NULL_HANDLE;
-    VkPhysicalDevice    physicalDevice  = VK_NULL_HANDLE;
+    VkDevice                device          = VK_NULL_HANDLE;
+    VkPhysicalDevice        physicalDevice  = VK_NULL_HANDLE;
+    VkPhysicalDeviceType    deviceType      = VK_PHYSICAL_DEVICE_TYPE_BEGIN_RANGE;
 
     StaticStack<vk_MemoryHeapUsageTracker, VK_MAX_MEMORY_HEAPS> memoryHeapUsageTrackers = {};
 

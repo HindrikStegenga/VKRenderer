@@ -170,7 +170,7 @@ bool isNotProtected(VkMemoryType memoryType) {
 }
 
 
-uint32_t deviceTypePriority(VkPhysicalDeviceType deviceType)
+uint32_t deviceTypePriority(VkPhysicalDeviceType deviceType, bool preferIGPU)
 {
     switch (deviceType) {
         case VK_PHYSICAL_DEVICE_TYPE_RANGE_SIZE:
@@ -184,9 +184,9 @@ uint32_t deviceTypePriority(VkPhysicalDeviceType deviceType)
         case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
             return 4;
         case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
-            return 5;
+            return preferIGPU ? 6 : 5;
         case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
-            return 6;
+            return preferIGPU ? 5 : 6;
     }
     return std::numeric_limits<uint32_t>::max();
 }

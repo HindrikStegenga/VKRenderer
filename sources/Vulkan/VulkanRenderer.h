@@ -10,6 +10,7 @@
 #include "Instance.h"
 #include "PresentDevice.h"
 #include "Classes/WindowRenderTarget.h"
+#include "../Serializables/ConfigTypes.h"
 
 using std::chrono::nanoseconds;
 
@@ -28,7 +29,7 @@ private:
     VkBool32                    debugEnabled        = VK_FALSE;
 public:
     VulkanRenderer() = default;
-    explicit VulkanRenderer(string appName, string engineName, vector<RenderWindow>& renderWindows, ExtensionProcessingFunc extensionProcessingFunc, bool debugEnabled = false);
+    explicit VulkanRenderer(vk_GeneralSettings settings, vector<RenderWindow>& renderWindows, ExtensionProcessingFunc extensionProcessingFunc);
     ~VulkanRenderer();
 
     VulkanRenderer(const VulkanRenderer&)       = delete;

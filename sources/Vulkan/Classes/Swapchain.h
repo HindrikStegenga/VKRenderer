@@ -41,8 +41,11 @@ private:
     vk_SwapchainSettings    settings                    = {};
     uint32_t                currentFrameIndex           = 0;
 
+    bool    limitFrameRate = false;
+    bool    preventTearing = false;
+
 private:
-    vk_SwapchainSettings    chooseSettings(uint32_t width, uint32_t height, uint32_t preferredFramesInFlight);
+    vk_SwapchainSettings    chooseSettings(uint32_t width, uint32_t height, uint32_t preferredFramesInFlight, bool preventTearing, bool limitFrameRate);
     void                    createSwapchain(vk_SwapchainSettings settings);
     void                    retrieveImages(uint32_t preferredFramesInFlight);
     void                    createFences();
@@ -54,13 +57,15 @@ private:
     void                    createSemaphores();
 
     static VkSurfaceFormatKHR chooseSurfaceFormat(const vector<VkSurfaceFormatKHR>& availableFormats);
-    static VkPresentModeKHR choosePresentMode(const vector<VkPresentModeKHR>& availableModes);
+    static VkPresentModeKHR choosePresentMode(const vector<VkPresentModeKHR>& availableModes, bool preventTearing, bool limitFrameRate);
     static VkExtent2D chooseExtent(uint32_t width, uint32_t height, VkSurfaceCapabilitiesKHR surfaceCaps);
 
     VkFormat chooseDepthStencilFormat(bool requiresStencil = false) const;
 public:
-    vk_RendermodeSwapchainInfo recreateSwapchain(uint32_t width, uint32_t height, uint32_t preferredFramesInFlight);
+    vk_RendermodeSwapchainInfo recreateSwapchain(uint32_t width, uint32_t height, uint32_t preferredFramesInFlight, bool preventTearing, bool limitFrameRate);
     uint32_t preferredFramesInFlight();
+    bool preferredTearingSetting();
+    bool preferredFrameLimitingSetting();
     vk_RendermodeSwapchainInfo getRendermodeSwapchainInfo() const;
 
     vk_PresentImageInfo     acquireNextImage();

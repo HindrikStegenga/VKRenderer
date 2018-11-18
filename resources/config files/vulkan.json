@@ -1,3 +1,4 @@
 {
+  "renderMode": "forward",
   "preferredFramesInFlight": 2
 }

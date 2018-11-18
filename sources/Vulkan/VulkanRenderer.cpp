@@ -8,24 +8,8 @@
 #include "Utilities/Parsable/VertexLayout.h"
 
 
-VulkanRenderer::VulkanRenderer(string appName, string engineName, vector<RenderWindow>& renderWindows, ExtensionProcessingFunc extensionProcessingFunc, bool debugEnabled) : debugEnabled(debugEnabled ? VK_TRUE : VK_FALSE)
+VulkanRenderer::VulkanRenderer(vk_GeneralSettings settings, vector<RenderWindow>& renderWindows, ExtensionProcessingFunc extensionProcessingFunc) : debugEnabled(settings.applicationSettings.debugMode ? VK_TRUE : VK_FALSE)
 {
-
-    auto configReader = ConfigFileReader();
-
-    configReader.parseFile("config/vulkan.cfg");
-
-    auto map = configReader.map();
-
-    map.insert(std::make_pair("appName",appName));
-    map.insert(std::make_pair("engineName", engineName));
-
-    map.insert(std::make_pair("debug", this->debugEnabled == VK_TRUE ? "true" : "false"));
-
-    uint32_t width, height;
-    width = static_cast<uint32_t>(std::stoi(map.at("width")));
-    height = static_cast<uint32_t>(std::stoi(map.at("height")));
-
     vector<const char*> extensions;
 	vector<const char*> layers;
 	vector<const char*> debugExtensions;
@@ -68,7 +52,7 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName, vector<RenderW
 
     VulkanInstanceCreateInfo supportDescription { layers, processedExtensions, debugLayers, debugExtensions };
 
-    instance = Instance(map, supportDescription);
+    instance = Instance(settings, supportDescription);
 
     if (this->debugEnabled == VK_TRUE) {
         setupDebugCallback();
@@ -83,7 +67,7 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName, vector<RenderW
 
     PresentDeviceCreateInfo deviceSupportDescription { dExtensions, ddExtensions, surfaces, requiredDeviceFeatures };
 
-    device = PresentDevice(instance.getHandle(), map, deviceSupportDescription);
+    device = PresentDevice(instance.getHandle(), settings, deviceSupportDescription);
 
     for (size_t i = 0; i < renderWindows.size(); ++i) {
 
@@ -95,22 +79,17 @@ VulkanRenderer::VulkanRenderer(string appName, string engineName, vector<RenderW
 
         SwapchainCreateInfo swapchainCreateInfo = {};
 
-        swapchainCreateInfo.deviceInfo  = device.getPresentDeviceInfo();
-        swapchainCreateInfo.surface     = target.surface;
-        swapchainCreateInfo.width       = width;
-        swapchainCreateInfo.height      = height;
-
-        if (map.find("preferredFramesInFlight") != map.end()) {
-            swapchainCreateInfo.preferredFramesInFlight = (uint32_t)std::stoi(map.at("preferredFramesInFlight"));
-        } else {
-            swapchainCreateInfo.preferredFramesInFlight = 2;
-        }
+        swapchainCreateInfo.deviceInfo              = device.getPresentDeviceInfo();
+        swapchainCreateInfo.surface                 = target.surface;
+        swapchainCreateInfo.width                   = settings.graphicsSettings.resolutionX;
+        swapchainCreateInfo.height                  = settings.graphicsSettings.resolutionY;
+        swapchainCreateInfo.preferredFramesInFlight = settings.vulkanSettings.preferredFramesInFlight;
+        swapchainCreateInfo.limitFrameRate          = settings.graphicsSettings.limitFrameRate;
+        swapchainCreateInfo.preventTearing          = settings.graphicsSettings.preventTearing;
 
         target.swapchain = Swapchain(swapchainCreateInfo);
 
-        const string renderMode = configReader.map().at("renderMode");
-
-        if (renderMode == string("Forward")) {
+        if (settings.vulkanSettings.renderMode == string("forward")) {
 
             ForwardRenderModeCreateInfo createInfo = {};
 
@@ -178,7 +157,7 @@ void VulkanRenderer::resizeWindow(uint32_t width, uint32_t height, WindowRenderT
 
     Logger::log("Window will be resized: " + std::to_string(width) + " - " + std::to_string(height));
 
-    vk_RendermodeSwapchainInfo swapchainInfo = renderTarget->swapchain.recreateSwapchain(width, height, renderTarget->swapchain.preferredFramesInFlight());
+    vk_RendermodeSwapchainInfo swapchainInfo = renderTarget->swapchain.recreateSwapchain(width, height, renderTarget->swapchain.preferredFramesInFlight(), renderTarget->swapchain.preferredTearingSetting(), renderTarget->swapchain.preferredFrameLimitingSetting());
 
     renderTarget->renderMode->windowHasResized(swapchainInfo);
 }

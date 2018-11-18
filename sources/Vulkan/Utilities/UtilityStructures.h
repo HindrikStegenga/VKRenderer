@@ -6,6 +6,13 @@
 #define VKRENDERER_UTILITYSTRUCTURES_H
 
 #include "../Platform/VulkanPlatform.h"
+#include "../../Serializables/ConfigTypes.h"
+
+struct vk_GeneralSettings {
+    ApplicationSettings applicationSettings;
+    GraphicsSettings graphicsSettings;
+    VulkanSettings vulkanSettings;
+};
 
 struct vk_QueueFamily final {
     uint32_t                queueFamilyIndex        = UINT32_MAX;

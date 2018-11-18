@@ -55,7 +55,8 @@ struct SwapchainCreateInfo final {
     uint32_t            preferredFramesInFlight = 0;
     PresentDeviceInfo   deviceInfo              = {};
     VkSurfaceKHR        surface                 = VK_NULL_HANDLE;
-
+    bool                preventTearing          = false;
+    bool                limitFrameRate          = false;
 };
 
 

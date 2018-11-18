@@ -40,7 +40,7 @@ bool isNotLazilyAllocated(VkMemoryType memoryType);
 bool isNotProtected(VkMemoryType memoryType);
 
 
-uint32_t deviceTypePriority(VkPhysicalDeviceType deviceType);
+uint32_t deviceTypePriority(VkPhysicalDeviceType deviceType, bool preferIGPU);
 
 VkComponentMapping defaultComponentMapping();
 

@@ -17,7 +17,6 @@ private:
     vector<RenderWindow>    renderWindows = {};
     VulkanRenderer          renderer;
     Clock                   internalClock;
-    string                  applicationName;
     bool                    mustStop = false;
 public:
     Application(ApplicationSettings applicationSettings, GraphicsSettings graphicsSettings);
@@ -32,6 +31,8 @@ public:
     void resizeWindow(uint32_t width, uint32_t height, RenderWindow* window);
     void run();
     void stop();
+private:
+    static string getVersionString(uint32_t major, uint32_t minor, uint32_t patch);
 };
 
 

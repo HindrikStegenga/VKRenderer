@@ -5,21 +5,21 @@
 #include "Swapchain.h"
 #include "../Utilities/UtilityFunctions.h"
 
-Swapchain::Swapchain(SwapchainCreateInfo createInfo) : device(createInfo.deviceInfo.logical), physicalDevice(createInfo.deviceInfo.physical), surface(createInfo.surface), presentQueue(createInfo.deviceInfo.presentQueue) {
+Swapchain::Swapchain(SwapchainCreateInfo createInfo) : device(createInfo.deviceInfo.logical), physicalDevice(createInfo.deviceInfo.physical), surface(createInfo.surface), presentQueue(createInfo.deviceInfo.presentQueue), preventTearing(createInfo.preventTearing), limitFrameRate(createInfo.limitFrameRate) {
 
     //Assume swapchain support was checked!
-    recreateSwapchain(createInfo.width, createInfo.height, createInfo.preferredFramesInFlight);
+    recreateSwapchain(createInfo.width, createInfo.height, createInfo.preferredFramesInFlight, createInfo.preventTearing, createInfo.limitFrameRate);
 }
 
-vk_RendermodeSwapchainInfo Swapchain::recreateSwapchain(uint32_t width, uint32_t height, uint32_t preferredFramesInFlight) {
+vk_RendermodeSwapchainInfo Swapchain::recreateSwapchain(uint32_t width, uint32_t height, uint32_t preferredFramesInFlight, bool preventTearing, bool limitFrameRate) {
 
-    vk_SwapchainSettings swapchainSettings = chooseSettings(width, height, preferredFramesInFlight);
+    vk_SwapchainSettings swapchainSettings = chooseSettings(width, height, preferredFramesInFlight, preventTearing, limitFrameRate);
     createSwapchain(swapchainSettings);
 
     return getRendermodeSwapchainInfo();
 }
 
-vk_SwapchainSettings Swapchain::chooseSettings(uint32_t width, uint32_t height, uint32_t preferredFramesInFlight) {
+vk_SwapchainSettings Swapchain::chooseSettings(uint32_t width, uint32_t height, uint32_t preferredFramesInFlight, bool preventTearing, bool limitFrameRate) {
 
     VkSurfaceCapabilitiesKHR caps = {};
 
@@ -38,7 +38,7 @@ vk_SwapchainSettings Swapchain::chooseSettings(uint32_t width, uint32_t height, 
     vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes.data());
 
     VkSurfaceFormatKHR surfaceFormat = chooseSurfaceFormat(formats);
-    VkPresentModeKHR presentMode = choosePresentMode(presentModes);
+    VkPresentModeKHR presentMode = choosePresentMode(presentModes, preventTearing, limitFrameRate);
     VkExtent2D extent = chooseExtent(width, height, caps);
 
     uint32_t imageCount = caps.minImageCount + 1;
@@ -74,21 +74,63 @@ VkSurfaceFormatKHR Swapchain::chooseSurfaceFormat(const vector<VkSurfaceFormatKH
     return availableFormats.front();
 }
 
-VkPresentModeKHR Swapchain::choosePresentMode(const vector<VkPresentModeKHR>& availableModes) {
+VkPresentModeKHR Swapchain::choosePresentMode(const vector<VkPresentModeKHR>& availableModes, bool preventTearing, bool limitFrameRate) {
+
+    using std::begin;
+    using std::end;
 
     //Guaranteed to be available
-    VkPresentModeKHR bestMode = VK_PRESENT_MODE_FIFO_KHR;
-
-    for(const auto& mode : availableModes) {
-
-        if(mode == VK_PRESENT_MODE_MAILBOX_KHR) {
-            return mode;
-        } else if(mode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
-            bestMode = mode;
-        }
+    if (preventTearing && limitFrameRate) {
+        Logger::log("Selected FIFO presentmode.");
+        return VK_PRESENT_MODE_FIFO_KHR;
     }
 
-    return bestMode;
+    //TEARING - NO LIMIT
+
+    if (!preventTearing && !limitFrameRate) {
+        if (std::find(begin(availableModes), end(availableModes), VK_PRESENT_MODE_IMMEDIATE_KHR) != end(availableModes)) {
+            Logger::log("Selected IMMEDIATE presentmode.");
+            return VK_PRESENT_MODE_IMMEDIATE_KHR;
+        }
+        if (std::find(begin(availableModes), end(availableModes), VK_PRESENT_MODE_MAILBOX_KHR) != end(availableModes)) {
+            Logger::log("Selected MAILBOX presentmode.");
+            return VK_PRESENT_MODE_MAILBOX_KHR;
+        }
+        Logger::warn("We could not find a present mode which provided no limit and allowed tearing!");
+
+        if (std::find(begin(availableModes), end(availableModes), VK_PRESENT_MODE_FIFO_RELAXED_KHR) != end(availableModes)) {
+            Logger::log("Selected FIFO_RELAXED presentmode.");
+            return VK_PRESENT_MODE_FIFO_RELAXED_KHR;
+        }
+
+        Logger::log("Selected FIFO presentmode.");
+        return VK_PRESENT_MODE_FIFO_KHR;
+    }
+
+    //TEARING - LIMIT
+
+    if (!preventTearing) {
+        if (std::find(begin(availableModes), end(availableModes), VK_PRESENT_MODE_FIFO_RELAXED_KHR) != end(availableModes)) {
+            Logger::log("Selected FIFO_RELAXED presentmode.");
+            return VK_PRESENT_MODE_FIFO_RELAXED_KHR;
+        }
+        Logger::log("Selected FIFO presentmode.");
+        return VK_PRESENT_MODE_FIFO_KHR;
+    }
+
+    //NO TEARING - NO LIMIT
+    if (std::find(begin(availableModes), end(availableModes), VK_PRESENT_MODE_MAILBOX_KHR) != end(availableModes)) {
+        Logger::log("Selected MAILBOX presentmode.");
+        return VK_PRESENT_MODE_MAILBOX_KHR;
+    }
+    if (std::find(begin(availableModes), end(availableModes), VK_PRESENT_MODE_FIFO_RELAXED_KHR) != end(availableModes)) {
+        Logger::log("Selected FIFO_RELAXED presentmode.");
+        return VK_PRESENT_MODE_FIFO_RELAXED_KHR;
+    }
+
+    Logger::warn("We could not find a present mode which provided no tearing and no limit!");
+    Logger::log("Selected FIFO presentmode.");
+    return VK_PRESENT_MODE_FIFO_KHR;
 }
 
 VkExtent2D Swapchain::chooseExtent(uint32_t width, uint32_t height, VkSurfaceCapabilitiesKHR surfaceCaps) {
@@ -432,4 +474,12 @@ void Swapchain::presentImage(uint32_t imageIndex, bool &mustRecreateSwapchain) {
 
 uint32_t Swapchain::preferredFramesInFlight() {
     return settings.preferredFramesInFlight;
+}
+
+bool Swapchain::preferredTearingSetting() {
+    return preventTearing;
+}
+
+bool Swapchain::preferredFrameLimitingSetting() {
+    return limitFrameRate;
 }
