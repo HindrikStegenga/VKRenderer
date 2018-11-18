@@ -27,16 +27,23 @@ struct VertexBufferFormatDescriptor {
     vector<VertexFormatDescriptor> formats;
 };
 
-struct MeshBufferDescriptor {
-    string vertexBufferFileName;
-    string vertexFormat;
-    string indexBufferFileName;
-    uint32_t indexBufferTypeSize;
+struct MeshVertexPropertyBufferDescriptor {
+    string fileName;
+    string format;
+    uint32_t offset;
+    uint32_t byteSize;
+};
+
+struct MeshIndexBufferDescriptor {
+    string fileName;
+    uint32_t typeSize;
+    uint32_t offset;
+    uint32_t byteSize;
 };
 
 struct MeshDescriptor {
     string name;
-    vector<MeshBufferDescriptor> buffers;
+    vector<MeshVertexPropertyBufferDescriptor> buffers;
 };
 
 
@@ -51,11 +58,18 @@ SERIALIZE_START(VertexBufferFormatDescriptor)
     SERIALIZE_MEMBER("formats", VertexBufferFormatDescriptor::formats)
 SERIALIZE_END
 
-SERIALIZE_START(MeshBufferDescriptor)
-    SERIALIZE_MEMBER("vertexBufferFileName", MeshBufferDescriptor::vertexBufferFileName),
-    SERIALIZE_MEMBER("vertexFormat", MeshBufferDescriptor::vertexFormat),
-    SERIALIZE_MEMBER("indexBufferFileName", MeshBufferDescriptor::indexBufferFileName),
-    SERIALIZE_MEMBER("indexBufferTypeSize", MeshBufferDescriptor::indexBufferTypeSize)
+SERIALIZE_START(MeshVertexPropertyBufferDescriptor)
+    SERIALIZE_MEMBER("fileName", MeshVertexPropertyBufferDescriptor::fileName),
+    SERIALIZE_MEMBER("format", MeshVertexPropertyBufferDescriptor::format),
+    SERIALIZE_MEMBER("offset", MeshVertexPropertyBufferDescriptor::offset),
+    SERIALIZE_MEMBER("byteSize", MeshVertexPropertyBufferDescriptor::byteSize)
+SERIALIZE_END
+
+SERIALIZE_START(MeshIndexBufferDescriptor)
+    SERIALIZE_MEMBER("fileName", MeshIndexBufferDescriptor::fileName),
+    SERIALIZE_MEMBER("typeSize", MeshIndexBufferDescriptor::typeSize),
+    SERIALIZE_MEMBER("offset", MeshIndexBufferDescriptor::offset),
+    SERIALIZE_MEMBER("byteOffset", MeshIndexBufferDescriptor::byteSize)
 SERIALIZE_END
 
 SERIALIZE_START(MeshDescriptor)

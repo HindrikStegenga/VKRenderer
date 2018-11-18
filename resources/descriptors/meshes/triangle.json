@@ -2,10 +2,22 @@
   "name": "triangle",
   "buffers": [
     {
-      "vertexBufferFileName": "triangle.bin",
-      "vertexFormat": "PositionTexCoordNormals",
-      "indexBufferFileName": "triangle.bin",
-      "indexBufferTypeSize": 16
+      "fileName": "triangle.bin",
+      "format": "Position",
+      "offset": 0,
+      "byteSize": 36
+    },
+    {
+      "fileName": "triangle.bin",
+      "format": "Color",
+      "offset": 36,
+      "byteSize": 36
     }
-  ]
+  ],
+  "indexBuffer": {
+    "fileName": "",
+    "typeSize": 0,
+    "offset": 0,
+    "byteSize": 0
+  }
 }
