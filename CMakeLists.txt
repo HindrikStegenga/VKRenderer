@@ -5,8 +5,22 @@ set(CMAKE_CXX_STANDARD 14)
 
 find_package(Vulkan REQUIRED)
 
-#include_directories($ENV{VULKAN_SDK}/include)
-#link_directories($ENV{VULKAN_SDK}/lib)
+if(Vulkan_FOUND)
+
+	message("Vulkan include directory: " ${Vulkan_INCLUDE_DIRS})
+	message("Vulkan library directory: " ${Vulkan_LIBRARIES})
+
+	include_directories(${Vulkan_INCLUDE_DIRS})
+	link_directories(${Vulkan_LIBRARIES})
+else()
+	include_directories($ENV{VULKAN_SDK}/include)
+	link_directories($ENV{VULKAN_SDK}/lib)
+
+	message("Vulkan include directory: " $ENV{VULKAN_SDK}/include)
+	message("Vulkan library directory: " $ENV{VULKAN_SDK}/lib)
+
+endif()
+
 
 include_directories(libraries)
 
