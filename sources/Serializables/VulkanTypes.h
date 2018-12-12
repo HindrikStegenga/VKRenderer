@@ -16,7 +16,7 @@
 using std::string;
 using std::vector;
 
-struct VertexFormatDescriptor {
+struct VertexAttributeDescriptor {
     string name;
     string type;
     uint32_t location;
@@ -24,7 +24,7 @@ struct VertexFormatDescriptor {
 
 struct VertexBufferFormatDescriptor {
     string name;
-    vector<VertexFormatDescriptor> formats;
+    vector<VertexAttributeDescriptor> attributes;
 };
 
 struct MeshVertexPropertyBufferDescriptor {
@@ -47,15 +47,15 @@ struct MeshDescriptor {
 };
 
 
-SERIALIZE_START(VertexFormatDescriptor)
-    SERIALIZE_MEMBER("name", VertexFormatDescriptor::name),
-    SERIALIZE_MEMBER("type", VertexFormatDescriptor::type),
-    SERIALIZE_MEMBER("location", VertexFormatDescriptor::location)
+SERIALIZE_START(VertexAttributeDescriptor)
+    SERIALIZE_MEMBER("name", VertexAttributeDescriptor::name),
+    SERIALIZE_MEMBER("type", VertexAttributeDescriptor::type),
+    SERIALIZE_MEMBER("location", VertexAttributeDescriptor::location)
 SERIALIZE_END
 
 SERIALIZE_START(VertexBufferFormatDescriptor)
     SERIALIZE_MEMBER("name", VertexBufferFormatDescriptor::name),
-    SERIALIZE_MEMBER("formats", VertexBufferFormatDescriptor::formats)
+    SERIALIZE_MEMBER("attributes", VertexBufferFormatDescriptor::attributes)
 SERIALIZE_END
 
 SERIALIZE_START(MeshVertexPropertyBufferDescriptor)

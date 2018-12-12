@@ -1,6 +1,6 @@
 {
   "name": "Position",
-  "formats": [
+  "attributes": [
     {
       "name": "position",
       "type": "float3",

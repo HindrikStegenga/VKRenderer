@@ -1,6 +1,6 @@
 {
   "name": "TexCoords",
-  "formats": [
+  "attributes": [
     {
       "name": "texcoords",
       "type": "float2",

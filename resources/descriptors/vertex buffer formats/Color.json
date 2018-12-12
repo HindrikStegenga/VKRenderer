@@ -1,6 +1,6 @@
 {
   "name": "Color",
-  "formats": [
+  "attributes": [
     {
       "name": "color",
       "type": "float3",

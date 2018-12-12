@@ -1,6 +1,6 @@
 {
   "name": "PositionColor",
-  "formats": [
+  "attributes": [
     {
       "name": "position",
       "type": "float3",

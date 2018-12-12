@@ -1,6 +1,6 @@
 {
   "name": "Normals",
-  "formats": [
+  "attributes": [
     {
       "name": "normals",
       "type": "float3",

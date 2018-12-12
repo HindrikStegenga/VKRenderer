@@ -1,6 +1,6 @@
 {
   "name": "PositionTexCoords",
-  "formats": [
+  "attributes": [
     {
       "name": "position",
       "type": "float3",
