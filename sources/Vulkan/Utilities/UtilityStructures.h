@@ -9,9 +9,9 @@
 #include "../../Serializables/ConfigTypes.h"
 
 struct vk_GeneralSettings {
-    ApplicationSettings applicationSettings;
-    GraphicsSettings graphicsSettings;
-    VulkanSettings vulkanSettings;
+    ApplicationSettings applicationSettings = {};
+    GraphicsSettings graphicsSettings       = {};
+    VulkanSettings vulkanSettings           = {};
 };
 
 struct vk_QueueFamily final {
@@ -93,7 +93,7 @@ struct vk_Allocation final {
 
     VkDeviceSize offset     = 0;
     VkDeviceSize size       = 0;
-    VkBuffer     buffer     = 0;
+    VkBuffer     buffer     = VK_NULL_HANDLE;
 
 };
 

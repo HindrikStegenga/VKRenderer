@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "Serializables/VulkanTypes.h"
+#include "Serializables/GenericTypes.h"
 
 ApplicationSettings readAppSettings() {
 
@@ -40,7 +41,11 @@ GraphicsSettings readGraphicsSettings() {
 
 
 int main() {
-    
+
+    using namespace Serializable;
+
+    Transform transform {};
+
     Application app(readAppSettings(), readGraphicsSettings());
     app.run();
 
