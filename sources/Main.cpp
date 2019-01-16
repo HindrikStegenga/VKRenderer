@@ -42,10 +42,6 @@ GraphicsSettings readGraphicsSettings() {
 
 int main() {
 
-    using namespace Serializable;
-
-    Transform transform {};
-
     Application app(readAppSettings(), readGraphicsSettings());
     app.run();
 

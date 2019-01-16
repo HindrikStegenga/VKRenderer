@@ -13,41 +13,38 @@
 #include <cstdint>
 #include "Vectors.h"
 
-namespace Serializable {
+struct Transform {
+    Vector3f position;
+    Vector3f rotation;
+    Vector3f scale;
+};
 
-    struct Transform {
-        Vector3f position;
-        Vector3f rotation;
-        Vector3f scale;
-    };
+struct GameObject {
+    string name;
+    bool isStatic;
+    Transform transform;
+};
 
-    struct GameObject {
-        string name;
-        bool isStatic;
-        Transform transform;
-    };
+struct Scene {
+    string name;
+    vector<GameObject> gameObjects;
+};
 
-    struct Scene {
-        string name;
-        vector<GameObject> gameObjects;
-    };
-}
-
-SERIALIZE_START(Serializable::Transform)
-    SERIALIZE_MEMBER("position", Serializable::Transform::position),
-    SERIALIZE_MEMBER("rotation", Serializable::Transform::rotation),
-    SERIALIZE_MEMBER("scale", Serializable::Transform::scale)
+SERIALIZE_START(Transform)
+    SERIALIZE_MEMBER("position", Transform::position),
+    SERIALIZE_MEMBER("rotation", Transform::rotation),
+    SERIALIZE_MEMBER("scale", Transform::scale)
 SERIALIZE_END
 
-SERIALIZE_START(Serializable::GameObject)
-    SERIALIZE_MEMBER("name", Serializable::GameObject::name),
-    SERIALIZE_MEMBER("isStatic", Serializable::GameObject::isStatic),
-    SERIALIZE_MEMBER("transform", Serializable::GameObject::transform)
+SERIALIZE_START(GameObject)
+    SERIALIZE_MEMBER("name", GameObject::name),
+    SERIALIZE_MEMBER("isStatic", GameObject::isStatic),
+    SERIALIZE_MEMBER("transform", GameObject::transform)
 SERIALIZE_END
 
-SERIALIZE_START(Serializable::Scene)
-    SERIALIZE_MEMBER("name", Serializable::Scene::name),
-    SERIALIZE_MEMBER("gameObjects", Serializable::Scene::gameObjects)
+SERIALIZE_START(Scene)
+    SERIALIZE_MEMBER("name", Scene::name),
+    SERIALIZE_MEMBER("gameObjects", Scene::gameObjects)
 SERIALIZE_END
 
 

@@ -9,9 +9,7 @@
 class Transform {
     float positionX, positionY, positionZ;
     float rotationX, rotationY, rotationZ;
-    float scale;
-
-
+    float scaleX, scaleY, scaleZ;
 };
 
 
