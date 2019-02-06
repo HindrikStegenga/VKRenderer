@@ -6,7 +6,7 @@
 #define VKRENDERER_DEVICEMEMORYSUBSYSTEM_H
 
 #include <cstdint>
-#include "../../CommonInclude.h"
+#include "../../../CommonInclude.h"
 #include "../Platform/VulkanPlatform.h"
 #include "DeviceMemoryManager.h"
 

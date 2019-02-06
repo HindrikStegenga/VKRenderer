@@ -7,9 +7,9 @@
 
 #include "Platform/VulkanPlatform.h"
 #include "Utilities/PhysicalDevice.h"
-#include "../Utilities/Nullable.h"
+#include "../../Utilities/Nullable.h"
 #include "Classes/DeviceMemorySubsystem.h"
-#include "../Serializables/ConfigTypes.h"
+#include "../../Serializables/ConfigTypes.h"
 
 class PresentDevice final {
 private:

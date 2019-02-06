@@ -5,7 +5,7 @@
 #ifndef VKRENDERER_VERTEXATTRIBUTE_H
 #define VKRENDERER_VERTEXATTRIBUTE_H
 
-#include "../../../CommonInclude.h"
+#include "../../../../CommonInclude.h"
 #include "../../Platform/VulkanPlatform.h"
 #include <nlohmannJSON/json.hpp>
 

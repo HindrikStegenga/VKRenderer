@@ -5,7 +5,7 @@
 #ifndef VKRENDERER_VULKANCREATEINFO_H
 #define VKRENDERER_VULKANCREATEINFO_H
 
-#include "../CommonInclude.h"
+#include "../../CommonInclude.h"
 #include "Utilities/UtilityStructures.h"
 #include <vulkan/vulkan.h>
 

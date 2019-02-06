@@ -6,7 +6,7 @@
 #define VKRENDERER_SHADERMODULE_H
 
 #include "../Platform/VulkanPlatform.h"
-#include "../../CommonInclude.h"
+#include "../../../CommonInclude.h"
 
 enum class ShaderModuleType : uint8_t
 {

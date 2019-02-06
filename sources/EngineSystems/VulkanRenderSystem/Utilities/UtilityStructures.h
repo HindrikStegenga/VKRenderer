@@ -6,7 +6,7 @@
 #define VKRENDERER_UTILITYSTRUCTURES_H
 
 #include "../Platform/VulkanPlatform.h"
-#include "../../Serializables/ConfigTypes.h"
+#include "../../../Serializables/ConfigTypes.h"
 
 struct vk_GeneralSettings {
     ApplicationSettings applicationSettings = {};

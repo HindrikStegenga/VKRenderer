@@ -5,9 +5,9 @@
 #ifndef VKRENDERER_DEVICEMEMORY_MANAGER_H
 #define VKRENDERER_DEVICEMEMORY_MANAGER_H
 
-#include "../../CommonInclude.h"
+#include "../../../CommonInclude.h"
 #include "../Platform/VulkanPlatform.h"
-#include "../../DataStorage/StaticStack.h"
+#include "../../../DataStorage/StaticStack.h"
 #include "../Utilities/VkEnums.h"
 
 

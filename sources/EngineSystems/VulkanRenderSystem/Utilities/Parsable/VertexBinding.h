@@ -5,7 +5,7 @@
 #ifndef VKRENDERER_VERTEXBINDING_H
 #define VKRENDERER_VERTEXBINDING_H
 
-#include "../../../CommonInclude.h"
+#include "../../../../CommonInclude.h"
 #include "../../Platform/VulkanPlatform.h"
 #include <nlohmannJSON/json.hpp>
 #include "VertexAttribute.h"

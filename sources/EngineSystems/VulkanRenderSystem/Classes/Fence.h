@@ -6,7 +6,7 @@
 #define VKRENDERER_FENCE_H
 
 #include "../Platform/VulkanPlatform.h"
-#include "../../CommonInclude.h"
+#include "../../../CommonInclude.h"
 
 class Fence final {
 private:

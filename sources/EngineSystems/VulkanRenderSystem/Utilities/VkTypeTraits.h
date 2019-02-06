@@ -7,8 +7,8 @@
 
 #include <vulkan/vulkan.h>
 
-#include "../../Utilities/TypeTraits.h"
-#include "../../Utilities/Macros.h"
+#include "../../../Utilities/TypeTraits.h"
+#include "../../../Utilities/Macros.h"
 
 #ifndef _MSC_VER
 

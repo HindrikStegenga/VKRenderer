@@ -10,38 +10,42 @@
 #include "Instance.h"
 #include "PresentDevice.h"
 #include "Classes/WindowRenderTarget.h"
-#include "../Serializables/ConfigTypes.h"
+#include "../../Serializables/ConfigTypes.h"
+#include "../../Core/EngineSystem.h"
 
 using std::chrono::nanoseconds;
 
 typedef vector<const char*> (*ExtensionProcessingFunc)(const vector<const char*>& instanceExtensions);
 
-class VulkanRenderer final {
+class VulkanRenderSystem : public EngineSystem {
 private:
     Instance                        instance        = Instance();
     PresentDevice                   device          = PresentDevice();
     vector<WindowRenderTarget>      renderTargets   = {};
 
     nanoseconds                 accumulatedTime     = nanoseconds(0);
+    nanoseconds                 latestDeltaTime     = nanoseconds(0);
     uint64_t                    accumulatedFrames   = 0;
 
     VkDebugReportCallbackEXT    debugCallbackHandle = VK_NULL_HANDLE;
     VkBool32                    debugEnabled        = VK_FALSE;
 public:
-    VulkanRenderer() = default;
-    explicit VulkanRenderer(vk_GeneralSettings settings, vector<RenderWindow>& renderWindows, ExtensionProcessingFunc extensionProcessingFunc);
-    ~VulkanRenderer();
+    VulkanRenderSystem() = default;
+    explicit VulkanRenderSystem(vk_GeneralSettings settings, vector<RenderWindow>& renderWindows, ExtensionProcessingFunc extensionProcessingFunc);
+    ~VulkanRenderSystem() override;
 
-    VulkanRenderer(const VulkanRenderer&)       = delete;
-    VulkanRenderer(VulkanRenderer&&) noexcept   = default;
+    VulkanRenderSystem(const VulkanRenderSystem&)       = delete;
+    VulkanRenderSystem(VulkanRenderSystem&&) noexcept   = default;
 
-    VulkanRenderer& operator= (const VulkanRenderer&)       = delete;
-    VulkanRenderer& operator= (VulkanRenderer&&) noexcept   = default;
+    VulkanRenderSystem& operator= (const VulkanRenderSystem&)       = delete;
+    VulkanRenderSystem& operator= (VulkanRenderSystem&&) noexcept   = default;
 public:
-    bool processEvents(std::chrono::nanoseconds deltaTime);
-    void render();
     void resizeWindow(uint32_t width, uint32_t height, WindowRenderTarget* renderTarget);
     void resizeWindow(uint32_t width, uint32_t height, RenderWindow* renderWindow);
+
+    void update(std::chrono::nanoseconds deltaTime) override;
+    void fixedUpdate() override;
+    bool getSystemStatus() override;
 private:
     VkDevice getDevice();
     void resizeWindow(bool mustResize, WindowRenderTarget* renderTarget);

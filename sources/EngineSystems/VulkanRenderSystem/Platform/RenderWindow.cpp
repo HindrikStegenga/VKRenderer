@@ -3,8 +3,8 @@
 //
 
 #include "RenderWindow.h"
-#include "../../Engine.h"
-#include "../VulkanRenderer.h"
+#include "../../../Core/Engine.h"
+#include "../VulkanRenderSystem.h"
 
 #ifdef WIN32
 #include <cstring>

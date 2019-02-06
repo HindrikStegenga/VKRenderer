@@ -2,13 +2,13 @@
 // Created by Hindrik Stegenga on 29-10-17.
 //
 
-#include "VulkanRenderer.h"
-#include "../Utilities/ConfigFileReader.h"
+#include "VulkanRenderSystem.h"
+#include "../../Utilities/ConfigFileReader.h"
 #include "RenderModes/ForwardRenderMode.h"
 #include "Utilities/Parsable/VertexLayout.h"
 
 
-VulkanRenderer::VulkanRenderer(vk_GeneralSettings settings, vector<RenderWindow>& renderWindows, ExtensionProcessingFunc extensionProcessingFunc) : debugEnabled(settings.applicationSettings.debugMode ? VK_TRUE : VK_FALSE)
+VulkanRenderSystem::VulkanRenderSystem(vk_GeneralSettings settings, vector<RenderWindow>& renderWindows, ExtensionProcessingFunc extensionProcessingFunc) : debugEnabled(settings.applicationSettings.debugMode ? VK_TRUE : VK_FALSE)
 {
     vector<const char*> extensions;
 	vector<const char*> layers;
@@ -108,9 +108,103 @@ VulkanRenderer::VulkanRenderer(vk_GeneralSettings settings, vector<RenderWindow>
     }
 }
 
-bool VulkanRenderer::processEvents(std::chrono::nanoseconds deltaTime)
+VkBool32 VulkanRenderSystem::debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj,
+                                       size_t location, int32_t code, const char *layerPrefix, const char *msg,
+                                       void *userData)
 {
-    accumulatedTime += deltaTime;
+    Logger::warn("Validation layer: " + string(msg));
+    return VK_FALSE;
+}
+
+void VulkanRenderSystem::resizeWindow(uint32_t width, uint32_t height, WindowRenderTarget* renderTarget) {
+
+    if(width == 0 && height == 0)
+        return;
+
+    Logger::log("Window will be resized: " + std::to_string(width) + " - " + std::to_string(height));
+
+    vk_RendermodeSwapchainInfo swapchainInfo = renderTarget->swapchain.recreateSwapchain(width, height, renderTarget->swapchain.preferredFramesInFlight(), renderTarget->swapchain.preferredTearingSetting(), renderTarget->swapchain.preferredFrameLimitingSetting());
+
+    renderTarget->renderMode->windowHasResized(swapchainInfo);
+}
+
+void VulkanRenderSystem::resizeWindow(bool mustResize, WindowRenderTarget* renderTarget) {
+
+    if(mustResize)
+    {
+        uint32_t width, height;
+        renderTarget->renderWindow->getCurrentSize(width, height);
+        resizeWindow(width, height, renderTarget);
+    }
+}
+
+void VulkanRenderSystem::setupDebugCallback()
+{
+    VkDebugReportCallbackCreateInfoEXT createInfo = {};
+    createInfo.sType        = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+    createInfo.pNext        = nullptr;
+    createInfo.flags        = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT;
+    createInfo.pfnCallback  = debugCallback;
+    createInfo.pUserData    = nullptr;
+
+    VkResult result = createDebugReportCallbackEXT(instance.getHandle(), &createInfo, nullptr, &debugCallbackHandle);
+    if (result != VK_SUCCESS) {
+        Logger::warn("Debug callback is not enabled! Reason: " + mapVkResult(result));
+        debugEnabled = VK_FALSE;
+    }
+    else {
+        Logger::success("Debug callback enabled!");
+    }
+}
+
+VulkanRenderSystem::~VulkanRenderSystem()
+{
+    if (instance.getHandle() != VK_NULL_HANDLE) {
+        Logger::log("Shutting down the Vulkan renderer.");
+        vkDeviceWaitIdle(getDevice());
+    }
+
+    if (debugEnabled == VK_TRUE) {
+        destroyDebugReportCallbackEXT(instance.getHandle(), debugCallbackHandle, nullptr);
+    }
+}
+
+VkDevice VulkanRenderSystem::getDevice() {
+    return device.getPresentDeviceInfo().logical;
+}
+
+void VulkanRenderSystem::resizeWindow(uint32_t width, uint32_t height, RenderWindow* renderWindow) {
+    for (auto& target : renderTargets) {
+        if (target.renderWindow == renderWindow) {
+            resizeWindow(width, height, &target);
+        }
+    }
+}
+
+void VulkanRenderSystem::update(std::chrono::nanoseconds deltaTime) {
+    latestDeltaTime = deltaTime;
+
+    for (auto& target : renderTargets) {
+
+        vk_PresentImageInfo presentImageInfo = target.swapchain.acquireNextImage();
+
+        resizeWindow(presentImageInfo.mustRecreateSwapchain, &target);
+
+        if(presentImageInfo.imageIndex == std::numeric_limits<uint32_t>::max())
+            return;
+
+        target.renderMode->render(presentImageInfo);
+
+        bool mustResize = false;
+        target.swapchain.presentImage(presentImageInfo.imageIndex, mustResize);
+
+        resizeWindow(mustResize, &target);
+    }
+}
+
+void VulkanRenderSystem::fixedUpdate() {
+
+    accumulatedTime += latestDeltaTime;
     accumulatedFrames += 1;
     int64_t fps = 0;
     bool mustSetFPS = false;
@@ -135,102 +229,15 @@ bool VulkanRenderer::processEvents(std::chrono::nanoseconds deltaTime)
         if (mustSetFPS) {
             target.renderWindow->setWindowTitle("VKRenderer " + std::to_string(fps) + " FPS");
         }
+    }
+}
+
+bool VulkanRenderSystem::getSystemStatus() {
+
+    for(auto& target : renderTargets) {
 
         if (!target.renderWindow->pollWindowEvents())
             return false;
     }
     return true;
-}
-
-VkBool32 VulkanRenderer::debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj,
-                                       size_t location, int32_t code, const char *layerPrefix, const char *msg,
-                                       void *userData)
-{
-    Logger::warn("Validation layer: " + string(msg));
-    return VK_FALSE;
-}
-
-void VulkanRenderer::resizeWindow(uint32_t width, uint32_t height, WindowRenderTarget* renderTarget) {
-
-    if(width == 0 && height == 0)
-        return;
-
-    Logger::log("Window will be resized: " + std::to_string(width) + " - " + std::to_string(height));
-
-    vk_RendermodeSwapchainInfo swapchainInfo = renderTarget->swapchain.recreateSwapchain(width, height, renderTarget->swapchain.preferredFramesInFlight(), renderTarget->swapchain.preferredTearingSetting(), renderTarget->swapchain.preferredFrameLimitingSetting());
-
-    renderTarget->renderMode->windowHasResized(swapchainInfo);
-}
-
-void VulkanRenderer::resizeWindow(bool mustResize, WindowRenderTarget* renderTarget) {
-
-    if(mustResize)
-    {
-        uint32_t width, height;
-        renderTarget->renderWindow->getCurrentSize(width, height);
-        resizeWindow(width, height, renderTarget);
-    }
-}
-
-void VulkanRenderer::setupDebugCallback()
-{
-    VkDebugReportCallbackCreateInfoEXT createInfo = {};
-    createInfo.sType        = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
-    createInfo.pNext        = nullptr;
-    createInfo.flags        = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT;
-    createInfo.pfnCallback  = debugCallback;
-    createInfo.pUserData    = nullptr;
-
-    VkResult result = createDebugReportCallbackEXT(instance.getHandle(), &createInfo, nullptr, &debugCallbackHandle);
-    if (result != VK_SUCCESS) {
-        Logger::warn("Debug callback is not enabled! Reason: " + mapVkResult(result));
-        debugEnabled = VK_FALSE;
-    }
-    else {
-        Logger::success("Debug callback enabled!");
-    }
-}
-
-VulkanRenderer::~VulkanRenderer()
-{
-    if (instance.getHandle() != VK_NULL_HANDLE) {
-        Logger::log("Shutting down the Vulkan renderer.");
-        vkDeviceWaitIdle(getDevice());
-    }
-
-    if (debugEnabled == VK_TRUE) {
-        destroyDebugReportCallbackEXT(instance.getHandle(), debugCallbackHandle, nullptr);
-    }
-}
-
-void VulkanRenderer::render()
-{
-    for (auto& target : renderTargets) {
-
-        vk_PresentImageInfo presentImageInfo = target.swapchain.acquireNextImage();
-
-        resizeWindow(presentImageInfo.mustRecreateSwapchain, &target);
-
-        if(presentImageInfo.imageIndex == std::numeric_limits<uint32_t>::max())
-            return;
-
-        target.renderMode->render(presentImageInfo);
-
-        bool mustResize = false;
-        target.swapchain.presentImage(presentImageInfo.imageIndex, mustResize);
-
-        resizeWindow(mustResize, &target);
-    }
-}
-
-VkDevice VulkanRenderer::getDevice() {
-    return device.getPresentDeviceInfo().logical;
-}
-
-void VulkanRenderer::resizeWindow(uint32_t width, uint32_t height, RenderWindow* renderWindow) {
-    for (auto& target : renderTargets) {
-        if (target.renderWindow == renderWindow) {
-            resizeWindow(width, height, &target);
-        }
-    }
 }
