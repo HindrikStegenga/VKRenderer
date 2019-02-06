@@ -5,6 +5,13 @@
 #ifndef VKRENDERER_SERIALIZEMACRO_H
 #define VKRENDERER_SERIALIZEMACRO_H
 
+#include <nlohmannJSON/json.hpp>
+#include <MetaStuff/Meta.h>
+#include <MetaStuff/JsonCast.h>
+
+using namespace meta;
+using namespace nlohmann;
+
 #define SERIALIZE_START(Type) namespace meta { \
     template <> \
     inline auto registerMembers<Type>() \
@@ -18,5 +25,17 @@
     } \
 }
 
+
+namespace Serializable {
+    template <typename T>
+    void from_json(const json& j, T& obj) {
+        meta::deserialize(obj, j);
+    }
+
+    template <typename T>
+    void to_json(json & j, const T& obj) {
+        j = meta::serialize(obj);
+    }
+}
 
 #endif //VKRENDERER_SERIALIZEMACRO_H
