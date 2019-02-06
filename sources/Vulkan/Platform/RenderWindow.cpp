@@ -3,7 +3,7 @@
 //
 
 #include "RenderWindow.h"
-#include "../../Application.h"
+#include "../../Engine.h"
 #include "../VulkanRenderer.h"
 
 #ifdef WIN32
@@ -152,7 +152,7 @@ void RenderWindow::onWindowResize(GLFWwindow *window, int width, int height) {
     if(renderWindow->application != nullptr) {
         renderWindow->application->resizeWindow(static_cast<uint32_t>(width), static_cast<uint32_t>(height), renderWindow);
     } else {
-        Logger::failure("Application pointer was not set!");
+        Logger::failure("Engine pointer was not set!");
     }
 }
 
@@ -169,6 +169,6 @@ void RenderWindow::setWindowTitle(string title) const {
     glfwSetWindowTitle(window, title.c_str());
 }
 
-void RenderWindow::setApplicationPointer(Application* application) {
-    this->application = application;
+void RenderWindow::setEnginePointer(Engine *engine) {
+    this->application = engine;
 }

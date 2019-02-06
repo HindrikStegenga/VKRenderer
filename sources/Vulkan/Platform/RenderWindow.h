@@ -12,7 +12,7 @@
 #define WINDOW_MAX_WIDTH 16384
 #define WINDOW_MAX_HEIGHT 16384
 
-class Application;
+class Engine;
 
 class RenderWindow final {
 private:
@@ -20,7 +20,7 @@ private:
     static bool isGLFWinitialized;
 private:
     GLFWwindow*     window          = nullptr;
-    Application*    application     = nullptr;
+    Engine*    application     = nullptr;
 public:
     RenderWindow() = default;
     RenderWindow(uint32_t width, uint32_t height, bool resizable = false);
@@ -34,8 +34,8 @@ public:
 private:
     static void initGLFW();
 private:
-    friend class Application;
-    void setApplicationPointer(Application* application);
+    friend class Engine;
+    void setEnginePointer(Engine *engine);
 private:
     static void onWindowResize(GLFWwindow* window, int width, int height);
 public:

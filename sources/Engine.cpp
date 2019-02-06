@@ -2,7 +2,7 @@
 // Created by Hindrik Stegenga on 29-10-17.
 //
 
-#include "Application.h"
+#include "Engine.h"
 #include "Utilities/ConfigFileReader.h"
 #include "Serializables/ConfigTypes.h"
 
@@ -25,7 +25,7 @@ VulkanSettings readVulkanSettings() {
 }
 
 
-Application::Application(ApplicationSettings applicationSettings, GraphicsSettings graphicsSettings) {
+Engine::Engine(ApplicationSettings applicationSettings, GraphicsSettings graphicsSettings) {
 
     Logger::log(applicationSettings.applicationName + " " + getVersionString(applicationSettings.applicationVersionMajor, applicationSettings.applicationVersionMinor, applicationSettings.applicationVersionPatch));
     Logger::log(applicationSettings.engineName + " " + getVersionString(applicationSettings.engineVersionMajor, applicationSettings.engineVersionMinor, applicationSettings.engineVersionPatch));
@@ -35,7 +35,7 @@ Application::Application(ApplicationSettings applicationSettings, GraphicsSettin
     renderWindows.emplace_back(graphicsSettings.resolutionX, graphicsSettings.resolutionY, true);
 
     RenderWindow& window = renderWindows.back();
-    window.setApplicationPointer(this);
+    window.setEnginePointer(this);
 
     vk_GeneralSettings settings = {};
 
@@ -46,7 +46,7 @@ Application::Application(ApplicationSettings applicationSettings, GraphicsSettin
     renderer = VulkanRenderer(settings, renderWindows, &RenderWindow::processExtensions);
 }
 
-void Application::run() {
+void Engine::run() {
 
     while (!mustStop) {
 
@@ -60,15 +60,15 @@ void Application::run() {
     }
 }
 
-void Application::stop() {
+void Engine::stop() {
     mustStop = true;
 }
 
-void Application::resizeWindow(uint32_t width, uint32_t height, RenderWindow* window) {
+void Engine::resizeWindow(uint32_t width, uint32_t height, RenderWindow* window) {
     renderer.resizeWindow(width, height, window);
 }
 
-string Application::getVersionString(uint32_t major, uint32_t minor, uint32_t patch) {
+string Engine::getVersionString(uint32_t major, uint32_t minor, uint32_t patch) {
     using std::to_string;
     return to_string(major) + "." + to_string(minor) + "." + to_string(patch);
 }

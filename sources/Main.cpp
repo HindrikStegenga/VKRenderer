@@ -1,4 +1,4 @@
-#include "Application.h"
+#include "Engine.h"
 #include "Serializables/VulkanTypes.h"
 #include "Serializables/GenericTypes.h"
 
@@ -42,7 +42,7 @@ GraphicsSettings readGraphicsSettings() {
 
 int main() {
 
-    Application app(readAppSettings(), readGraphicsSettings());
+    Engine app(readAppSettings(), readGraphicsSettings());
     app.run();
 
     return 0;

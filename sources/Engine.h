@@ -12,21 +12,21 @@
 #include "Utilities/Clock.h"
 #include "Serializables/ConfigTypes.h"
 
-class Application final {
+class Engine final {
 private:
     vector<RenderWindow>    renderWindows = {};
     VulkanRenderer          renderer;
     Clock                   internalClock;
     bool                    mustStop = false;
 public:
-    Application(ApplicationSettings applicationSettings, GraphicsSettings graphicsSettings);
-    ~Application() = default;
+    Engine(ApplicationSettings applicationSettings, GraphicsSettings graphicsSettings);
+    ~Engine() = default;
 
-    Application(const Application&)     = delete;
-    Application(Application&&) noexcept = delete;
+    Engine(const Engine&)     = delete;
+    Engine(Engine&&) noexcept = delete;
 
-    Application& operator= (const Application&)     = delete;
-    Application& operator= (Application&&) noexcept = delete;
+    Engine& operator= (const Engine&)     = delete;
+    Engine& operator= (Engine&&) noexcept = delete;
 public:
     void resizeWindow(uint32_t width, uint32_t height, RenderWindow* window);
     void run();
