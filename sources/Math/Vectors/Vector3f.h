@@ -5,6 +5,7 @@
 #ifndef VKRENDERER_VECTOR3F_H
 #define VKRENDERER_VECTOR3F_H
 
+#include "../MathSerialization.h"
 
 namespace Math {
 
@@ -37,5 +38,13 @@ namespace Math {
     float    dot(const Vector3f& lhs, const Vector3f& rhs);
     Vector3f cross(const Vector3f& lhs, const Vector3f& rhs);
 }
+
+using Math::Vector3f;
+
+SERIALIZE_START(Vector3f)
+    SERIALIZE_MEMBER("x", Vector3f::x),
+    SERIALIZE_MEMBER("y", Vector3f::y),
+    SERIALIZE_MEMBER("z", Vector3f::z)
+SERIALIZE_END
 
 #endif //VKRENDERER_VECTOR3F_H

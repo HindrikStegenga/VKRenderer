@@ -5,6 +5,8 @@
 #ifndef VKRENDERER_VECTOR2F_H
 #define VKRENDERER_VECTOR2F_H
 
+#include "../MathSerialization.h"
+
 namespace Math {
 
     struct Vector2f {
@@ -36,8 +38,11 @@ namespace Math {
 
 }
 
+using Math::Vector2f;
 
-
-
+SERIALIZE_START(Vector2f)
+    SERIALIZE_MEMBER("x", Vector2f::x),
+    SERIALIZE_MEMBER("y", Vector2f::y)
+SERIALIZE_END
 
 #endif //VKRENDERER_VECTOR2F_H
