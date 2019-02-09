@@ -11,7 +11,7 @@
 #include "PresentDevice.h"
 #include "Classes/WindowRenderTarget.h"
 #include "../../Serializables/ConfigTypes.h"
-#include "../../Core/EngineSystem.h"
+#include "../../Core/ECS/EngineSystem.h"
 
 using std::chrono::nanoseconds;
 

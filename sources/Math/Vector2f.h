@@ -8,11 +8,14 @@
 namespace Math {
 
     struct Vector2f {
+    public:
         float x = 0.0f;
         float y = 0.0f;
     public:
         Vector2f() = default;
-        Vector2f(float x, float y) : x(x), y(y) {}
+        ~Vector2f() = default;
+
+        Vector2f(float x, float y);
 
         Vector2f(const Vector2f&) = default;
 

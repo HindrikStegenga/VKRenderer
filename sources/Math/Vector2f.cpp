@@ -3,11 +3,12 @@
 //
 
 #include <cmath>
-
 #include "Vector2f.h"
 
 using namespace std;
 using Math::Vector2f;
+
+Math::Vector2f::Vector2f(float x, float y) : x(x), y(y) {}
 
 float Vector2f::magnitude() const {
     return sqrt(x * x + y * y);
@@ -22,7 +23,6 @@ Vector2f Math::Vector2f::unit() const {
     return Vector2f(x / mag, y / mag);
 }
 
-
 Vector2f Math::add(const Vector2f &lhs, float rhs) {
     return Vector2f(lhs.x + rhs, lhs.y + rhs);
 }
@@ -35,16 +35,12 @@ Vector2f Math::subtract(const Vector2f &lhs, float rhs) {
     return add(lhs, rhs * -1.0f);
 }
 
-Vector2f Math::multiply(const Vector2f &lhs, float rhs) {
-    return Vector2f(lhs.x * rhs, lhs.y * rhs);
+Vector2f Math::subtract(const Vector2f &lhs, const Vector2f &rhs) {
+    return add(lhs, rhs.negate());
 }
 
-
-
-
-Vector2f Math::subtract(const Vector2f &lhs, const Vector2f &rhs) {
-    Vector2f negateRhs = rhs.negate();
-    return add(lhs, negateRhs);
+Vector2f Math::multiply(const Vector2f &lhs, float rhs) {
+    return Vector2f(lhs.x * rhs, lhs.y * rhs);
 }
 
 float Math::dot(const Vector2f &lhs, const Vector2f &rhs) {

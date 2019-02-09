@@ -1,6 +1,7 @@
 #include "Core/Engine.h"
 #include "Serializables/VulkanTypes.h"
 #include "Serializables/GenericTypes.h"
+#include "Core/ECS/Component.h"
 
 ApplicationSettings readAppSettings() {
 
@@ -38,7 +39,6 @@ GraphicsSettings readGraphicsSettings() {
 
     return graphicsSettings;
 }
-
 
 int main() {
 

@@ -6,10 +6,14 @@
 #define VKRENDERER_TRANSFORM_H
 
 
+#include "../Math/Vector3f.h"
+
+using namespace Math;
+
 class Transform {
-    float positionX, positionY, positionZ;
-    float rotationX, rotationY, rotationZ;
-    float scaleX, scaleY, scaleZ;
+    Vector3f position;
+    Vector3f rotation;
+    Vector3f scale;
 };
 
 

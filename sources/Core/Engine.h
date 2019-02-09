@@ -11,7 +11,7 @@
 #include "../Utilities/Nullable.h"
 #include "../Utilities/Clock.h"
 #include "../Serializables/ConfigTypes.h"
-#include "EngineSystem.h"
+#include "ECS/EngineSystem.h"
 
 class Engine final {
 private:
