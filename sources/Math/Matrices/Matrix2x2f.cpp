@@ -24,6 +24,14 @@ namespace Math {
         return data[index];
     }
 
+    Vector2f Matrix2x2f::getFirstRow() const {
+        return Vector2f(data[0], data[1]);
+    }
+
+    Vector2f Matrix2x2f::getSecondRow() const {
+        return Vector2f(data[2], data[3]);
+    }
+
     void Matrix2x2f::setFirstRow(Vector2f row) {
         data[0] = row.x;
         data[1] = row.y;
@@ -32,14 +40,6 @@ namespace Math {
     void Matrix2x2f::setSecondRow(Vector2f row) {
         data[2] = row.x;
         data[3] = row.y;
-    }
-
-    Vector2f Matrix2x2f::getFirstRow() const {
-        return Vector2f(data[0], data[1]);
-    }
-
-    Vector2f Matrix2x2f::getSecondRow() const {
-        return Vector2f(data[2], data[3]);
     }
 
     array<float, 4> Matrix2x2f::getData() const {
@@ -63,7 +63,7 @@ namespace Math {
     }
 
     Matrix2x2f add(const Matrix2x2f& lhs, float rhs) {
-        return Matrix2x2f(lhs[0] - rhs, lhs[1] - rhs, lhs[2] - rhs, lhs[3] - rhs);
+        return Matrix2x2f(lhs[0] + rhs, lhs[1] + rhs, lhs[2] + rhs, lhs[3] + rhs);
     }
 
     Matrix2x2f subtract(const Matrix2x2f &lhs, float rhs) {
@@ -80,6 +80,13 @@ namespace Math {
                 lhs[0] * rhs[1] + lhs[1] * rhs[3], //a0 * c1 + a1 * d1
                 lhs[2] * rhs[0] + lhs[3] * rhs[2], //b0 * c0 + b1 * d0
                 lhs[2] * rhs[1] + lhs[3] * rhs[3]  //b0 * c1 + b1 * d1
+                );
+    }
+
+    Vector2f multiply(const Vector2f &lhs, const Matrix2x2f &rhs) {
+        return Vector2f(
+                lhs.x * rhs[0] + lhs.y * rhs[2],
+                lhs.x * rhs[1] + lhs.y * rhs[3]
                 );
     }
 }

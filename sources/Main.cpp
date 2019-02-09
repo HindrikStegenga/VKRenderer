@@ -46,12 +46,12 @@ int main() {
 
 //    using namespace Math;
 //
-//    Matrix2x2f mat(3,4,5,6);
-//    Matrix2x2f mat2(0,1,2,3);
+//    Matrix3x3f mat(1,2,3,4,5,6,7,8,9);
+//    Matrix3x3f mat2(6,6,7,8,2,3,9,0,1);
 //
 //
 //    json something;
-//    something = multiply(mat,mat2);
+//    something = multiply(mat, mat2);
 //
 //    std::cout << std::setw(4) << something << std::endl;
 

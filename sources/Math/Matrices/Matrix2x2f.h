@@ -15,7 +15,8 @@ namespace Math {
 
     class Matrix2x2f final {
     private:
-        float data[4] = { 1.0f, 0.0f, 0.0f, 1.0f };
+        float data[4] = { 1.0f, 0.0f,
+                          0.0f, 1.0f };
         // row major
         // a0 a1 -> | 1 0 |
         // -----    -------
@@ -55,6 +56,7 @@ namespace Math {
     Matrix2x2f subtract(const Matrix2x2f& lhs, float rhs);
     Matrix2x2f multiply(const Matrix2x2f& lhs, float rhs);
     Matrix2x2f multiply(const Matrix2x2f& lhs, const Matrix2x2f& rhs);
+    Vector2f   multiply(const Vector2f& lhs, const Matrix2x2f& rhs);
 }
 
 SERIALIZE_START(Math::Matrix2x2f)
