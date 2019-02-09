@@ -9,7 +9,7 @@
 
 namespace Math {
 
-    struct Vector2f {
+    struct Vector2f final {
     public:
         float x = 0.0f;
         float y = 0.0f;
@@ -38,11 +38,9 @@ namespace Math {
 
 }
 
-using Math::Vector2f;
-
-SERIALIZE_START(Vector2f)
-    SERIALIZE_MEMBER("x", Vector2f::x),
-    SERIALIZE_MEMBER("y", Vector2f::y)
+SERIALIZE_START(Math::Vector2f)
+    SERIALIZE_MEMBER("x", Math::Vector2f::x),
+    SERIALIZE_MEMBER("y", Math::Vector2f::y)
 SERIALIZE_END
 
 #endif //VKRENDERER_VECTOR2F_H

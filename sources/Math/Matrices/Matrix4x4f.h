@@ -7,7 +7,7 @@
 
 namespace Math {
 
-    class Matrix4x4f {
+    class Matrix4x4f final {
 
     };
 

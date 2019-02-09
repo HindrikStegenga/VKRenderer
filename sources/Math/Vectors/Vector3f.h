@@ -9,7 +9,7 @@
 
 namespace Math {
 
-    struct Vector3f {
+    struct Vector3f final {
     public:
         float x = 0.0f;
         float y = 0.0f;
@@ -39,12 +39,10 @@ namespace Math {
     Vector3f cross(const Vector3f& lhs, const Vector3f& rhs);
 }
 
-using Math::Vector3f;
-
-SERIALIZE_START(Vector3f)
-    SERIALIZE_MEMBER("x", Vector3f::x),
-    SERIALIZE_MEMBER("y", Vector3f::y),
-    SERIALIZE_MEMBER("z", Vector3f::z)
+SERIALIZE_START(Math::Vector3f)
+    SERIALIZE_MEMBER("x", Math::Vector3f::x),
+    SERIALIZE_MEMBER("y", Math::Vector3f::y),
+    SERIALIZE_MEMBER("z", Math::Vector3f::z)
 SERIALIZE_END
 
 #endif //VKRENDERER_VECTOR3F_H

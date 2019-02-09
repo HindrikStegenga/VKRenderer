@@ -9,7 +9,7 @@
 
 namespace Math {
 
-    struct Vector4f {
+    struct Vector4f final {
     public:
         float x = 0.0f;
         float y = 0.0f;
@@ -38,13 +38,11 @@ namespace Math {
     float    dot(const Vector4f& lhs, const Vector4f& rhs);
 }
 
-using Math::Vector4f;
-
-SERIALIZE_START(Vector4f)
-    SERIALIZE_MEMBER("x", Vector4f::x),
-    SERIALIZE_MEMBER("y", Vector4f::y),
-    SERIALIZE_MEMBER("z", Vector4f::z),
-    SERIALIZE_MEMBER("w", Vector4f::w)
+SERIALIZE_START(Math::Vector4f)
+    SERIALIZE_MEMBER("x", Math::Vector4f::x),
+    SERIALIZE_MEMBER("y", Math::Vector4f::y),
+    SERIALIZE_MEMBER("z", Math::Vector4f::z),
+    SERIALIZE_MEMBER("w", Math::Vector4f::w)
 SERIALIZE_END
 
 #endif //VKRENDERER_VECTOR4F_H

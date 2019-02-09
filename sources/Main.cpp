@@ -1,7 +1,9 @@
+#include <iomanip>
 #include "Core/Engine.h"
 #include "Serializables/VulkanTypes.h"
 #include "Serializables/GenericTypes.h"
 #include "Core/ECS/Component.h"
+#include "Math/Math.h"
 
 ApplicationSettings readAppSettings() {
 
@@ -41,6 +43,17 @@ GraphicsSettings readGraphicsSettings() {
 }
 
 int main() {
+
+//    using namespace Math;
+//
+//    Matrix2x2f mat(3,4,5,6);
+//    Matrix2x2f mat2(0,1,2,3);
+//
+//
+//    json something;
+//    something = multiply(mat,mat2);
+//
+//    std::cout << std::setw(4) << something << std::endl;
 
     Engine engine(readAppSettings(), readGraphicsSettings());
     engine.run();
