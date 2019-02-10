@@ -13,12 +13,14 @@
 #include "../Serializables/ConfigTypes.h"
 #include "ECS/EngineSystem.h"
 #include "Threading/Threadpool.h"
+#include "SceneManager.h"
 
 class Engine final {
 private:
     Threadpool                          threadpool;
     vector<RenderWindow>                renderWindows = {};
     vector<unique_ptr<EngineSystem>>    engineSystems = {};
+    SceneManager                        sceneManager;
 
     ApplicationSettings                 applicationSettings = {};
     GraphicsSettings                    graphicsSettings = {};

@@ -12,7 +12,7 @@
 class Entity {
 private:
     Transform transform;
-
+    bool isStatic = false;
 public:
 
 

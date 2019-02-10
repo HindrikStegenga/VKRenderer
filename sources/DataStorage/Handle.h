@@ -7,13 +7,13 @@
 
 #include <limits>
 
-template<typename T, typename HandleSizeType>
+template<typename T, typename HandleSize>
 class Handle final {
 private:
-    HandleSizeType value;
+    HandleSize value;
 public:
-    using HandleSize = HandleSizeType;
-    constexpr static int invalidMaxValue = std::numeric_limits<HandleSizeType>::max();
+    using HandleSizeType = HandleSize;
+    constexpr static HandleSizeType invalidMaxValue = std::numeric_limits<HandleSizeType>::max();
 public:
     Handle() : value(invalidMaxValue) {}
     ~Handle() = default;

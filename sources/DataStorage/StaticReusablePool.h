@@ -14,14 +14,14 @@ using std::array;
 #include "Handle.h"
 #include "ReusablePoolItem.h"
 
-template<typename T, typename HandleType = Handle<T, uint16_t>, typename HandleType::HandleSize poolSize = HandleType::invalidMaxValue - 1>
+template<typename T, typename HandleType = Handle<T, uint16_t>, typename HandleType::HandleSizeType poolSize = HandleType::invalidMaxValue - 1>
 class StaticReusablePool final {
     static_assert(poolSize >= 0 && poolSize < HandleType::invalidMaxValue, "You must select a size between (and including) 2 and handleSize - 1");
-    typedef typename HandleType::HandleSize HandleSize;
+    typedef typename HandleType::HandleSizeType HandleSizeType;
 private:
     array<ReusablePoolItem<T, HandleType>, poolSize> data = {};
-    HandleSize inUseCounter     = 0;
-    HandleSize firstFreeIndex   = 0;
+    HandleSizeType inUseCounter     = 0;
+    HandleSizeType firstFreeIndex   = 0;
 public:
     StaticReusablePool();
     ~StaticReusablePool();
@@ -32,12 +32,12 @@ public:
     StaticReusablePool& operator=(const StaticReusablePool&)        = delete;
     StaticReusablePool& operator=(StaticReusablePool&&) noexcept    = default;
 
-    HandleSize size() const;
-    HandleSize maxSize() const;
-    HandleSize getFirstFreeIndex() const;
+    HandleSizeType size() const;
+    HandleSizeType maxSize() const;
+    HandleSizeType getFirstFreeIndex() const;
 
     template<typename ... Args>
-    HandleType getNewItem(Args&&... args);
+    HandleType getItem(Args &&... args);
     void returnItem(HandleType handle);
     void reset();
 
@@ -46,64 +46,64 @@ public:
 
 };
 
-template<typename T, typename HandleType, typename HandleType::HandleSize poolSize>
-typename HandleType::HandleSize StaticReusablePool<T, HandleType, poolSize>::size() const {
+template<typename T, typename HandleType, typename HandleType::HandleSizeType poolSize>
+typename HandleType::HandleSizeType StaticReusablePool<T, HandleType, poolSize>::size() const {
     return inUseCounter;
 }
 
-template<typename T, typename HandleType, typename HandleType::HandleSize poolSize>
-typename HandleType::HandleSize StaticReusablePool<T, HandleType, poolSize>::maxSize() const {
+template<typename T, typename HandleType, typename HandleType::HandleSizeType poolSize>
+typename HandleType::HandleSizeType StaticReusablePool<T, HandleType, poolSize>::maxSize() const {
     return poolSize;
 }
 
-template<typename T, typename HandleType, typename HandleType::HandleSize poolSize>
-typename HandleType::HandleSize StaticReusablePool<T, HandleType, poolSize>::getFirstFreeIndex() const {
+template<typename T, typename HandleType, typename HandleType::HandleSizeType poolSize>
+typename HandleType::HandleSizeType StaticReusablePool<T, HandleType, poolSize>::getFirstFreeIndex() const {
     return firstFreeIndex;
 }
 
-template<typename T, typename HandleType, typename HandleType::HandleSize poolSize>
+template<typename T, typename HandleType, typename HandleType::HandleSizeType poolSize>
 StaticReusablePool<T, HandleType, poolSize>::StaticReusablePool() {
     reset();
 }
 
 
-template<typename T, typename HandleType, typename HandleType::HandleSize poolSize>
+template<typename T, typename HandleType, typename HandleType::HandleSizeType poolSize>
 StaticReusablePool<T, HandleType, poolSize>::~StaticReusablePool() {
     reset();
 }
 
-template<typename T, typename HandleType, typename HandleType::HandleSize poolSize>
+template<typename T, typename HandleType, typename HandleType::HandleSizeType poolSize>
 void StaticReusablePool<T, HandleType, poolSize>::returnItem(HandleType handle) {
-    if (static_cast<HandleSize>(handle) < 0 || static_cast<HandleSize>(handle) > poolSize) {
+    if (static_cast<HandleSizeType>(handle) < 0 || static_cast<HandleSizeType>(handle) > poolSize) {
         throw std::out_of_range("Given handle was not valid for this collection.");
     }
 
-    auto& item = data[static_cast<HandleSize>(handle)];
+    auto& item = data[static_cast<HandleSizeType>(handle)];
     item.cleanUp();
     item.data.nextIndex = getFirstFreeIndex();
-    firstFreeIndex = static_cast<HandleSize>(handle);
+    firstFreeIndex = static_cast<HandleSizeType>(handle);
     inUseCounter--;
 }
 
-template<typename T, typename HandleType, typename HandleType::HandleSize poolSize>
+template<typename T, typename HandleType, typename HandleType::HandleSizeType poolSize>
 template<typename... Args>
-HandleType StaticReusablePool<T, HandleType, poolSize>::getNewItem(Args&&... args) {
+HandleType StaticReusablePool<T, HandleType, poolSize>::getItem(Args &&... args) {
 
     if (getFirstFreeIndex() == poolSize) {
         throw NoMoreItemsException();
     }
 
-    HandleSize tempIndex = getFirstFreeIndex();
+    HandleSizeType tempIndex = getFirstFreeIndex();
     firstFreeIndex = data[tempIndex].data.nextIndex;
     data[tempIndex].reset(std::forward<Args>(args)...);
     inUseCounter++;
     return HandleType(tempIndex);
 }
 
-template<typename T, typename HandleType, typename HandleType::HandleSize poolSize>
+template<typename T, typename HandleType, typename HandleType::HandleSizeType poolSize>
 void StaticReusablePool<T, HandleType, poolSize>::reset() {
 
-    for(HandleSize i = 0; i < maxSize(); ++i) {
+    for(HandleSizeType i = 0; i < maxSize(); ++i) {
 
         if(data[i].isUsed){
             data[i].cleanUp();
@@ -116,21 +116,21 @@ void StaticReusablePool<T, HandleType, poolSize>::reset() {
     }
 }
 
-template<typename T, typename HandleType, typename HandleType::HandleSize poolSize>
+template<typename T, typename HandleType, typename HandleType::HandleSizeType poolSize>
 T& StaticReusablePool<T, HandleType, poolSize>::at(const HandleType &index) {
 
     if (static_cast<HandleType>(index) > 0
     && static_cast<HandleType>(index) < maxSize()
-    && data[static_cast<HandleSize>(index)].isUsed) {
-        return data[static_cast<HandleSize>(index)].data.object;
+    && data[static_cast<HandleSizeType>(index)].isUsed) {
+        return data[static_cast<HandleSizeType>(index)].data.object;
     }
 
     throw std::out_of_range("The given handle was invalid for this collection");
 }
 
-template<typename T, typename HandleType, typename HandleType::HandleSize poolSize>
+template<typename T, typename HandleType, typename HandleType::HandleSizeType poolSize>
 T& StaticReusablePool<T, HandleType, poolSize>::operator[](const HandleType& index) {
-    return data[static_cast<HandleSize>(index)].data.object;
+    return data[static_cast<HandleSizeType>(index)].data.object;
 }
 
 

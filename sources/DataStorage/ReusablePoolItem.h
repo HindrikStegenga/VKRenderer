@@ -25,7 +25,7 @@ public:
     {
     public:
         T object;
-        typename HandleType::HandleSize nextIndex;
+        typename HandleType::HandleSizeType nextIndex;
     public:
         //Implement constructor/destructor as no-op, because they NEED to be defined in case of T having a non trivial constructor
         Data() { (void)0; };

@@ -3,3 +3,7 @@
 //
 
 #include "SceneManager.h"
+
+SceneManager::SceneManager() {
+    currentScene = Scene();
+}

@@ -5,13 +5,14 @@
 #ifndef VKRENDERER_SCENEMANAGER_H
 #define VKRENDERER_SCENEMANAGER_H
 
-#include "../CommonInclude.h"
+#include "Scene.h"
+
 
 class SceneManager final {
-
-    
-
-
+private:
+    Scene currentScene;
+public:
+    SceneManager();
 };
 
 
