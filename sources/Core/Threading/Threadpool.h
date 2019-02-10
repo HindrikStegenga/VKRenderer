@@ -14,17 +14,17 @@
 #include <condition_variable>
 #include <functional>
 
-class ThreadPool final
+class Threadpool final
 {
 public:
-    explicit ThreadPool(size_t threads);
-    ~ThreadPool();
+    explicit Threadpool(size_t threads);
+    ~Threadpool();
 
-    ThreadPool(const ThreadPool&)       = delete;
-    ThreadPool(ThreadPool&&) noexcept   = delete;
+    Threadpool(const Threadpool&)       = delete;
+    Threadpool(Threadpool&&) noexcept   = delete;
 
-    ThreadPool& operator=(const ThreadPool&)        = delete;
-    ThreadPool& operator=(ThreadPool&&) noexcept    = delete;
+    Threadpool& operator=(const Threadpool&)        = delete;
+    Threadpool& operator=(Threadpool&&) noexcept    = delete;
 
 public:
     template<class F> void enqueue(F f);
@@ -39,7 +39,7 @@ private:
 };
 
 template<class F>
-void ThreadPool::enqueue(F f)
+void Threadpool::enqueue(F f)
 {
     std::unique_lock<std::mutex> lock(queue_mutex);
     tasks.push_back(std::function<void()>(f));

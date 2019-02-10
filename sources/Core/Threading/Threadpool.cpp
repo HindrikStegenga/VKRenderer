@@ -5,13 +5,13 @@
 #include "Threadpool.h"
 #include "ThreadWorker.h"
 
-ThreadPool::ThreadPool(size_t threads) : stop(false)
+Threadpool::Threadpool(size_t threads) : stop(false)
 {
     for (size_t i = 0; i < threads; ++i)
         workers.emplace_back(ThreadWorker(*this));
 }
 
-ThreadPool::~ThreadPool()
+Threadpool::~Threadpool()
 {
     stop = true;
     cond.notify_all();

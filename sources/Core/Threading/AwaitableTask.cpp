@@ -4,7 +4,7 @@
 
 #include "AwaitableTask.h"
 
-#include "Logger.h"
+#include "../../Utilities/Logger.h"
 #include "Threadpool.h"
 
 AwaitableTask::AwaitableTask(std::function<void()> func) : m_Func(std::move(func))
@@ -17,7 +17,7 @@ void AwaitableTask::wait()
     m_Condition.wait(lk, [&]{ return m_IsDone; });
 }
 
-void AwaitableTask::enqueue(ThreadPool &pool)
+void AwaitableTask::enqueue(Threadpool &pool)
 {
     if(!m_Func)
         Logger::error("No task assigned to execute!");

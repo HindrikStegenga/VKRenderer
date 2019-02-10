@@ -12,11 +12,14 @@
 #include "../Utilities/Clock.h"
 #include "../Serializables/ConfigTypes.h"
 #include "ECS/EngineSystem.h"
+#include "Threading/Threadpool.h"
 
 class Engine final {
 private:
+    Threadpool                          threadpool;
     vector<RenderWindow>                renderWindows = {};
     vector<unique_ptr<EngineSystem>>    engineSystems = {};
+
     ApplicationSettings                 applicationSettings = {};
     GraphicsSettings                    graphicsSettings = {};
 
@@ -37,6 +40,13 @@ public:
     void stop();
 private:
     void setupEngineSystems();
+public:
+    void registerRenderWindow(RenderWindow& renderWindow);
+    void registerEngineSystem(EngineSystem& engineSystem);
+
+    void enqueueTask(function<void()> task);
+    void enqueueTask(AwaitableTask& task);
+
 private:
     static string getVersionString(uint32_t major, uint32_t minor, uint32_t patch);
 };

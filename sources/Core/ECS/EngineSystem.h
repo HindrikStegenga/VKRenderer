@@ -8,12 +8,19 @@
 #include <string>
 #include <vector>
 #include <chrono>
+#include <functional>
 
+using std::function;
 using std::vector;
 using std::string;
 using std::chrono::nanoseconds;
 
+class Engine;
+class AwaitableTask;
+
 class EngineSystem {
+private:
+    Engine* engine = nullptr;
 public:
     EngineSystem() = default;
     virtual ~EngineSystem() = 0;
@@ -23,7 +30,13 @@ public:
 
     EngineSystem& operator=(const EngineSystem&) = delete;
     EngineSystem& operator=(EngineSystem&&) = default;
+private:
+    friend class Engine;
+    void setEnginePointer(Engine* engine);
 public:
+    void enqueueTask(function<void()> task);
+    void enqueueTask(AwaitableTask& task);
+
     //Update function for dynamic updates
     virtual void update(std::chrono::nanoseconds deltaTime) = 0;
 

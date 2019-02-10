@@ -1,7 +1,6 @@
 #include <iomanip>
 #include "Core/Engine.h"
 #include "Serializables/VulkanTypes.h"
-#include "Serializables/GenericTypes.h"
 #include "Core/ECS/Component.h"
 #include "Math/Math.h"
 

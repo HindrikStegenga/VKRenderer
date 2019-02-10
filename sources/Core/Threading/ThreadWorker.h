@@ -9,12 +9,12 @@
 #include <mutex>
 
 
-class ThreadPool;
+class Threadpool;
 
 class ThreadWorker final
 {
 public:
-    explicit ThreadWorker(ThreadPool &s) : pool(&s) { }
+    explicit ThreadWorker(Threadpool &s) : pool(&s) { }
     void operator()();
 
     ThreadWorker()  = delete;
@@ -26,7 +26,7 @@ public:
     ThreadWorker& operator=(const ThreadWorker&)        = delete;
     ThreadWorker& operator=(ThreadWorker&&) noexcept    = default;
 private:
-    ThreadPool* pool;
+    Threadpool* pool;
 };
 
 

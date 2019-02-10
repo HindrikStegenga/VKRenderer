@@ -1,5 +1,7 @@
 #include <utility>
 
+#include <utility>
+
 //
 // Created by Hindrik Stegenga on 29-10-17.
 //
@@ -7,6 +9,7 @@
 #include "Engine.h"
 #include "../Utilities/ConfigFileReader.h"
 #include "../Serializables/ConfigTypes.h"
+#include "Threading/AwaitableTask.h"
 
 VulkanSettings readVulkanSettings() {
 
@@ -28,7 +31,7 @@ VulkanSettings readVulkanSettings() {
 
 
 Engine::Engine(ApplicationSettings applicationSettings, GraphicsSettings graphicsSettings)
-    : applicationSettings(std::move(applicationSettings)), graphicsSettings(graphicsSettings)
+    : applicationSettings(std::move(applicationSettings)), graphicsSettings(graphicsSettings), threadpool(std::thread::hardware_concurrency())
     {
 
     setupEngineSystems();
@@ -44,11 +47,14 @@ void Engine::run() {
             auto start = std::chrono::steady_clock::now();
 
             for(const auto& systemPtr : engineSystems) {
+
                 if(!systemPtr->getSystemStatus()){
                     mustStop = true;
                 }
+
                 if(mustStop)
                     break;
+
                 systemPtr->fixedUpdate();
             }
 
@@ -110,5 +116,24 @@ void Engine::setupEngineSystems() {
     settings.vulkanSettings = vulkanSettings;
 
     EngineSystem* renderSystem = new VulkanRenderSystem(settings, renderWindows, &RenderWindow::processExtensions);
+    renderSystem->setEnginePointer(this);
     engineSystems.emplace_back(renderSystem);
+}
+
+void Engine::registerEngineSystem(EngineSystem& engineSystem) {
+    engineSystems.emplace_back(&engineSystem);
+    engineSystems.back().get()->setEnginePointer(this);
+}
+
+void Engine::registerRenderWindow(RenderWindow &renderWindow) {
+    renderWindows.emplace_back(std::move(renderWindow));
+    renderWindows.back().setEnginePointer(this);
+}
+
+void Engine::enqueueTask(function<void()> task) {
+    threadpool.enqueue(std::move(task));
+}
+
+void Engine::enqueueTask(AwaitableTask &task) {
+    task.enqueue(threadpool);
 }

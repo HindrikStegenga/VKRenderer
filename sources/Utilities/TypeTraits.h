@@ -5,6 +5,8 @@
 #ifndef VKRENDERER_TYPETRAITS_H
 #define VKRENDERER_TYPETRAITS_H
 
+#include <typeinfo>
+
 template<typename T>
 struct TypeTraits final {
     static const char* name();

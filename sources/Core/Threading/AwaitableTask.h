@@ -10,7 +10,7 @@
 #include <mutex>
 #include <condition_variable>
 
-class ThreadPool;
+class Threadpool;
 
 class AwaitableTask
 {
@@ -29,7 +29,7 @@ public:
     AwaitableTask& operator=(const AwaitableTask&)      = delete;
     AwaitableTask& operator=(AwaitableTask&&) noexcept  = delete;
 public:
-    void enqueue(ThreadPool& pool);
+    void enqueue(Threadpool& pool);
     void wait();
     bool isTaskDone();
     void resetCurrentTask();
