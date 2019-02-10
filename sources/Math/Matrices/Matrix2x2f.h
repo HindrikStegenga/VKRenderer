@@ -42,6 +42,11 @@ namespace Math {
         void setFirstRow(Vector2f row);
         void setSecondRow(Vector2f row);
 
+        Vector2f getFirstColumn() const;
+        Vector2f getSecondColumn() const;
+        void setFirstColumn(Vector2f column);
+        void setSecondColumn(Vector2f column);
+
         array<float, 4> getData() const;
         void setData(array<float, 4> data);
 

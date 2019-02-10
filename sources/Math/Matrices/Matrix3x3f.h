@@ -48,6 +48,13 @@ namespace Math {
         void setSecondRow(const Vector3f& row);
         void setThirdRow(const Vector3f& row);
 
+        Vector3f getFirstColumn() const;
+        Vector3f getSecondColumn() const;
+        Vector3f getThirdColumn() const;
+        void setFirstColumn(const Vector3f& column);
+        void setSecondColumn(const Vector3f& column);
+        void setThirdColumn(const Vector3f& column);
+
         array<float, 9> getData() const;
         void setData(array<float, 9> data);
 

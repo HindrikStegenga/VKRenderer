@@ -42,6 +42,24 @@ namespace Math {
         data[3] = row.y;
     }
 
+    Vector2f Matrix2x2f::getFirstColumn() const {
+        return Vector2f(data[0], data[2]);
+    }
+
+    Vector2f Matrix2x2f::getSecondColumn() const {
+        return Vector2f(data[1], data[3]);
+    }
+
+    void Matrix2x2f::setFirstColumn(Vector2f column) {
+        data[0] = column.x;
+        data[2] = column.y;
+    }
+
+    void Matrix2x2f::setSecondColumn(Vector2f column) {
+        data[1] = column.x;
+        data[3] = column.y;
+    }
+
     array<float, 4> Matrix2x2f::getData() const {
         return { data[0], data[1], data[2], data[3] };
     }

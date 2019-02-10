@@ -66,6 +66,36 @@ namespace Math {
         data[8] = row.z;
     }
 
+    Vector3f Matrix3x3f::getFirstColumn() const {
+        return Vector3f(data[0], data[3], data[6]);
+    }
+
+    Vector3f Matrix3x3f::getSecondColumn() const {
+        return Vector3f(data[1], data[4], data[7]);
+    }
+
+    Vector3f Matrix3x3f::getThirdColumn() const {
+        return Vector3f(data[2], data[5], data[8]);
+    }
+
+    void Matrix3x3f::setFirstColumn(const Vector3f &column) {
+        data[0] = column.x;
+        data[3] = column.y;
+        data[6] = column.z;
+    }
+
+    void Matrix3x3f::setSecondColumn(const Vector3f &column) {
+        data[1] = column.x;
+        data[4] = column.y;
+        data[7] = column.z;
+    }
+
+    void Matrix3x3f::setThirdColumn(const Vector3f &column) {
+        data[2] = column.x;
+        data[5] = column.y;
+        data[8] = column.z;
+    }
+
     array<float, 9> Matrix3x3f::getData() const {
         return { data[0], data[1], data[2],
                  data[3], data[4], data[5],
