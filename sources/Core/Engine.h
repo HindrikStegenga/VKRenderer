@@ -20,7 +20,6 @@ private:
     ApplicationSettings                 applicationSettings = {};
     GraphicsSettings                    graphicsSettings = {};
 
-    VulkanRenderSystem                      renderer;
     Clock                               internalClock;
     bool                                mustStop = false;
 public:
@@ -33,7 +32,7 @@ public:
     Engine& operator= (const Engine&)     = delete;
     Engine& operator= (Engine&&) noexcept = delete;
 public:
-    void resizeWindow(uint32_t width, uint32_t height, RenderWindow* window);
+    void windowHasResized(uint32_t width, uint32_t height, RenderWindow *window);
     void run();
     void stop();
 private:

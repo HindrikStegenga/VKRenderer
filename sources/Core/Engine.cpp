@@ -41,6 +41,8 @@ void Engine::run() {
 
         while (!mustStop) {
 
+            auto start = std::chrono::steady_clock::now();
+
             for(const auto& systemPtr : engineSystems) {
                 if(!systemPtr->getSystemStatus()){
                     mustStop = true;
@@ -49,7 +51,12 @@ void Engine::run() {
                     break;
                 systemPtr->fixedUpdate();
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+
+            auto delta = std::chrono::steady_clock::now() - start;
+            auto sleepTime = std::chrono::milliseconds(20) - delta;
+
+            if(sleepTime > nanoseconds(0))
+            std::this_thread::sleep_for(sleepTime);
         }
     });
 
@@ -71,8 +78,12 @@ void Engine::stop() {
     mustStop = true;
 }
 
-void Engine::resizeWindow(uint32_t width, uint32_t height, RenderWindow* window) {
-    renderer.resizeWindow(width, height, window);
+void Engine::windowHasResized(uint32_t width, uint32_t height, RenderWindow *window) {
+
+    Logger::warn("windowHasResized has not been implemented!");
+
+    //for(auto& system : engineSystems)
+        //system.resizeWindow(width, height, window);
 }
 
 string Engine::getVersionString(uint32_t major, uint32_t minor, uint32_t patch) {

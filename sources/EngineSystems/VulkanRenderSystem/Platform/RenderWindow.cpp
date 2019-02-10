@@ -150,7 +150,8 @@ void RenderWindow::onWindowResize(GLFWwindow *window, int width, int height) {
         return;
 
     if(renderWindow->application != nullptr) {
-        renderWindow->application->resizeWindow(static_cast<uint32_t>(width), static_cast<uint32_t>(height), renderWindow);
+        renderWindow->application->windowHasResized(static_cast<uint32_t>(width), static_cast<uint32_t>(height),
+                                                    renderWindow);
     } else {
         Logger::failure("Engine pointer was not set!");
     }
