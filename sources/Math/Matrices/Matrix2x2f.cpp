@@ -12,9 +12,9 @@ namespace Math {
 
     Matrix2x2f::Matrix2x2f(float a0, float a1, float b0, float b1) : data { a0,a1,b0,b1 } {}
 
-    Matrix2x2f::Matrix2x2f(Vector2f a, Vector2f b) : data { a.x, a.y, b.x, b.y } {}
+    Matrix2x2f::Matrix2x2f(const Vector2f& a, const Vector2f& b) : data { a.x, a.y, b.x, b.y } {}
 
-    Matrix2x2f::Matrix2x2f(array<float, 4> array) : data { array[0], array[1], array[2], array[3] } {}
+    Matrix2x2f::Matrix2x2f(const array<float, 4>& array) : data { array[0], array[1], array[2], array[3] } {}
 
     float& Matrix2x2f::operator[](const size_t index) {
         return data[index];

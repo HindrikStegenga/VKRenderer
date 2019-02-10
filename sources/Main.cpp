@@ -46,8 +46,8 @@ int main() {
 
 //    using namespace Math;
 //
-//    Matrix3x3f mat(1,2,3,4,5,6,7,8,9);
-//    Matrix3x3f mat2(6,6,7,8,2,3,9,0,1);
+//    Matrix4x4f mat(1,2,3,4, 5,6,7,8, 9,54,6,3, 6,7,8,9);
+//    Matrix4x4f mat2(6,6,7,8, 2,3,9,0, 1,2,6,1, 7,32,6,1);
 //
 //
 //    json something;

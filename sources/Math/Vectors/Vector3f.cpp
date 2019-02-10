@@ -28,6 +28,9 @@ namespace Math {
         return Vector3f(x / mag, y / mag, z / mag);
     }
 
+    Vector3f::Vector3f(const Vector2f& vec, float c) : x(vec.x), y(vec.y), z(c) {
+    }
+
     Vector3f add(const Vector3f &lhs, float rhs) {
         return Vector3f(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs);
     }

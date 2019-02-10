@@ -16,13 +16,18 @@ namespace Math {
         c0, c1, c2
     } {}
 
-    Matrix3x3f::Matrix3x3f(array<float, 9> array)
+    Matrix3x3f::Matrix3x3f(const array<float, 9>& array)
         : data { array[0], array[1], array[2],
                  array[3], array[4], array[5],
                  array[6], array[7], array[8]} {
     }
 
-    Matrix3x3f::Matrix3x3f(Vector3f a, Vector3f b, Vector3f c)
+    Matrix3x3f::Matrix3x3f(const Matrix2x2f &mat) : data { mat[0], mat[1], 0.0f,
+                                                           mat[2], mat[3], 0.0f,
+                                                           0.0f,     0.0f, 1.0f } {
+    }
+
+    Matrix3x3f::Matrix3x3f(const Vector3f& a, const Vector3f& b, const Vector3f& c)
         : data { a.x, a.y, a.z,
                  b.x, b.y, b.z,
                  c.x, c.y, c.z } {

@@ -8,6 +8,7 @@
 #include <array>
 #include "../MathSerialization.h"
 #include "../Vectors/Vector3f.h"
+#include "Matrix2x2f.h"
 
 using std::array;
 
@@ -31,12 +32,14 @@ namespace Math {
         Matrix3x3f(const Matrix3x3f&) = default;
         Matrix3x3f& operator=(const Matrix3x3f&) = default;
 
+        explicit Matrix3x3f(const Matrix2x2f& mat);
+
         Matrix3x3f(float a0, float a1, float a2,
                    float b0, float b1, float b2,
                    float c0, float c1, float c2);
 
-        explicit Matrix3x3f(array<float, 9> array);
-        Matrix3x3f(Vector3f a, Vector3f b, Vector3f c);
+        explicit Matrix3x3f(const array<float, 9>& array);
+        Matrix3x3f(const Vector3f& a, const Vector3f& b, const Vector3f& c);
     public:
         float& operator[](size_t index);
         const float& operator[](size_t index) const;

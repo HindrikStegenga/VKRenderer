@@ -6,6 +6,8 @@
 #define VKRENDERER_VECTOR4F_H
 
 #include "../MathSerialization.h"
+#include "Vector2f.h"
+#include "Vector3f.h"
 
 namespace Math {
 
@@ -20,6 +22,9 @@ namespace Math {
         ~Vector4f() = default;
 
         Vector4f(float x, float y, float z, float w);
+
+        Vector4f(const Vector3f& vec, float c);
+        Vector4f(const Vector2f& vec1, const Vector2f& vec2);
 
         Vector4f(const Vector4f&) = default;
         Vector4f& operator=(const Vector4f&) = default;

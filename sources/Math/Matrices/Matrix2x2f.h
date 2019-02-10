@@ -31,8 +31,8 @@ namespace Math {
 
         Matrix2x2f(float a0, float a1, float b0, float b1);
 
-        explicit Matrix2x2f(array<float, 4> array);
-        Matrix2x2f(Vector2f a, Vector2f b);
+        explicit Matrix2x2f(const array<float, 4>& array);
+        Matrix2x2f(const Vector2f& a, const Vector2f& b);
     public:
         float& operator[](size_t index);
         const float& operator[](size_t index) const;

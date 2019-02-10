@@ -6,6 +6,7 @@
 #define VKRENDERER_VECTOR3F_H
 
 #include "../MathSerialization.h"
+#include "Vector2f.h"
 
 namespace Math {
 
@@ -23,6 +24,8 @@ namespace Math {
         Vector3f(const Vector3f&) = default;
 
         Vector3f& operator=(const Vector3f&) = default;
+
+        explicit Vector3f( const Vector2f& vec, float c);
     public:
         float magnitude() const;
         Vector3f negate() const;

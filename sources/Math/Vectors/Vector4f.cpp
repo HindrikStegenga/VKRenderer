@@ -29,6 +29,10 @@ namespace Math {
         return Vector4f(x / mag, y / mag, z / mag, w / mag);
     }
 
+    Vector4f::Vector4f(const Vector3f &vec, float c) : x(vec.x), y(vec.y), z(vec.z), w(c) {}
+
+    Vector4f::Vector4f(const Vector2f &vec1, const Vector2f &vec2) : x(vec1.x), y(vec1.y), z(vec2.x), w(vec2.y) {}
+
     Vector4f add(const Vector4f &lhs, float rhs) {
         return Vector4f(lhs.x + rhs, lhs.y + rhs, lhs.z + rhs, lhs.w + rhs);
     }
