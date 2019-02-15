@@ -33,14 +33,11 @@ public:
     explicit VulkanRenderSystem(Engine* engine, vk_GeneralSettings settings, ExtensionProcessingFunc extensionProcessingFunc);
     ~VulkanRenderSystem() override;
 
-    VulkanRenderSystem(const VulkanRenderSystem&)       = delete;
-    VulkanRenderSystem(VulkanRenderSystem&&) noexcept   = default;
-
+    VulkanRenderSystem(const VulkanRenderSystem&)                   = delete;
     VulkanRenderSystem& operator= (const VulkanRenderSystem&)       = delete;
-    VulkanRenderSystem& operator= (VulkanRenderSystem&&) noexcept   = default;
 public:
     void resizeWindow(uint32_t width, uint32_t height, WindowRenderTarget* renderTarget);
-    void resizeWindow(uint32_t width, uint32_t height, RenderWindow* renderWindow);
+    void windowHasResized(uint32_t width, uint32_t height, RenderWindow* renderWindow) override;
 
     void update(std::chrono::nanoseconds deltaTime) override;
     void fixedUpdate() override;

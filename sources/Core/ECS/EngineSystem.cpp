@@ -18,3 +18,27 @@ void EngineSystem::enqueueTask(function<void()> task) {
 void EngineSystem::enqueueTask(AwaitableTask &task) {
     engine->enqueueTask(task);
 }
+
+void EngineSystem::resumeUpdateThread() {
+    engine->resumeUpdateThread(this);
+}
+
+void EngineSystem::haltUpdateThread() {
+    engine->haltUpdateThread(this);
+}
+
+void EngineSystem::processFixedThreadSyncs() {
+    if(!engine->mustWaitForFixedUpdateThread(this))
+        return;
+
+    //Wait for fixed update here...
+    engine->waitForFixedUpdateThread(this);
+}
+
+void EngineSystem::haltFixedUpdateThread() {
+
+}
+
+void EngineSystem::resumeFixedUpdateThread() {
+
+}

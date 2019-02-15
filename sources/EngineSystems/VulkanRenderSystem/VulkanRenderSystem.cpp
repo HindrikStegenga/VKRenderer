@@ -176,12 +176,17 @@ VkDevice VulkanRenderSystem::getDevice() {
     return device.getPresentDeviceInfo().logical;
 }
 
-void VulkanRenderSystem::resizeWindow(uint32_t width, uint32_t height, RenderWindow* renderWindow) {
+void VulkanRenderSystem::windowHasResized(uint32_t width, uint32_t height, RenderWindow* renderWindow) {
+
+    haltUpdateThread();
+
     for (auto& target : renderTargets) {
         if (target.renderWindow == renderWindow) {
             resizeWindow(width, height, &target);
         }
     }
+
+    resumeUpdateThread();
 }
 
 void VulkanRenderSystem::update(std::chrono::nanoseconds deltaTime) {

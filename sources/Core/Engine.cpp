@@ -53,6 +53,7 @@ void Engine::run() {
         for(auto& systemPtr : engineSystems) {
             EngineSystem& system = systemPtr.getEngineSystem();
 
+            system.processFixedThreadSyncs();
             system.update(deltaTime);
         }
     }
@@ -65,10 +66,8 @@ void Engine::stop() {
 
 void Engine::windowHasResized(uint32_t width, uint32_t height, RenderWindow *window) {
 
-    Logger::warn("windowHasResized has not been implemented!");
-
-    //for(auto& system : engineSystems)
-        //system.resizeWindow(width, height, window);
+    for(auto& system : engineSystems)
+        system.getEngineSystem().windowHasResized(width, height, window);
 }
 
 string Engine::getVersionString(uint32_t major, uint32_t minor, uint32_t patch) {
@@ -86,4 +85,44 @@ void Engine::enqueueTask(AwaitableTask &task) {
 
 vector<RenderWindow> &Engine::getRenderWindows() {
     return renderWindows;
+}
+
+void Engine::haltUpdateThread(EngineSystem *engineSystem) {
+    for(auto& s : engineSystems) {
+        if(&s.getEngineSystem() == engineSystem){
+            s.haltUpdateThread();
+            return;
+        }
+    }
+    Logger::failure("Engine System not found? How can this be?");
+}
+
+void Engine::resumeUpdateThread(EngineSystem *engineSystem) {
+    for(auto& s : engineSystems) {
+        if(&s.getEngineSystem() == engineSystem){
+            s.resumeUpdateThread();
+            return;
+        }
+    }
+    Logger::failure("Engine System not found? How can this be?");
+}
+
+bool Engine::mustWaitForFixedUpdateThread(EngineSystem *engineSystem) {
+    for(auto& s : engineSystems) {
+        if(&s.getEngineSystem() == engineSystem) {
+            return s.mustWaitForFixedUpdate();
+        }
+    }
+    Logger::failure("Engine System not found? How can this be?");
+    return false;
+}
+
+void Engine::waitForFixedUpdateThread(EngineSystem *engineSystem) {
+    for(auto& s : engineSystems) {
+        if(&s.getEngineSystem() == engineSystem){
+            s.waitForFixedUpdateThread();
+            return;
+        }
+    }
+    Logger::failure("Engine System not found? How can this be?");
 }

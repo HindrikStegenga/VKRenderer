@@ -52,6 +52,13 @@ public:
     void enqueueTask(AwaitableTask& task);
 
     vector<RenderWindow>& getRenderWindows();
+private:
+    friend class EngineSystem;
+
+    bool mustWaitForFixedUpdateThread(EngineSystem *engineSystem);
+    void waitForFixedUpdateThread(EngineSystem *engineSystem);
+    void haltUpdateThread(EngineSystem *engineSystem);
+    void resumeUpdateThread(EngineSystem *engineSystem);
 public:
     static string getVersionString(uint32_t major, uint32_t minor, uint32_t patch);
 };

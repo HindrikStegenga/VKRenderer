@@ -17,13 +17,22 @@
 
 using std::unique_ptr;
 using std::mutex;
+using std::unique_lock;
+using std::lock_guard;
 using std::condition_variable;
 
 class EngineSystemThreadingContainer final {
 private:
     unique_ptr<EngineSystem> engineSystem;
-    mutex syncMutex;
-    condition_variable conditionVariable;
+
+    mutex waitOnFixedMutex;
+    mutex waitOnMainMutex;
+
+    condition_variable mustWaitOnFixedCV;
+    condition_variable mustWaitOnMainCV;
+
+    bool waitForFixedUpdate = false;
+    bool waitForUpdate      = false;
 public:
     EngineSystemThreadingContainer() = default;
     explicit EngineSystemThreadingContainer(unique_ptr<EngineSystem>&& ptr);
@@ -36,14 +45,16 @@ public:
 public:
     EngineSystem& getEngineSystem();
 
+    bool mustWaitForUpdateThread();
+    void waitForUpdateThread();
+    void haltFixedUpdateThread();
+    void resumeFixedUpdateThread();
+
+    bool mustWaitForFixedUpdate();
+    void waitForFixedUpdateThread();
+    void haltUpdateThread();
+    void resumeUpdateThread();
 };
-
-inline EngineSystemThreadingContainer::EngineSystemThreadingContainer(unique_ptr<EngineSystem>&& ptr) : engineSystem(std::move(ptr)) {
-}
-
-inline EngineSystem &EngineSystemThreadingContainer::getEngineSystem() {
-    return *engineSystem;
-}
 
 
 #endif //VKRENDERER_ENGINESYSTEMTHREADINGCONTAINER_H
