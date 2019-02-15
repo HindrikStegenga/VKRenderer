@@ -13,9 +13,11 @@
 
 class Scene {
 private:
+    //For some reason not compiling in release mode?
+
     //StaticReusablePool<Entity> staticEntities;
 
-    LinearStaticReusablePool<Entity> staticEntities;
+    //LinearStaticReusablePool<Entity> staticEntities;
     //LinearStaticReusablePool<Entity> dynamicEntities;
 
 public:

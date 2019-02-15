@@ -100,7 +100,7 @@ void StaticStack<T, container_size>::push(Args... args) {
     if(usedCount >= container_size)
         throw std::runtime_error("Out of bounds!");
 
-    data[usedCount] = T(std::forward(args)...);
+    new (data[usedCount]) T(std::forward<Args>(args)...);
     usedCount++;
 }
 
@@ -110,7 +110,8 @@ void StaticStack<T, container_size>::emplace(Args... args) {
     if(usedCount >= container_size)
         throw std::runtime_error("Out of bounds!");
 
-    data[usedCount] = std::move(T(std::forward(args)...));
+    void* place = &data[usedCount];
+    new (place) T(std::forward<Args>(args)...);
     usedCount++;
 }
 

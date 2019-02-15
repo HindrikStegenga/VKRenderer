@@ -22,17 +22,14 @@ class EngineSystem {
 private:
     Engine* engine = nullptr;
 public:
-    EngineSystem() = default;
+    explicit EngineSystem(Engine* engine);
     virtual ~EngineSystem() = 0;
 
     EngineSystem(const EngineSystem&) = delete;
-    EngineSystem(EngineSystem&&) = default;
+    EngineSystem(EngineSystem&&) = delete;
 
     EngineSystem& operator=(const EngineSystem&) = delete;
-    EngineSystem& operator=(EngineSystem&&) = default;
-private:
-    friend class Engine;
-    void setEnginePointer(Engine* engine);
+    EngineSystem& operator=(EngineSystem&&) = delete;
 public:
     void enqueueTask(function<void()> task);
     void enqueueTask(AwaitableTask& task);

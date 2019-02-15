@@ -6,9 +6,10 @@
 #include "../../Utilities/ConfigFileReader.h"
 #include "RenderModes/ForwardRenderMode.h"
 #include "Utilities/Parsable/VertexLayout.h"
+#include "../../Core/Engine.h"
 
 
-VulkanRenderSystem::VulkanRenderSystem(vk_GeneralSettings settings, vector<RenderWindow>& renderWindows, ExtensionProcessingFunc extensionProcessingFunc) : debugEnabled(settings.applicationSettings.debugMode ? VK_TRUE : VK_FALSE)
+VulkanRenderSystem::VulkanRenderSystem(Engine* engine, vk_GeneralSettings settings, ExtensionProcessingFunc extensionProcessingFunc) : EngineSystem(engine), debugEnabled(settings.applicationSettings.debugMode ? VK_TRUE : VK_FALSE)
 {
     vector<const char*> extensions;
 	vector<const char*> layers;
@@ -57,6 +58,8 @@ VulkanRenderSystem::VulkanRenderSystem(vk_GeneralSettings settings, vector<Rende
     if (this->debugEnabled == VK_TRUE) {
         setupDebugCallback();
     }
+
+    vector<RenderWindow>& renderWindows = engine->getRenderWindows();
 
     vector<VkSurfaceKHR> surfaces(renderWindows.size());
     for (size_t i = 0; i < renderWindows.size(); ++i) {

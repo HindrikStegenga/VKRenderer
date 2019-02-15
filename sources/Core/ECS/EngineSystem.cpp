@@ -7,12 +7,9 @@
 #include "EngineSystem.h"
 #include "../Engine.h"
 
+EngineSystem::EngineSystem(Engine* engine) : engine(engine) {}
+
 EngineSystem::~EngineSystem() = default;
-
-
-void EngineSystem::setEnginePointer(Engine* engine) {
-    this->engine = engine;
-}
 
 void EngineSystem::enqueueTask(function<void()> task) {
     engine->enqueueTask(std::move(task));

@@ -30,8 +30,7 @@ private:
     VkDebugReportCallbackEXT    debugCallbackHandle = VK_NULL_HANDLE;
     VkBool32                    debugEnabled        = VK_FALSE;
 public:
-    VulkanRenderSystem() = default;
-    explicit VulkanRenderSystem(vk_GeneralSettings settings, vector<RenderWindow>& renderWindows, ExtensionProcessingFunc extensionProcessingFunc);
+    explicit VulkanRenderSystem(Engine* engine, vk_GeneralSettings settings, ExtensionProcessingFunc extensionProcessingFunc);
     ~VulkanRenderSystem() override;
 
     VulkanRenderSystem(const VulkanRenderSystem&)       = delete;

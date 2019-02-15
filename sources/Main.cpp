@@ -82,9 +82,7 @@ int main() {
 
     VulkanSettings vulkanSettings = readVulkanSettings();
 
-    auto renderWindow = RenderWindow(graphicsSettings.resolutionX, graphicsSettings.resolutionY, true);
-
-    engine.registerRenderWindow(renderWindow);
+    engine.registerRenderWindow(graphicsSettings.resolutionX, graphicsSettings.resolutionY, true);
 
     vk_GeneralSettings settings = {};
 
@@ -92,9 +90,7 @@ int main() {
     settings.graphicsSettings = graphicsSettings;
     settings.vulkanSettings = vulkanSettings;
 
-    EngineSystem* renderSystem = new VulkanRenderSystem(settings, engine.getRenderWindows(), &RenderWindow::processExtensions);
-
-    engine.registerEngineSystem(*renderSystem);
+    engine.registerEngineSystem<VulkanRenderSystem>(&engine, settings, &RenderWindow::processExtensions);
 
     engine.run();
 

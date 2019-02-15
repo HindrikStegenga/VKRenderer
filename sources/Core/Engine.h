@@ -41,16 +41,11 @@ public:
     void windowHasResized(uint32_t width, uint32_t height, RenderWindow *window);
     void run();
     void stop();
-private:
-    void setupEngineSystems();
 public:
     template<typename T, typename ...Args>
     void registerEngineSystem(Args... args);
     template<typename ...Args>
     void registerRenderWindow(Args... args);
-
-    void registerRenderWindow(RenderWindow& renderWindow);
-    void registerEngineSystem(EngineSystem& engineSystem);
 
     void enqueueTask(function<void()> task);
     void enqueueTask(AwaitableTask& task);
@@ -62,13 +57,12 @@ public:
 
 template<typename T, typename... Args>
 inline void Engine::registerEngineSystem(Args... args) {
-    engineSystems.emplace(T(std::forward(args)...));
-    engineSystems.top()->setEnginePointer(this);
+    engineSystems.emplace(make_unique<T>(std::forward<Args>(args)...));
 }
 
 template<typename... Args>
 inline void Engine::registerRenderWindow(Args... args) {
-    renderWindows.emplace_back(std::forward(args)...);
+    renderWindows.emplace_back(std::forward<Args>(args)...);
     renderWindows.back().setEnginePointer(this);
 }
 
