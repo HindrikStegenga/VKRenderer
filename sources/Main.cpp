@@ -4,6 +4,24 @@
 #include "Core/ECS/Component.h"
 #include "Math/Math.h"
 
+VulkanSettings readVulkanSettings() {
+
+    std::ifstream file(PATH_CONFIG_FILES + "vulkan.json");
+    if (!file.is_open()) {
+        Logger::failure("Could not read vulkan settings file!");
+    }
+
+    std::stringstream vulkanSettingsBuffer;
+    vulkanSettingsBuffer << file.rdbuf();
+
+    auto graphicsSettingsJSON = json::parse(vulkanSettingsBuffer.str());
+
+    VulkanSettings vulkanSettings = graphicsSettingsJSON.get<VulkanSettings>();
+    file.close();
+
+    return vulkanSettings;
+}
+
 ApplicationSettings readAppSettings() {
 
     std::ifstream file(PATH_CONFIG_FILES + "application.json");
@@ -54,7 +72,30 @@ int main() {
 //
 //    std::cout << std::setw(4) << something << std::endl;
 
-    Engine engine(readAppSettings(), readGraphicsSettings());
+    auto applicationSettings = readAppSettings();
+    auto graphicsSettings = readGraphicsSettings();
+
+    Engine engine(applicationSettings, graphicsSettings);
+
+    Logger::log(applicationSettings.applicationName + " " + Engine::getVersionString(applicationSettings.applicationVersionMajor, applicationSettings.applicationVersionMinor, applicationSettings.applicationVersionPatch));
+    Logger::log(applicationSettings.engineName + " " + Engine::getVersionString(applicationSettings.engineVersionMajor, applicationSettings.engineVersionMinor, applicationSettings.engineVersionPatch));
+
+    VulkanSettings vulkanSettings = readVulkanSettings();
+
+    auto renderWindow = RenderWindow(graphicsSettings.resolutionX, graphicsSettings.resolutionY, true);
+
+    engine.registerRenderWindow(renderWindow);
+
+    vk_GeneralSettings settings = {};
+
+    settings.applicationSettings = applicationSettings;
+    settings.graphicsSettings = graphicsSettings;
+    settings.vulkanSettings = vulkanSettings;
+
+    EngineSystem* renderSystem = new VulkanRenderSystem(settings, engine.getRenderWindows(), &RenderWindow::processExtensions);
+
+    engine.registerEngineSystem(*renderSystem);
+
     engine.run();
 
     return 0;

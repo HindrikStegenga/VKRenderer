@@ -34,6 +34,12 @@ public:
     void push(const T& item);
     void emplace(T&& item);
 
+    template<typename ...Args>
+    void push(Args... args);
+
+    template<typename ...Args>
+    void emplace(Args... args);
+
     bool empty() const;
 
     void pop();
@@ -85,6 +91,26 @@ void StaticStack<T, container_size>::emplace(T &&item) {
         throw std::runtime_error("Out of bounds!");
 
     data[usedCount] = std::move(item);
+    usedCount++;
+}
+
+template<typename T, size_t container_size>
+template<typename... Args>
+void StaticStack<T, container_size>::push(Args... args) {
+    if(usedCount >= container_size)
+        throw std::runtime_error("Out of bounds!");
+
+    data[usedCount] = T(std::forward(args)...);
+    usedCount++;
+}
+
+template<typename T, size_t container_size>
+template<typename... Args>
+void StaticStack<T, container_size>::emplace(Args... args) {
+    if(usedCount >= container_size)
+        throw std::runtime_error("Out of bounds!");
+
+    data[usedCount] = std::move(T(std::forward(args)...));
     usedCount++;
 }
 

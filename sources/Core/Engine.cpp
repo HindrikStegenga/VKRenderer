@@ -10,7 +10,7 @@
 #include "../Utilities/ConfigFileReader.h"
 #include "../Serializables/ConfigTypes.h"
 #include "Threading/AwaitableTask.h"
-
+/*
 VulkanSettings readVulkanSettings() {
 
     std::ifstream file(PATH_CONFIG_FILES + "vulkan.json");
@@ -27,14 +27,14 @@ VulkanSettings readVulkanSettings() {
     file.close();
 
     return vulkanSettings;
-}
+} */
 
 
 Engine::Engine(ApplicationSettings applicationSettings, GraphicsSettings graphicsSettings)
     : applicationSettings(std::move(applicationSettings)), graphicsSettings(graphicsSettings), threadpool(std::thread::hardware_concurrency())
     {
 
-    setupEngineSystems();
+    //setupEngineSystems();
 }
 
 void Engine::run() {
@@ -98,6 +98,7 @@ string Engine::getVersionString(uint32_t major, uint32_t minor, uint32_t patch) 
 }
 
 void Engine::setupEngineSystems() {
+/*
 
     Logger::log(applicationSettings.applicationName + " " + getVersionString(applicationSettings.applicationVersionMajor, applicationSettings.applicationVersionMinor, applicationSettings.applicationVersionPatch));
     Logger::log(applicationSettings.engineName + " " + getVersionString(applicationSettings.engineVersionMajor, applicationSettings.engineVersionMinor, applicationSettings.engineVersionPatch));
@@ -117,12 +118,19 @@ void Engine::setupEngineSystems() {
 
     EngineSystem* renderSystem = new VulkanRenderSystem(settings, renderWindows, &RenderWindow::processExtensions);
     renderSystem->setEnginePointer(this);
-    engineSystems.emplace_back(renderSystem);
+
+    engineSystems.emplace(unique_ptr<EngineSystem>(renderSystem));
+
+    //engineSystems.emplace_back(renderSystem);
+    */
 }
 
 void Engine::registerEngineSystem(EngineSystem& engineSystem) {
-    engineSystems.emplace_back(&engineSystem);
-    engineSystems.back().get()->setEnginePointer(this);
+    engineSystems.emplace(unique_ptr<EngineSystem>(&engineSystem));
+    //engineSystems.emplace_back(&engineSystem);
+    engineSystems.top()->setEnginePointer(this);
+
+    //engineSystems.back().get()->setEnginePointer(this);
 }
 
 void Engine::registerRenderWindow(RenderWindow &renderWindow) {
@@ -136,4 +144,8 @@ void Engine::enqueueTask(function<void()> task) {
 
 void Engine::enqueueTask(AwaitableTask &task) {
     task.enqueue(threadpool);
+}
+
+vector<RenderWindow> &Engine::getRenderWindows() {
+    return renderWindows;
 }

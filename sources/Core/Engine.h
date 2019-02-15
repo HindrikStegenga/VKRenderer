@@ -19,7 +19,8 @@ class Engine final {
 private:
     Threadpool                          threadpool;
     vector<RenderWindow>                renderWindows = {};
-    vector<unique_ptr<EngineSystem>>    engineSystems = {};
+
+    StaticStack<unique_ptr<EngineSystem>, 16> engineSystems = {};
     SceneManager                        sceneManager;
 
     ApplicationSettings                 applicationSettings = {};
@@ -43,15 +44,32 @@ public:
 private:
     void setupEngineSystems();
 public:
+    template<typename T, typename ...Args>
+    void registerEngineSystem(Args... args);
+    template<typename ...Args>
+    void registerRenderWindow(Args... args);
+
     void registerRenderWindow(RenderWindow& renderWindow);
     void registerEngineSystem(EngineSystem& engineSystem);
 
     void enqueueTask(function<void()> task);
     void enqueueTask(AwaitableTask& task);
 
-private:
+    vector<RenderWindow>& getRenderWindows();
+public:
     static string getVersionString(uint32_t major, uint32_t minor, uint32_t patch);
 };
 
+template<typename T, typename... Args>
+inline void Engine::registerEngineSystem(Args... args) {
+    engineSystems.emplace(T(std::forward(args)...));
+    engineSystems.top()->setEnginePointer(this);
+}
+
+template<typename... Args>
+inline void Engine::registerRenderWindow(Args... args) {
+    renderWindows.emplace_back(std::forward(args)...);
+    renderWindows.back().setEnginePointer(this);
+}
 
 #endif //VKRENDERER_APPLICATION_H
