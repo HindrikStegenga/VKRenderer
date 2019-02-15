@@ -138,3 +138,16 @@ void Engine::resumeFixedUpdateThread(EngineSystem *engineSystem) {
     }
     Logger::failure("Engine System not found? How can this be?");
 }
+
+float Engine::getTimeScale() const {
+    return timeScale;
+}
+
+void Engine::setTimeScale(float scale) {
+    if (scale < 0.0f) {
+        Logger::warn("Time scale cannot be set to a negative number. It will be set to 0");
+        timeScale = 0.0f;
+        return;
+    }
+    timeScale = scale;
+}

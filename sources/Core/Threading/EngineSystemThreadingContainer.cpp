@@ -2,7 +2,7 @@
 // Created by hindrik on 15-2-19.
 //
 
-#define THREAD_DEBUG 0
+//#define THREAD_DEBUG
 
 #include "EngineSystemThreadingContainer.h"
 #include "../../Utilities/Logger.h"
