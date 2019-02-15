@@ -50,7 +50,7 @@ public:
     void haltFixedUpdateThread();
     void resumeFixedUpdateThread();
 
-    bool mustWaitForFixedUpdate();
+    bool mustWaitForFixedUpdateThread();
     void waitForFixedUpdateThread();
     void haltUpdateThread();
     void resumeUpdateThread();

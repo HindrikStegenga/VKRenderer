@@ -14,7 +14,7 @@ EngineSystem &EngineSystemThreadingContainer::getEngineSystem() {
     return *engineSystem;
 }
 
-bool EngineSystemThreadingContainer::mustWaitForFixedUpdate() {
+bool EngineSystemThreadingContainer::mustWaitForFixedUpdateThread() {
     return waitForFixedUpdate;
 }
 
@@ -85,7 +85,6 @@ void EngineSystemThreadingContainer::waitForFixedUpdateThread() {
     Logger::log("[Main] Resumed main thread.");
 #endif
 }
-
 
 
 bool EngineSystemThreadingContainer::mustWaitForUpdateThread() {

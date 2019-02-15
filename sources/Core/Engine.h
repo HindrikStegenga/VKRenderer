@@ -55,8 +55,9 @@ public:
 private:
     friend class EngineSystem;
 
-    bool mustWaitForFixedUpdateThread(EngineSystem *engineSystem);
-    void waitForFixedUpdateThread(EngineSystem *engineSystem);
+    void haltFixedUpdateThread(EngineSystem* engineSystem);
+    void resumeFixedUpdateThread(EngineSystem* engineSystem);
+
     void haltUpdateThread(EngineSystem *engineSystem);
     void resumeUpdateThread(EngineSystem *engineSystem);
 public:

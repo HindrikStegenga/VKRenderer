@@ -210,7 +210,13 @@ void VulkanRenderSystem::update(std::chrono::nanoseconds deltaTime) {
     }
 }
 
-void VulkanRenderSystem::fixedUpdate() {
+bool VulkanRenderSystem::fixedUpdate() {
+
+    for(auto& target : renderTargets) {
+
+        if (!target.renderWindow->pollWindowEvents())
+            return false;
+    }
 
     accumulatedTime += latestDeltaTime;
     accumulatedFrames += 1;
@@ -238,14 +244,6 @@ void VulkanRenderSystem::fixedUpdate() {
             target.renderWindow->setWindowTitle("VKRenderer " + std::to_string(fps) + " FPS");
         }
     }
-}
 
-bool VulkanRenderSystem::getSystemStatus() {
-
-    for(auto& target : renderTargets) {
-
-        if (!target.renderWindow->pollWindowEvents())
-            return false;
-    }
     return true;
 }

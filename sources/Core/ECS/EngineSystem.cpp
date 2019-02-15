@@ -27,18 +27,10 @@ void EngineSystem::haltUpdateThread() {
     engine->haltUpdateThread(this);
 }
 
-void EngineSystem::processFixedThreadSyncs() {
-    if(!engine->mustWaitForFixedUpdateThread(this))
-        return;
-
-    //Wait for fixed update here...
-    engine->waitForFixedUpdateThread(this);
-}
-
 void EngineSystem::haltFixedUpdateThread() {
-
+    engine->haltFixedUpdateThread(this);
 }
 
 void EngineSystem::resumeFixedUpdateThread() {
-
+    engine->resumeFixedUpdateThread(this);
 }

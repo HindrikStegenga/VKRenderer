@@ -27,15 +27,14 @@ void Engine::run() {
 
             for(auto& systemPtr : engineSystems) {
 
-                if(!systemPtr.getEngineSystem().getSystemStatus()){
+                if (!systemPtr.getEngineSystem().fixedUpdate()) {
                     mustStop = true;
-                }
-
-                if(mustStop)
                     break;
-
-                systemPtr.getEngineSystem().fixedUpdate();
+                }
             }
+
+            if(mustStop)
+                break;
 
             auto delta = std::chrono::steady_clock::now() - start;
             auto sleepTime = std::chrono::milliseconds(20) - delta;
@@ -48,12 +47,17 @@ void Engine::run() {
     //Current main thread
     while (!mustStop) {
 
+        //Get delta time since previous frame.
         std::chrono::nanoseconds deltaTime = internalClock.getDeltaTime();
 
         for(auto& systemPtr : engineSystems) {
             EngineSystem& system = systemPtr.getEngineSystem();
 
-            system.processFixedThreadSyncs();
+            if(systemPtr.mustWaitForFixedUpdateThread()) {
+                //Wait for fixedUpdate() here...
+                systemPtr.waitForFixedUpdateThread();
+            } //Resume after fixedUpdate() completed.
+
             system.update(deltaTime);
         }
     }
@@ -107,20 +111,20 @@ void Engine::resumeUpdateThread(EngineSystem *engineSystem) {
     Logger::failure("Engine System not found? How can this be?");
 }
 
-bool Engine::mustWaitForFixedUpdateThread(EngineSystem *engineSystem) {
+void Engine::haltFixedUpdateThread(EngineSystem *engineSystem) {
     for(auto& s : engineSystems) {
-        if(&s.getEngineSystem() == engineSystem) {
-            return s.mustWaitForFixedUpdate();
+        if(&s.getEngineSystem() == engineSystem){
+            s.haltFixedUpdateThread();
+            return;
         }
     }
     Logger::failure("Engine System not found? How can this be?");
-    return false;
 }
 
-void Engine::waitForFixedUpdateThread(EngineSystem *engineSystem) {
+void Engine::resumeFixedUpdateThread(EngineSystem *engineSystem) {
     for(auto& s : engineSystems) {
         if(&s.getEngineSystem() == engineSystem){
-            s.waitForFixedUpdateThread();
+            s.resumeFixedUpdateThread();
             return;
         }
     }
