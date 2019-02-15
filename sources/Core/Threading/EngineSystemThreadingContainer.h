@@ -13,7 +13,7 @@
 #include <memory>
 #include <condition_variable>
 
-#include "ECS/EngineSystem.h"
+#include "../ECS/EngineSystem.h"
 
 using std::unique_ptr;
 using std::mutex;
@@ -25,11 +25,11 @@ class EngineSystemThreadingContainer final {
 private:
     unique_ptr<EngineSystem> engineSystem;
 
-    mutex waitOnFixedMutex;
-    mutex waitOnMainMutex;
+    mutex waitForFixedUpdateMutex;
+    mutex waitForUpdateMutex;
 
-    condition_variable mustWaitOnFixedCV;
-    condition_variable mustWaitOnMainCV;
+    condition_variable mustWaitForFixedUpdateCV;
+    condition_variable mustWaitForUpdateCV;
 
     bool waitForFixedUpdate = false;
     bool waitForUpdate      = false;
@@ -45,11 +45,13 @@ public:
 public:
     EngineSystem& getEngineSystem();
 
+    // May only be called from fixedUpdate()
     bool mustWaitForUpdateThread();
     void waitForUpdateThread();
     void haltFixedUpdateThread();
     void resumeFixedUpdateThread();
 
+    // May only be called from Update()
     bool mustWaitForFixedUpdateThread();
     void waitForFixedUpdateThread();
     void haltUpdateThread();

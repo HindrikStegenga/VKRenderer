@@ -34,7 +34,6 @@ public:
 public:
     void haltFixedUpdateThread();
     void resumeFixedUpdateThread();
-
     void haltUpdateThread();
     void resumeUpdateThread();
 public:

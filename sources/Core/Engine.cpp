@@ -11,6 +11,8 @@
 #include "../Serializables/ConfigTypes.h"
 #include "Threading/AwaitableTask.h"
 
+using std::thread;
+
 Engine::Engine(ApplicationSettings applicationSettings, GraphicsSettings graphicsSettings)
     : applicationSettings(std::move(applicationSettings)), graphicsSettings(graphicsSettings), threadpool(std::thread::hardware_concurrency())
     {
@@ -19,7 +21,7 @@ Engine::Engine(ApplicationSettings applicationSettings, GraphicsSettings graphic
 void Engine::run() {
 
     //Fixed update thread
-    std::thread fixedUpdateThread([this](){
+    thread fixedUpdateThread([this](){
 
         while (!mustStop) {
 
@@ -27,6 +29,12 @@ void Engine::run() {
 
             for(auto& systemPtr : engineSystems) {
 
+                if (systemPtr.mustWaitForUpdateThread()) {
+                    //Wait for update() here.
+                    systemPtr.waitForUpdateThread();
+                } //Resume here.
+
+                //TODO: Proper synchronization when it gets stopped, only relevant when multiple engine systems will be added.
                 if (!systemPtr.getEngineSystem().fixedUpdate()) {
                     mustStop = true;
                     break;
@@ -54,7 +62,7 @@ void Engine::run() {
             EngineSystem& system = systemPtr.getEngineSystem();
 
             if(systemPtr.mustWaitForFixedUpdateThread()) {
-                //Wait for fixedUpdate() here...
+                //Wait for fixedUpdate() here.
                 systemPtr.waitForFixedUpdateThread();
             } //Resume after fixedUpdate() completed.
 

@@ -8,7 +8,7 @@
 #include "../CommonInclude.h"
 #include "../EngineSystems/VulkanRenderSystem/Platform/RenderWindow.h"
 #include "../EngineSystems/VulkanRenderSystem/VulkanRenderSystem.h"
-#include "EngineSystemThreadingContainer.h"
+#include "Threading/EngineSystemThreadingContainer.h"
 #include "../Utilities/Nullable.h"
 #include "../Utilities/Clock.h"
 #include "../Serializables/ConfigTypes.h"
@@ -28,6 +28,7 @@ private:
     GraphicsSettings                    graphicsSettings = {};
 
     Clock                               internalClock;
+    float                               timeScale = 1.0f;
     bool                                mustStop = false;
 public:
     Engine(ApplicationSettings applicationSettings, GraphicsSettings graphicsSettings);
@@ -52,6 +53,9 @@ public:
     void enqueueTask(AwaitableTask& task);
 
     vector<RenderWindow>& getRenderWindows();
+
+    float getTimeScale() const;
+    void setTimeScale(float scale);
 private:
     friend class EngineSystem;
 
@@ -73,6 +77,19 @@ template<typename... Args>
 inline void Engine::registerRenderWindow(Args... args) {
     renderWindows.emplace_back(std::forward<Args>(args)...);
     renderWindows.back().setEnginePointer(this);
+}
+
+float Engine::getTimeScale() const {
+    return timeScale;
+}
+
+void Engine::setTimeScale(float scale) {
+    if (scale < 0.0f) {
+        Logger::warn("Time scale cannot be set to a negative number. It will be set to 0");
+        timeScale = 0.0f;
+        return;
+    }
+    timeScale = scale;
 }
 
 #endif //VKRENDERER_APPLICATION_H
