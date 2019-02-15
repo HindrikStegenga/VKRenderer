@@ -10,10 +10,11 @@
 #include <stdexcept>
 #include <cstring>
 
+//TODO: Modify so it doesn' t require default inizitalizables anymore.
 template<typename T, size_t container_size>
 class StaticStack final {
 private:
-    T data[container_size]  = {};
+    T data[container_size];
     size_t usedCount        = 0;
 public:
     StaticStack()  = default;

@@ -25,16 +25,16 @@ void Engine::run() {
 
             auto start = std::chrono::steady_clock::now();
 
-            for(const auto& systemPtr : engineSystems) {
+            for(auto& systemPtr : engineSystems) {
 
-                if(!systemPtr->getSystemStatus()){
+                if(!systemPtr.getEngineSystem().getSystemStatus()){
                     mustStop = true;
                 }
 
                 if(mustStop)
                     break;
 
-                systemPtr->fixedUpdate();
+                systemPtr.getEngineSystem().fixedUpdate();
             }
 
             auto delta = std::chrono::steady_clock::now() - start;
@@ -50,8 +50,8 @@ void Engine::run() {
 
         std::chrono::nanoseconds deltaTime = internalClock.getDeltaTime();
 
-        for(const auto& systemPtr : engineSystems) {
-            EngineSystem& system = *systemPtr;
+        for(auto& systemPtr : engineSystems) {
+            EngineSystem& system = systemPtr.getEngineSystem();
 
             system.update(deltaTime);
         }

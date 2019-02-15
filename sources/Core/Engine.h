@@ -8,6 +8,7 @@
 #include "../CommonInclude.h"
 #include "../EngineSystems/VulkanRenderSystem/Platform/RenderWindow.h"
 #include "../EngineSystems/VulkanRenderSystem/VulkanRenderSystem.h"
+#include "EngineSystemThreadingContainer.h"
 #include "../Utilities/Nullable.h"
 #include "../Utilities/Clock.h"
 #include "../Serializables/ConfigTypes.h"
@@ -20,7 +21,7 @@ private:
     Threadpool                          threadpool;
     vector<RenderWindow>                renderWindows = {};
 
-    StaticStack<unique_ptr<EngineSystem>, 16> engineSystems = {};
+    StaticStack<EngineSystemThreadingContainer, 16> engineSystems;
     SceneManager                        sceneManager;
 
     ApplicationSettings                 applicationSettings = {};
