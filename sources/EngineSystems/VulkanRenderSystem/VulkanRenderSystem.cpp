@@ -191,6 +191,8 @@ void VulkanRenderSystem::windowHasResized(uint32_t width, uint32_t height, Rende
 
 void VulkanRenderSystem::update(std::chrono::nanoseconds deltaTime) {
     latestDeltaTime = deltaTime;
+    accumulatedTime += latestDeltaTime;
+    accumulatedFrames += 1;
 
     for (auto& target : renderTargets) {
 
@@ -218,8 +220,6 @@ bool VulkanRenderSystem::fixedUpdate() {
             return false;
     }
 
-    accumulatedTime += latestDeltaTime;
-    accumulatedFrames += 1;
     int64_t fps = 0;
     bool mustSetFPS = false;
 
