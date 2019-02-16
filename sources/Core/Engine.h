@@ -8,7 +8,6 @@
 #include "../CommonInclude.h"
 #include "../EngineSystems/VulkanRenderSystem/Platform/RenderWindow.h"
 #include "../EngineSystems/VulkanRenderSystem/VulkanRenderSystem.h"
-#include "Threading/EngineSystemThreadingContainer.h"
 #include "../Utilities/Nullable.h"
 #include "../Utilities/Clock.h"
 #include "../Serializables/ConfigTypes.h"
@@ -21,7 +20,7 @@ private:
     Threadpool                          threadpool;
     vector<RenderWindow>                renderWindows = {};
 
-    StaticStack<EngineSystemThreadingContainer, 16> engineSystems;
+    StaticStack<unique_ptr<EngineSystem>, 16> engineSystems;
     SceneManager                        sceneManager;
 
     ApplicationSettings                 applicationSettings = {};
@@ -56,14 +55,6 @@ public:
 
     float getTimeScale() const;
     void setTimeScale(float scale);
-private:
-    friend class EngineSystem;
-
-    void haltFixedUpdateThread(EngineSystem* engineSystem);
-    void resumeFixedUpdateThread(EngineSystem* engineSystem);
-
-    void haltUpdateThread(EngineSystem *engineSystem);
-    void resumeUpdateThread(EngineSystem *engineSystem);
 public:
     static string getVersionString(uint32_t major, uint32_t minor, uint32_t patch);
 };

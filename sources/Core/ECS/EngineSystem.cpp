@@ -18,19 +18,3 @@ void EngineSystem::enqueueTask(function<void()> task) {
 void EngineSystem::enqueueTask(AwaitableTask &task) {
     engine->enqueueTask(task);
 }
-
-void EngineSystem::resumeUpdateThread() {
-    engine->resumeUpdateThread(this);
-}
-
-void EngineSystem::haltUpdateThread() {
-    engine->haltUpdateThread(this);
-}
-
-void EngineSystem::haltFixedUpdateThread() {
-    engine->haltFixedUpdateThread(this);
-}
-
-void EngineSystem::resumeFixedUpdateThread() {
-    engine->resumeFixedUpdateThread(this);
-}

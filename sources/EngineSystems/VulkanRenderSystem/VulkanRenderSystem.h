@@ -39,8 +39,10 @@ public:
     void resizeWindow(uint32_t width, uint32_t height, WindowRenderTarget* renderTarget);
     void windowHasResized(uint32_t width, uint32_t height, RenderWindow* renderWindow) override;
 
-    void update(std::chrono::nanoseconds deltaTime) override;
-    bool fixedUpdate() override;
+    bool update(std::chrono::nanoseconds deltaTime) override;
+private:
+    bool processWindowEvents(nanoseconds deltaTime);
+    void render(nanoseconds deltaTime);
 private:
     VkDevice getDevice();
     void resizeWindow(bool mustResize, WindowRenderTarget* renderTarget);

@@ -178,41 +178,29 @@ VkDevice VulkanRenderSystem::getDevice() {
 
 void VulkanRenderSystem::windowHasResized(uint32_t width, uint32_t height, RenderWindow* renderWindow) {
 
-    haltUpdateThread();
-
     for (auto& target : renderTargets) {
         if (target.renderWindow == renderWindow) {
             resizeWindow(width, height, &target);
         }
     }
-
-    resumeUpdateThread();
 }
 
-void VulkanRenderSystem::update(std::chrono::nanoseconds deltaTime) {
+bool VulkanRenderSystem::update(std::chrono::nanoseconds deltaTime) {
+
+    bool canContinue = processWindowEvents(deltaTime);
+
+    if(!canContinue)
+        return false;
+
+    render(deltaTime);
+
+    return true;
+}
+
+bool VulkanRenderSystem::processWindowEvents(nanoseconds deltaTime) {
     latestDeltaTime = deltaTime;
     accumulatedTime += latestDeltaTime;
     accumulatedFrames += 1;
-
-    for (auto& target : renderTargets) {
-
-        vk_PresentImageInfo presentImageInfo = target.swapchain.acquireNextImage();
-
-        resizeWindow(presentImageInfo.mustRecreateSwapchain, &target);
-
-        if(presentImageInfo.imageIndex == std::numeric_limits<uint32_t>::max())
-            return;
-
-        target.renderMode->render(presentImageInfo);
-
-        bool mustResize = false;
-        target.swapchain.presentImage(presentImageInfo.imageIndex, mustResize);
-
-        resizeWindow(mustResize, &target);
-    }
-}
-
-bool VulkanRenderSystem::fixedUpdate() {
 
     for(auto& target : renderTargets) {
 
@@ -244,6 +232,25 @@ bool VulkanRenderSystem::fixedUpdate() {
             target.renderWindow->setWindowTitle("VKRenderer " + std::to_string(fps) + " FPS");
         }
     }
-
     return true;
+}
+
+void VulkanRenderSystem::render(nanoseconds deltaTime) {
+
+    for (auto& target : renderTargets) {
+
+        vk_PresentImageInfo presentImageInfo = target.swapchain.acquireNextImage();
+
+        resizeWindow(presentImageInfo.mustRecreateSwapchain, &target);
+
+        if(presentImageInfo.imageIndex == std::numeric_limits<uint32_t>::max())
+            continue;
+
+        target.renderMode->render(presentImageInfo);
+
+        bool mustResize = false;
+        target.swapchain.presentImage(presentImageInfo.imageIndex, mustResize);
+
+        resizeWindow(mustResize, &target);
+    }
 }

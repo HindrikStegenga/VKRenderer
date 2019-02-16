@@ -20,56 +20,20 @@ Engine::Engine(ApplicationSettings applicationSettings, GraphicsSettings graphic
 
 void Engine::run() {
 
-    //Fixed update thread
-    thread fixedUpdateThread([this](){
-
-        while (!mustStop) {
-
-            auto start = std::chrono::steady_clock::now();
-
-            for(auto& systemPtr : engineSystems) {
-
-                if (systemPtr.mustWaitForUpdateThread()) {
-                    //Wait for update() here.
-                    systemPtr.waitForUpdateThread();
-                } //Resume here.
-
-                //TODO: Proper synchronization when it gets stopped, only relevant when multiple engine systems will be added.
-                if (!systemPtr.getEngineSystem().fixedUpdate()) {
-                    mustStop = true;
-                    break;
-                }
-            }
-
-            if(mustStop)
-                break;
-
-            auto delta = std::chrono::steady_clock::now() - start;
-            auto sleepTime = std::chrono::milliseconds(20) - delta;
-
-            if(sleepTime > nanoseconds(0))
-            std::this_thread::sleep_for(sleepTime);
-        }
-    });
-
-    //Current main thread
     while (!mustStop) {
 
         //Get delta time since previous frame.
         std::chrono::nanoseconds deltaTime = internalClock.getDeltaTime();
 
         for(auto& systemPtr : engineSystems) {
-            EngineSystem& system = systemPtr.getEngineSystem();
+            EngineSystem& system = *systemPtr;
 
-            if(systemPtr.mustWaitForFixedUpdateThread()) {
-                //Wait for fixedUpdate() here.
-                systemPtr.waitForFixedUpdateThread();
-            } //Resume after fixedUpdate() completed.
-
-            system.update(deltaTime);
+            if(!system.update(deltaTime)) {
+                mustStop = true;
+                break;
+            }
         }
     }
-    fixedUpdateThread.join();
 }
 
 void Engine::stop() {
@@ -79,7 +43,7 @@ void Engine::stop() {
 void Engine::windowHasResized(uint32_t width, uint32_t height, RenderWindow *window) {
 
     for(auto& system : engineSystems)
-        system.getEngineSystem().windowHasResized(width, height, window);
+        system->windowHasResized(width, height, window);
 }
 
 string Engine::getVersionString(uint32_t major, uint32_t minor, uint32_t patch) {
@@ -97,46 +61,6 @@ void Engine::enqueueTask(AwaitableTask &task) {
 
 vector<RenderWindow> &Engine::getRenderWindows() {
     return renderWindows;
-}
-
-void Engine::haltUpdateThread(EngineSystem *engineSystem) {
-    for(auto& s : engineSystems) {
-        if(&s.getEngineSystem() == engineSystem){
-            s.haltUpdateThread();
-            return;
-        }
-    }
-    Logger::failure("Engine System not found? How can this be?");
-}
-
-void Engine::resumeUpdateThread(EngineSystem *engineSystem) {
-    for(auto& s : engineSystems) {
-        if(&s.getEngineSystem() == engineSystem){
-            s.resumeUpdateThread();
-            return;
-        }
-    }
-    Logger::failure("Engine System not found? How can this be?");
-}
-
-void Engine::haltFixedUpdateThread(EngineSystem *engineSystem) {
-    for(auto& s : engineSystems) {
-        if(&s.getEngineSystem() == engineSystem){
-            s.haltFixedUpdateThread();
-            return;
-        }
-    }
-    Logger::failure("Engine System not found? How can this be?");
-}
-
-void Engine::resumeFixedUpdateThread(EngineSystem *engineSystem) {
-    for(auto& s : engineSystems) {
-        if(&s.getEngineSystem() == engineSystem){
-            s.resumeFixedUpdateThread();
-            return;
-        }
-    }
-    Logger::failure("Engine System not found? How can this be?");
 }
 
 float Engine::getTimeScale() const {
