@@ -8,18 +8,11 @@
 #include <vector>
 #include <string>
 #include "ECS/Entity.h"
-#include "../DataStorage/StaticReusablePool.h"
-#include "../DataStorage/LinearStaticReusablePool.h"
+#include "ECS/EntityManager.h"
 
 class Scene {
 private:
-    //For some reason not compiling in release mode?
-
-    //StaticReusablePool<Entity> staticEntities;
-
-    //LinearStaticReusablePool<Entity> staticEntities;
-    //LinearStaticReusablePool<Entity> dynamicEntities;
-
+    EntityManager entityManager;
 public:
     Scene();
 };

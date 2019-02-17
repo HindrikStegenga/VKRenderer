@@ -6,7 +6,7 @@
 #define VKRENDERER_LINEARSTATICREUSABLEPOOL_H
 
 
-#include "LinearPoolItem.h"
+#include "StaticLinearPoolItem.h"
 #include "StaticReusablePool.h"
 #include <iostream>
 
@@ -20,7 +20,7 @@ public:
     LinearStaticReusablePool();
     ~LinearStaticReusablePool();
 private:
-    array <LinearPoolItem<T>, poolSize>                     items;
+    array <StaticLinearPoolItem<T>, poolSize>                     items;
     array <HandleSizeType, poolSize>                            mappedIndices;
     StaticReusablePool  <HandleSizeType, IndexPoolHandleType, poolSize>  indices;
 

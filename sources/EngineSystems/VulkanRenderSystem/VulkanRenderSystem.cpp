@@ -107,7 +107,7 @@ VulkanRenderSystem::VulkanRenderSystem(Engine* engine, vk_GeneralSettings settin
             Logger::error("Could not find appropriate renderMode!");
         }
 
-        renderTargets.emplace_back(std::move(target));
+        windowRenderTargets.emplace_back(std::move(target));
     }
 }
 
@@ -178,7 +178,7 @@ VkDevice VulkanRenderSystem::getDevice() {
 
 void VulkanRenderSystem::windowHasResized(uint32_t width, uint32_t height, RenderWindow* renderWindow) {
 
-    for (auto& target : renderTargets) {
+    for (auto& target : windowRenderTargets) {
         if (target.renderWindow == renderWindow) {
             resizeWindow(width, height, &target);
         }
@@ -192,7 +192,7 @@ bool VulkanRenderSystem::update(std::chrono::nanoseconds deltaTime) {
     if(!canContinue)
         return false;
 
-    render(deltaTime);
+    render();
 
     return true;
 }
@@ -202,7 +202,7 @@ bool VulkanRenderSystem::processWindowEvents(nanoseconds deltaTime) {
     accumulatedTime += latestDeltaTime;
     accumulatedFrames += 1;
 
-    for(auto& target : renderTargets) {
+    for(auto& target : windowRenderTargets) {
 
         if (!target.renderWindow->pollWindowEvents())
             return false;
@@ -226,7 +226,7 @@ bool VulkanRenderSystem::processWindowEvents(nanoseconds deltaTime) {
         }
     }
 
-    for (auto& target : renderTargets) {
+    for (auto& target : windowRenderTargets) {
 
         if (mustSetFPS) {
             target.renderWindow->setWindowTitle("VKRenderer " + std::to_string(fps) + " FPS");
@@ -235,9 +235,9 @@ bool VulkanRenderSystem::processWindowEvents(nanoseconds deltaTime) {
     return true;
 }
 
-void VulkanRenderSystem::render(nanoseconds deltaTime) {
+void VulkanRenderSystem::render() {
 
-    for (auto& target : renderTargets) {
+    for (auto& target : windowRenderTargets) {
 
         vk_PresentImageInfo presentImageInfo = target.swapchain.acquireNextImage();
 

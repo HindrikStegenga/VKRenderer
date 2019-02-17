@@ -19,9 +19,9 @@ typedef vector<const char*> (*ExtensionProcessingFunc)(const vector<const char*>
 
 class VulkanRenderSystem : public EngineSystem {
 private:
-    Instance                        instance        = Instance();
-    PresentDevice                   device          = PresentDevice();
-    vector<WindowRenderTarget>      renderTargets   = {};
+    Instance                        instance            = Instance();
+    PresentDevice                   device              = PresentDevice();
+    vector<WindowRenderTarget>      windowRenderTargets = {};
 
     nanoseconds                 accumulatedTime     = nanoseconds(0);
     nanoseconds                 latestDeltaTime     = nanoseconds(0);
@@ -42,7 +42,7 @@ public:
     bool update(std::chrono::nanoseconds deltaTime) override;
 private:
     bool processWindowEvents(nanoseconds deltaTime);
-    void render(nanoseconds deltaTime);
+    void render();
 private:
     VkDevice getDevice();
     void resizeWindow(bool mustResize, WindowRenderTarget* renderTarget);

@@ -2,13 +2,13 @@
 // Created by hindrik on 10-2-19.
 //
 
-#ifndef VKRENDERER_LINEARPOOLITEM_H
-#define VKRENDERER_LINEARPOOLITEM_H
+#ifndef VKRENDERER_STATICLINEARPOOLITEM_H
+#define VKRENDERER_STATICLINEARPOOLITEM_H
 
 #include <utility>
 
 template<typename T>
-class LinearPoolItem final
+class StaticLinearPoolItem final
 {
 public:
     union Data
@@ -29,14 +29,14 @@ public:
 
     alignas(T) Data data;
 public:
-    LinearPoolItem() = default;
-    ~LinearPoolItem();
+    StaticLinearPoolItem() = default;
+    ~StaticLinearPoolItem();
 
-    LinearPoolItem(const LinearPoolItem&)             = delete;
-    LinearPoolItem& operator=(const LinearPoolItem&)  = delete;
+    StaticLinearPoolItem(const StaticLinearPoolItem&)             = delete;
+    StaticLinearPoolItem& operator=(const StaticLinearPoolItem&)  = delete;
 
-    LinearPoolItem(LinearPoolItem&&)                  = delete;
-    LinearPoolItem& operator=(LinearPoolItem&&)       = delete;
+    StaticLinearPoolItem(StaticLinearPoolItem&&)                  = delete;
+    StaticLinearPoolItem& operator=(StaticLinearPoolItem&&)       = delete;
 
     void cleanUp();
 
@@ -45,23 +45,23 @@ public:
 };
 
 template<typename T>
-inline LinearPoolItem<T>::~LinearPoolItem()
+inline StaticLinearPoolItem<T>::~StaticLinearPoolItem()
 {
     cleanUp();
 }
 
 template<typename T>
-inline void LinearPoolItem<T>::cleanUp()
+inline void StaticLinearPoolItem<T>::cleanUp()
 {
     data.object.~T();
 }
 
 template<typename T>
 template<typename... Args>
-void LinearPoolItem<T>::reset(Args&&... arguments)
+void StaticLinearPoolItem<T>::reset(Args&&... arguments)
 {
     void* tVoid = &(data.object);
     new (tVoid) T(std::forward<Args>(arguments)...);
 }
 
-#endif //VKRENDERER_LINEARPOOLITEM_H
+#endif //VKRENDERER_HANDLE_VECTOR_ITEM_H
