@@ -6,6 +6,7 @@
 
 #include "EngineSystem.h"
 #include "../Engine.h"
+#include "../Threading/AwaitableTask.h"
 
 EngineSystem::EngineSystem(Engine* engine) : engine(engine) {}
 
