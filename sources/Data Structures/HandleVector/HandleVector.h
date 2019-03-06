@@ -83,12 +83,12 @@ typename HandleVector<T, HandleSize>::HandleType HandleVector<T, HandleSize>::ge
 
         //Store copy, and set the nextFreeHandleIndex to the index pointed to by the handle in the handleToData vector.
         HandleSize nextFree = nextFreeHandleIndex;
-        nextFreeHandleIndex = handleToData[nextFreeHandleIndex];
+        nextFreeHandleIndex = handleToData[nextFree];
 
         //Set the handle to point to the last element of data.
         handleToData[nextFree] = data.size() - 1;
 
-        //Put daataTohandle in the right place
+        //Put dataTohandle in the right place
         dataToHandle.emplace_back(nextFree);
 
         return HandleType(nextFree);
@@ -136,9 +136,11 @@ void HandleVector<T, HandleSize>::returnItem(HandleType &handle) {
         data.pop_back();
         dataToHandle.pop_back();
 
-        //Update handle to point to new location
-        handleToData[lastElementHandle] = handleToData[indexInHandle];
-        dataToHandle[lastElementIndex] = lastElementHandle;
+        //Update handles to point to new location
+        dataToHandle[handleToData[indexInHandle]] = lastElementIndex;
+
+        handleToData[lastElementIndex] = handleToData[indexInHandle];
+        handleToData[indexInHandle] = nextFreeHandleIndex;
 
         nextFreeHandleIndex = indexInHandle;
 
