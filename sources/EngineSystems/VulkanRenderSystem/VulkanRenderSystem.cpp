@@ -3,7 +3,6 @@
 //
 
 #include "VulkanRenderSystem.h"
-#include "../../Utilities/ConfigFileReader.h"
 #include "RenderModes/ForwardRenderMode.h"
 #include "Utilities/Parsable/VertexLayout.h"
 #include "../../Core/Engine.h"
