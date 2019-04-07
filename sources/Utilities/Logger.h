@@ -123,20 +123,20 @@ public:
     Logger& operator=(const Logger&&) = delete;
 
 
-    static void log(string msg);
-    static void warn(string msg);
-    static void error(string msg);
-    static void success(string msg);
-    static void failure(string msg);
+    static void log(const string& msg);
+    static void warn(const string& msg);
+    static void error(const string& msg);
+    static void success(const string& msg);
+    static void failure(const string& msg);
 
-    static void logNoEndl(string msg);
-    static void warnNoEndl(string msg);
-    static void errorNoEndl(string msg);
-    static void successNoEndl(string msg);
-    static void failureNoEndl(string msg);
+    static void logNoEndl(const string& msg);
+    static void warnNoEndl(const string& msg);
+    static void errorNoEndl(const string& msg);
+    static void successNoEndl(const string& msg);
+    static void failureNoEndl(const string& msg);
 
 private:
-    static void logToFileAndConsole(string str, LogLevel e);
+    static void logToFileAndConsole(const string& msg, LogLevel e);
 };
 
 #undef RESET

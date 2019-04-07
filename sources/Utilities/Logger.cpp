@@ -51,21 +51,21 @@
 bool Logger::logToFile = true;
 bool Logger::logFileIsOpened = false;
 
-void Logger::log(string msg)
+void Logger::log(const string& msg)
 {
     std::stringstream str;
     str << msg << std::endl;
     logToFileAndConsole(str.str(), LogLevel::Information);
 }
 
-void Logger::warn(string msg)
+void Logger::warn(const string& msg)
 {
     std::stringstream str;
     str << msg << std::endl;
     logToFileAndConsole(str.str(), LogLevel::Warning);
 }
 
-void Logger::error(string msg)
+void Logger::error(const string& msg)
 {
     std::stringstream str;
     str << msg << std::endl;
@@ -73,14 +73,14 @@ void Logger::error(string msg)
 
 }
 
-void Logger::success(string msg)
+void Logger::success(const string& msg)
 {
     std::stringstream str;
     str << msg << std::endl;
     logToFileAndConsole(str.str(), LogLevel::Succes);
 }
 
-void Logger::failure(string msg)
+void Logger::failure(const string& msg)
 {
     std::stringstream str;
     str << RED << msg << WHITE << std::endl;
@@ -88,27 +88,27 @@ void Logger::failure(string msg)
     throw std::runtime_error(msg);
 }
 
-void Logger::logNoEndl(string msg)
+void Logger::logNoEndl(const string& msg)
 {
-    logToFileAndConsole(move(msg), LogLevel::Information);
+    logToFileAndConsole(msg, LogLevel::Information);
 }
 
-void Logger::warnNoEndl(string msg)
+void Logger::warnNoEndl(const string& msg)
 {
-    logToFileAndConsole(move(msg), LogLevel::Warning);
+    logToFileAndConsole(msg, LogLevel::Warning);
 }
 
-void Logger::errorNoEndl(string msg)
+void Logger::errorNoEndl(const string& msg)
 {
-    logToFileAndConsole(move(msg), LogLevel::Error);
+    logToFileAndConsole(msg, LogLevel::Error);
 }
 
-void Logger::successNoEndl(string msg)
+void Logger::successNoEndl(const string& msg)
 {
-    logToFileAndConsole(move(msg), LogLevel::Succes);
+    logToFileAndConsole(msg, LogLevel::Succes);
 }
 
-void Logger::failureNoEndl(string msg)
+void Logger::failureNoEndl(const string& msg)
 {
     string str = RED + msg + WHITE;
 
@@ -116,7 +116,7 @@ void Logger::failureNoEndl(string msg)
     throw std::runtime_error(msg);
 }
 
-void Logger::logToFileAndConsole(string str, LogLevel e)
+void Logger::logToFileAndConsole(const string& msg, LogLevel e)
 {
     time_t currentTime;
     time(&currentTime);
@@ -126,7 +126,7 @@ void Logger::logToFileAndConsole(string str, LogLevel e)
     strftime(timeString, sizeof(timeString), "%H:%M:%S", time_info);
     string timestamp(timeString);
 
-    cout << "[" << timestamp << "]" << tagged(e,str, true);
+    cout << "[" << timestamp << "]" << tagged(e, msg, true);
     if(!logToFile) return;
 
     std::ofstream ofs;
@@ -143,7 +143,7 @@ void Logger::logToFileAndConsole(string str, LogLevel e)
             ofs << "This log file has been created on " << ctime(&currentTime) << std::endl;
 
         }
-        ofs << "[" << timestamp << "]" << tagged(e, str);
+        ofs << "[" << timestamp << "]" << tagged(e, msg);
     }
     else
     {
