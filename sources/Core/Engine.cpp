@@ -19,6 +19,8 @@ Engine::Engine(ApplicationSettings applicationSettings, GraphicsSettings graphic
 
 void Engine::run() {
 
+    sceneManager.loadScene(applicationSettings.startupScene);
+
     while (!mustStop) {
 
         //Get delta time since previous frame.

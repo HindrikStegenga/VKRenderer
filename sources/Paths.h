@@ -15,5 +15,6 @@ const static string PATH_DESCRIPTORS = PATH_RESOURCES + "descriptors/";
 const static string PATH_MESH_DESCRIPTORS = PATH_DESCRIPTORS + "meshes/";
 const static string PATH_VERTEXBUFFERFORMAT_DESCRIPTORS = PATH_DESCRIPTORS + "vertex buffer formats/";
 const static string PATH_SHADERS = PATH_RESOURCES + "shaders/";
+const static string PATH_SCENES = PATH_RESOURCES + "scenes/";
 
 #endif //VKRENDERER_PATHS_H

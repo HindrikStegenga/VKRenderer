@@ -1,0 +1,34 @@
+{
+  "name": "Basic Scene",
+  "staticEntities": [
+    {
+      "name": "static cube",
+      "isStatic": true,
+      "transform": {
+        "position": { "x": 0.0, "y": 0.0, "z": 0.0 },
+        "rotation": { "x": 0.0, "y": 0.0, "z": 0.0 },
+        "scale":    { "x": 1.0, "y": 1.0, "z": 1.0 }
+      }
+    }
+  ],
+  "dynamicEntities": [
+    {
+      "name": "cube",
+      "isStatic": false,
+      "transform": {
+        "position": { "x": 0.0, "y": 0.0, "z": 0.0 },
+        "rotation": { "x": 0.0, "y": 0.0, "z": 0.0 },
+        "scale":    { "x": 1.0, "y": 1.0, "z": 1.0 }
+      }
+    },
+    {
+      "name": "triangle",
+      "isStatic": false,
+      "transform": {
+        "position": { "x": 0.0, "y": 0.0, "z": 0.0 },
+        "rotation": { "x": 0.0, "y": 0.0, "z": 0.0 },
+        "scale":    { "x": 1.0, "y": 1.0, "z": 1.0 }
+      }
+    }
+  ]
+}

@@ -6,34 +6,37 @@
 #define VKRENDERER_ENTITY_H
 
 #include <cstdint>
-#include "../Transform.h"
-#include "../../Data Structures/Handle.h"
+#include <vector>
+#include "Transform.h"
 
-
-class Entity {
+class Entity final {
 private:
-    int id;
-    Transform transform;
-    bool isStatic = false;
+    uint32_t  entityID  = 0;
 public:
-    Entity(int id) : id(id) {}
+    Transform transform = {};
+public:
+    Entity() = default;
+    ~Entity() = default;
 
-    template<typename ComponentType, typename ...Args>
-    Handle<ComponentType, uint16_t> addComponent(Args... args);
+    //TODO: Fix copy constructor mess.
 
-    template<typename ComponentType>
-    void removeComponent(Handle<ComponentType, uint16_t> handle);
+    Entity(const Entity&) = default;
+    //Entity(Entity&&) noexcept = default;
+
+    Entity& operator=(const Entity&) = default;
+    //Entity& operator=(Entity&&) noexcept = default;
+
+    Entity(uint32_t id, Transform transform);
+public:
+    uint32_t getID() const;
+    void setID(uint32_t id);
 };
 
-template<typename ComponentType, typename... Args>
-Handle<ComponentType, uint16_t> Entity::addComponent(Args... args) {
-    return Handle<ComponentType, uint16_t>();
-}
+SERIALIZE_START(Entity)
+    SERIALIZE_GETSET("id", Entity::getID, Entity::setID),
+    SERIALIZE_MEMBER("transform", Entity::transform)
+SERIALIZE_END
 
-template<typename ComponentType>
-void Entity::removeComponent(Handle<ComponentType, uint16_t> handle) {
-
-}
 
 
 #endif //VKRENDERER_ENTITY_H

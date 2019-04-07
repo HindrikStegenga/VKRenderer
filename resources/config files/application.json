@@ -1,11 +1,16 @@
 {
   "applicationName": "VKRenderer",
   "engineName": "VKRendererEngine",
+
   "applicationVersionMajor": 1,
   "applicationVersionMinor": 0,
   "applicationVersionPatch": 0,
+
   "engineVersionMajor": 1,
   "engineVersionMinor": 0,
   "engineVersionPatch": 0,
-  "debugMode": true
+
+  "debugMode": true,
+
+  "startupScene": "Basic Scene"
 }

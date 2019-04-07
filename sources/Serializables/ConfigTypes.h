@@ -25,6 +25,7 @@ struct ApplicationSettings {
     uint32_t engineVersionMinor;
     uint32_t engineVersionPatch;
     bool debugMode;
+    string startupScene;
 };
 
 SERIALIZE_START(ApplicationSettings)
@@ -36,7 +37,8 @@ SERIALIZE_START(ApplicationSettings)
     SERIALIZE_MEMBER("engineVersionMajor", ApplicationSettings::engineVersionMajor),
     SERIALIZE_MEMBER("engineVersionMinor", ApplicationSettings::engineVersionMinor),
     SERIALIZE_MEMBER("engineVersionPatch", ApplicationSettings::engineVersionPatch),
-    SERIALIZE_MEMBER("debugMode", ApplicationSettings::debugMode)
+    SERIALIZE_MEMBER("debugMode", ApplicationSettings::debugMode),
+    SERIALIZE_MEMBER("startupScene", ApplicationSettings::startupScene)
 SERIALIZE_END
 
 struct GraphicsSettings {

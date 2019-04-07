@@ -1,18 +1,34 @@
 //
-// Created by Hindrik Stegenga on 2018-12-14.
+// Created by hindriks on 7-4-19.
 //
 
 #ifndef VKRENDERER_SCENEMANAGER_H
 #define VKRENDERER_SCENEMANAGER_H
 
+#include <vector>
 #include "Scene.h"
 
+using std::vector;
 
 class SceneManager final {
 private:
-    Scene currentScene;
+    vector<Scene> loadedScenes = {};
 public:
-    SceneManager();
+    SceneManager() = default;
+    ~SceneManager() = default;
+
+    SceneManager(const SceneManager&) = delete;
+    SceneManager(SceneManager&&) noexcept = default;
+
+    SceneManager& operator=(const SceneManager&) = delete;
+    SceneManager& operator=(SceneManager&&) noexcept = default;
+public:
+    void loadScene(const string& name);
+
+
+
+
+
 };
 
 
