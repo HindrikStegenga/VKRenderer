@@ -12,6 +12,8 @@
 using namespace meta;
 using namespace nlohmann;
 
+#define SERIALIZE_FRIEND(Namespace, Type) private: friend auto Namespace::registerMembers<Type>();
+
 #define SERIALIZE_START(Type) namespace meta { \
     template <> \
     inline auto registerMembers<Type>() \
