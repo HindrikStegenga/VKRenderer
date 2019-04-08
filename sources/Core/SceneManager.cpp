@@ -9,6 +9,8 @@
 
 void SceneManager::loadScene(const string &name) {
 
-    loadedScenes.emplace_back(loadJSONFile<Scene>(PATH_SCENES + name + ".json"));
-    Logger::success("Loaded scene: " + name);
+    //TODO: Fix this shit.
+    //auto n = loadJSONFile<Scene>(PATH_SCENES + name + ".json");
+    //loadedScenes.emplace_back();
+    Logger::success("Loaded scenes: " + name);
 }

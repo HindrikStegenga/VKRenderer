@@ -5,14 +5,21 @@
 #ifndef VKRENDERER_SERIALIZEMACRO_H
 #define VKRENDERER_SERIALIZEMACRO_H
 
+#include <string>
 #include <nlohmannJSON/json.hpp>
 #include <MetaStuff/Meta.h>
 #include <MetaStuff/JsonCast.h>
 
+using std::string;
+
 using namespace meta;
 using namespace nlohmann;
 
-#define SERIALIZE_FRIEND(Namespace, Type) private: friend auto Namespace::registerMembers<Type>();
+template<typename T>
+T loadJSONFile(const string&);
+
+#define SERIALIZE_FRIEND(Namespace, Type) private: friend auto Namespace::registerMembers<Type>(); \
+private: friend Type loadJSONFile<Type>(const string&);
 
 #define SERIALIZE_START(Type) namespace meta { \
     template <> \

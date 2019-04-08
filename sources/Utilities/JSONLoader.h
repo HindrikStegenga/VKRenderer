@@ -9,6 +9,7 @@
 #include "nlohmannJSON/json.hpp"
 #include <fstream>
 #include "Logger.h"
+#include "../Core/ECS/Entity.h"
 
 using std::string;
 using nlohmann::json;
@@ -29,7 +30,9 @@ T loadJSONFile(const string& fileName) {
     inputFileStream.close();
     stringBuffer.clear();
 
-    return JSONRepresentation.get<T>();
+    T item;
+    JSONRepresentation.get_to<T>(item);
+    return item;
 }
 
 #endif //VKRENDERER_JSONLOADER_H

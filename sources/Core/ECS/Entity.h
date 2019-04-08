@@ -7,33 +7,34 @@
 
 #include <cstdint>
 #include <vector>
+#include <string>
 #include "Transform.h"
+
+using std::string;
 
 class Entity final {
 private:
-    uint32_t  entityID  = 0;
+    string name = "";
 public:
     Transform transform = {};
-public:
+private:
     Entity() = default;
-    ~Entity() = default;
-
-    //TODO: Fix copy constructor mess.
-
-    Entity(const Entity&) = default;
-    //Entity(Entity&&) noexcept = default;
-
-    Entity& operator=(const Entity&) = default;
-    //Entity& operator=(Entity&&) noexcept = default;
-
-    Entity(uint32_t id, Transform transform);
 public:
-    uint32_t getID() const;
-    void setID(uint32_t id);
+    ~Entity() = default;
+    Entity(const string& name, Transform transform);
+
+    Entity(const Entity&) = delete;
+    Entity(Entity&&) noexcept = default;
+
+    Entity& operator=(const Entity&) = delete;
+    Entity& operator=(Entity&&) noexcept = default;
+
+
+    SERIALIZE_FRIEND(meta, Entity)
 };
 
 SERIALIZE_START(Entity)
-    SERIALIZE_GETSET("id", Entity::getID, Entity::setID),
+    SERIALIZE_MEMBER("name", Entity::name),
     SERIALIZE_MEMBER("transform", Entity::transform)
 SERIALIZE_END
 
